@@ -4,15 +4,17 @@ function AudioButton() {
     y: 0.5
   };
 
-  var cookie = JSON.parse(getCookie("cuteanimals_stats"));
+  if (typeof localStorage.musicActivated === 'undefined') {
+    localStorage.musicActivated = "1";
+  }
 
-  this.on = true;//cookie.music;
+  this.on = localStorage.musicActivated;
   createjs.Sound.setMute(!this.on);
   this.musicElement = $("#music")[0];
   if (this.on) {
     this.musicElement.play && this.musicElement.play();
   }
-};
+}
 
 AudioButton.prototype.render = function() {
   var sprite = this.on ? this.sprite_on : this.sprite_off;
@@ -26,10 +28,7 @@ AudioButton.prototype.render = function() {
 
 AudioButton.prototype.pause = function() {
   this.musicElement.pause && this.musicElement.pause();
-
-  var cookie = JSON.parse(getCookie("cuteanimals_stats"));
-  cookie.music = false;
-  setCookie("cuteanimals_stats", JSON.stringify(cookie));
+  localStorage.musicActivated = "";
 };
 
 AudioButton.prototype.toggleActivated = function() {
@@ -41,7 +40,5 @@ AudioButton.prototype.toggleActivated = function() {
     this.musicElement.pause && this.musicElement.pause();
   }
 
-  var cookie = JSON.parse(getCookie("cuteanimals_stats"));
-  cookie.music = this.on;
-  setCookie("cuteanimals_stats", JSON.stringify(cookie));
+  localStorage.musicActivated = this.on ? "1" : "";
 };
