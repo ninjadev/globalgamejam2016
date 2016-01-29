@@ -81,8 +81,11 @@ PlayerCharacter.prototype.applyFrictionForce = function() {
 };
 
 PlayerCharacter.prototype.render = function(ctx) {
+  ctx.strokeStyle = "#C0C0C0";
+  ctx.fillStyle = "#C0C0C0";
   ctx.beginPath();
   ctx.arc(this.x * GU, this.y * GU, this.bodyRadius * GU, 0, 2 * Math.PI, false);
+  ctx.closePath();
   ctx.fill();
 
   if (this.isShieldActive) {
