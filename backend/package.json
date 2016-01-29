@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/ninjadev/globalgamejam2016#readme",
   "dependencies": {
-    "websockets": "^0.2.0"
+    "websocket": "^1.0.22"
   }
 }
