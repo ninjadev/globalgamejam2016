@@ -6,6 +6,8 @@ CENTER = {
   y: 4.5
 };
 
+MOUSE = {x: 0, y: 0, left: false, right: false};
+
 missedGFXFrames = 0;
 
 /* smoothstep interpolates between a and b, at time t from 0 to 1 */
@@ -92,8 +94,6 @@ function bootstrap() {
   document.addEventListener("keyup", function(e) {
     KEYS[e.keyCode] = false;
   });
-
-  window.MOUSE = {x: 0, y: 0, left: false, right: false};
 
   // prevent context menu from appearing on right click
   document.addEventListener('contextmenu', function(e) {
@@ -251,7 +251,7 @@ function handleEvent(e) {
   }
   var coordX, coordY, sizeX, sizeY;
   var hoverOverClickable = false;
-  if(clickables.hasOwnProperty("length")) {
+  if (clickables && clickables.hasOwnProperty("length")) {
     for (var i = 0; i < clickables.length; i++) {
       coordX = clickables[i][1].x;
       coordY = clickables[i][1].y;
@@ -267,7 +267,7 @@ function handleEvent(e) {
       }
     }
   }
-  clickables[i] && clickables[i][1].hover && clickables[i][1].hover();
+  clickables && clickables[i] && clickables[i][1].hover && clickables[i][1].hover();
   $("body").css('cursor', hoverOverClickable ? "pointer" : "auto");
 }
 
