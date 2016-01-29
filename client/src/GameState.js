@@ -1,9 +1,11 @@
 function GameState() {
-};
+}
 
 GameState.prototype.init = function() {
   this.bg = loadImage('res/bg.png');
   this.vignette = loadImage('res/vignette.png');
+  this.playerCharacter = new PlayerCharacter();
+  this.playerCharacter.init();
 };
 
 GameState.prototype.pause = function() {
@@ -26,9 +28,12 @@ GameState.prototype.render = function(ctx) {
   ctx.scale(scaler, scaler);
   ctx.drawImage(this.vignette, 0, 0);
   ctx.restore();
+
+  this.playerCharacter.render(ctx);
 };
 
 GameState.prototype.update = function() {
   var that = this;
+  this.playerCharacter.update();
 };
 
