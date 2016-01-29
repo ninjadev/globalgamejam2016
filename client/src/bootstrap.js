@@ -41,6 +41,7 @@ window.requestAnimFrame = (function() {
     };
 })();
 
+var MS_PER_FRAME = 15;
 function loop() {
   if (loaded > 0) {
     canvas.width = canvas.width;
@@ -54,9 +55,9 @@ function loop() {
   t = +new Date();
   dt += (t - old_time);
   old_time = t;
-  while (dt > 20) {
+  while (dt > MS_PER_FRAME) {
     sm.update();
-    dt -= 20;
+    dt -= MS_PER_FRAME;
   }
   /* clearing canvas */
   canvas.width = canvas.width;
