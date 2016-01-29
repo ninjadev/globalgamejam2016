@@ -30,3 +30,4 @@ node_modules
 
 # Misc
 .idea
+.*.swp
