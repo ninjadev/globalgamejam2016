@@ -93,6 +93,33 @@ function bootstrap() {
     KEYS[e.keyCode] = false;
   });
 
+  window.MOUSE = {x: 0, y: 0, left: false, right: false};
+
+  // prevent context menu from appearing on right click
+  document.addEventListener('contextmenu', function(e) {
+    console.log("context menu was suppressed");
+    if (e.button === 2) {
+      e.preventDefault();
+      return false;
+    }
+  }, false);
+
+  document.addEventListener("mousedown", function(e) {
+    if (e.button === 0) {
+      MOUSE.left = true;
+    } else if (e.button === 2) {
+      MOUSE.right = true;
+    }
+  });
+
+  document.addEventListener("mouseup", function(e) {
+    if (e.button === 0) {
+      MOUSE.left = false;
+    } else if (e.button === 2) {
+      MOUSE.right = false;
+    }
+  });
+
   /* add game states here */
 
   sm.addState("game", new GameState());
@@ -210,7 +237,9 @@ if (window.navigator.msPointerEnabled) {
 
 function handleEvent(e) {
   e.preventDefault();
-  MOUSE = relMouseCoords(e);
+  var position = relMouseCoords(e);
+  MOUSE.x = position.x;
+  MOUSE.y = position.y;
   var eventType = (e.type === "mousemove" || e.type === "touchmove" || e.type === "pointermove" ? "hover" : "click");
   var clickables;
   if (typeof sm === "undefined") {
