@@ -1,11 +1,24 @@
 function GameState() {
 }
 
+GameState.prototype.connectWebsocket = function() {
+  var ws = new WebSocket('ws://localhost:1337', 'echo-protocol');
+  var that = this;
+  ws.addEventListener('open', function(e) {
+  });
+  ws.addEventListener('message', function(e) {
+    that.state = JSON.parse(e.data);
+    console.log(that.state);
+  });
+};
+
+
 GameState.prototype.init = function() {
   this.bg = loadImage('res/bg.png');
   this.vignette = loadImage('res/vignette.png');
   this.playerCharacter = new PlayerCharacter();
   this.playerCharacter.init();
+  this.connectWebsocket();
 };
 
 GameState.prototype.pause = function() {
@@ -38,12 +51,19 @@ GameState.prototype.render = function(ctx) {
   ctx.drawImage(this.vignette, 0, 0);
   ctx.restore();
 
+  ctx.fillStyle = 'blue';
   this.playerCharacter.render(ctx);
+  ctx.fillStyle = 'red';
+  if(this.state) {
+    for(var i = 0; i < this.state.length; i++) {
+      var player = this.state[i];
+      ctx.fillRect(player.x * GU, player.y * GU, GU / 4, GU / 4);
+    }
+  }
+
   this.audioButton.render();
 };
 
 GameState.prototype.update = function() {
   var that = this;
-  this.playerCharacter.update();
 };
-

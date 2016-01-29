@@ -133,7 +133,7 @@ function bootstrap() {
 
   /* start the game */
 
-  sm.changeState("menu");
+  sm.changeState("game");
 
   loaded--;
   requestAnimFrame(loop);
@@ -243,7 +243,7 @@ function handleEvent(e) {
   MOUSE.x = position.x;
   MOUSE.y = position.y;
   var eventType = (e.type === "mousemove" || e.type === "touchmove" || e.type === "pointermove" ? "hover" : "click");
-  var clickables;
+  var clickables = [];
   if (typeof sm === "undefined") {
     return;
   } else if (typeof sm.activeState.gameMenuWindow !== "undefined" && sm.activeState.gameMenuWindow.visible) {
