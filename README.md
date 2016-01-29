@@ -1,2 +1,4 @@
-# globalgamejam2016
-This is Ninjadevs contribution to the global gamejam 2016
+bgj-06
+======
+
+Bacon Game Jam number 6
