@@ -4,7 +4,11 @@ function GameState() {
 GameState.prototype.connectWebsocket = function() {
   var ws = new WebSocket('ws://localhost:1337', 'echo-protocol');
   var that = this;
+  this.ws = ws;
+  this.wsReady = false;
+  var that = this;
   ws.addEventListener('open', function(e) {
+    that.wsReady = true;
   });
   ws.addEventListener('message', function(e) {
     that.state = JSON.parse(e.data);
@@ -16,8 +20,6 @@ GameState.prototype.connectWebsocket = function() {
 GameState.prototype.init = function() {
   this.bg = loadImage('res/bg.png');
   this.vignette = loadImage('res/vignette.png');
-  this.playerCharacter = new PlayerCharacter();
-  this.playerCharacter.init();
   this.connectWebsocket();
 };
 
@@ -52,7 +54,6 @@ GameState.prototype.render = function(ctx) {
   ctx.restore();
 
   ctx.fillStyle = 'blue';
-  this.playerCharacter.render(ctx);
   ctx.fillStyle = 'red';
   if(this.state) {
     for(var i = 0; i < this.state.length; i++) {
@@ -66,4 +67,39 @@ GameState.prototype.render = function(ctx) {
 
 GameState.prototype.update = function() {
   var that = this;
+  var buttons = {
+    MOVE_UP: 1,
+    MOVE_DOWN: 2,
+    MOVE_LEFT: 3,
+    MOVE_RIGHT: 4,
+    FIRE: 5,
+    ALTERNATE_FIRE: 6
+  };
+
+  if(this.wsReady) {
+    var inputs = [];
+    if (KEYS[87]) { // W
+      inputs.push(buttons.MOVE_UP);
+    }
+    if (KEYS[83]) { // S
+      inputs.push(buttons.MOVE_DOWN);
+    }
+    if (KEYS[65]) { // A
+      inputs.push(buttons.MOVE_LEFT);
+    }
+    if (KEYS[68]) { // D
+      inputs.push(buttons.MOVE_RIGHT);
+    }
+    this.ws.send(JSON.stringify({
+      type: 'inputs',
+      inputs: [
+        KEYS[87], // W
+        KEYS[83], // S
+        KEYS[65], // A
+        KEYS[68],  // D
+        false,
+        false
+      ]
+    }));
+  }
 };
