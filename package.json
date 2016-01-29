@@ -1,0 +1,23 @@
+{
+  "name": "globalgamejam2016",
+  "version": "1.0.0",
+  "description": "This is Ninjadevs contribution to the global gamejam 2016",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ninjadev/globalgamejam2016.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ninjadev/globalgamejam2016/issues"
+  },
+  "homepage": "https://github.com/ninjadev/globalgamejam2016#readme",
+  "dependencies": {
+    "websockets": "^0.2.0"
+  }
+}
