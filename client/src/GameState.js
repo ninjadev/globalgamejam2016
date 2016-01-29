@@ -12,7 +12,6 @@ GameState.prototype.connectWebsocket = function() {
   });
   ws.addEventListener('message', function(e) {
     that.state = JSON.parse(e.data);
-    console.log(that.state);
   });
 };
 
