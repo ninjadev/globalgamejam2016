@@ -14,6 +14,26 @@ wsServer = new WebSocketServer({
 var count = 0;
 var clients = {};
 
+function getPlayers() {
+  var players = [];
+  for (var i in clients) {
+    if (clients.hasOwnProperty(i)) {
+      players.push(clients[i].player)
+    }
+  }
+  return players;
+}
+
+function broadcastPlayers() {
+  var players = getPlayers();
+  var playersJson = JSON.stringify(players);
+  for (var i in clients) {
+    if (clients.hasOwnProperty(i)) {
+      clients[i].sendUTF(playersJson);
+    }
+  }
+}
+
 wsServer.on('request', function(r) {
   // Code here to run on connection
 
@@ -24,22 +44,24 @@ wsServer.on('request', function(r) {
   // Store the connection method so we can loop through & contact all clients
   clients[id] = connection;
 
+  connection.player = {
+    name: null
+  };
+
   console.log((new Date()) + ' Connection accepted [' + id + ']');
 
   // Create event listener
   connection.on('message', function(message) {
 
     // The string message that was sent to us
-    var msgString = message.utf8Data;
+    connection.player.name = message.utf8Data;
+    broadcastPlayers();
 
-    // Loop through all clients
-    for (var i in clients) {
-      if (clients.hasOwnProperty(i)) {
-        // Send a message to the client with the message
-        clients[i].sendUTF(msgString);
-      }
-    }
+  });
 
+  connection.on('close', function(reasonCode, description) {
+    delete clients[id];
+    console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
   });
 
 });

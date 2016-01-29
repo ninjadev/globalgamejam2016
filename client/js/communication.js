@@ -7,8 +7,13 @@ function sendMessage(){
 
 ws.addEventListener("message", function(e) {
   // The data is simply the message that we're sending back
-  var msg = e.data;
+  console.log(e);
+  var players = JSON.parse(e.data);
+  console.log(players);
+  var playersHtml = "";
+  for (var i = 0; i < players.length; i++) {
+    playersHtml += '<li>' + players[i].name + '</li>';
+  }
+  document.getElementById('players').innerHTML = playersHtml;
 
-  // Append the message
-  document.getElementById('chatlog').innerHTML += '<br>' + msg;
 });

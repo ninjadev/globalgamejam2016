@@ -6,9 +6,12 @@
   <script src="js/communication.js"></script>
 </head>
 <body>
-<div id="chatlog"></div>
-<input type="text" placeholder="What's your name, stranger?" id="message">
-<input type="button" onclick="sendMessage()" value="Set name">
+
+<form>
+  <input type="text" placeholder="What's your name?" id="message">
+  <input type="button" onclick="sendMessage()" value="Set name">
+</form>
+<ul id="players"></ul>
 
 </body>
 </html>
