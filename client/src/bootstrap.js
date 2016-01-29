@@ -96,6 +96,7 @@ function bootstrap() {
   /* add game states here */
 
   sm.addState("game", new GameState());
+  sm.addState("menu", new MenuState());
 
   document.body.appendChild(canvas);
 
@@ -103,7 +104,7 @@ function bootstrap() {
 
   /* start the game */
 
-  sm.changeState("game");
+  sm.changeState("menu");
 
   loaded--;
   requestAnimFrame(loop);
@@ -221,22 +222,24 @@ function handleEvent(e) {
   }
   var coordX, coordY, sizeX, sizeY;
   var hoverOverClickable = false;
-  /*for (var i = 0; i < clickables.length; i++) {
-    coordX = clickables[i][1].x;
-    coordY = clickables[i][1].y;
-    sizeX = clickables[i][1].w;
-    sizeY = clickables[i][1].h;
-    if (MOUSE.x >= coordX && MOUSE.x <= coordX + sizeX && MOUSE.y >= coordY && MOUSE.y <= coordY + sizeY) {
-      if (eventType === "click") {
-        clickables[i][0](clickables[i].slice(2));
-      } else if (eventType === "hover") {
-        hoverOverClickable = true;
+  if(clickables.hasOwnProperty("length")) {
+    for (var i = 0; i < clickables.length; i++) {
+      coordX = clickables[i][1].x;
+      coordY = clickables[i][1].y;
+      sizeX = clickables[i][1].w;
+      sizeY = clickables[i][1].h;
+      if (MOUSE.x >= coordX && MOUSE.x <= coordX + sizeX && MOUSE.y >= coordY && MOUSE.y <= coordY + sizeY) {
+        if (eventType === "click") {
+          clickables[i][0](clickables[i].slice(2));
+        } else if (eventType === "hover") {
+          hoverOverClickable = true;
+        }
+        break;
       }
-      break;
     }
   }
   clickables[i] && clickables[i][1].hover && clickables[i][1].hover();
-  $("body").css('cursor', hoverOverClickable ? "pointer" : "auto");*/
+  $("body").css('cursor', hoverOverClickable ? "pointer" : "auto");
 }
 
 window.addEventListener('resize', resize);
