@@ -36,7 +36,10 @@ wsServer.on('request', function(r) {
   connection.on('message', function(message) {
 
     // The string message that was sent to us
-    connection.player.name = message.utf8Data;
+    var event = JSON.parse(message.utf8Data);
+    if(event.type == 'inputs') {
+      connection.player.input = [false].concat(event.inputs);
+    }
   });
 
   connection.on('close', function(reasonCode, description) {
@@ -76,7 +79,7 @@ var updateTickAccumulator = 0;
 var networkTickAccumulator = 0;
 var UPDATE_TICK_LENGTH_IN_MS = 15;
 var NETWORK_TICK_LENGTH_IN_MS = 50;
-var FRICTION_COEFFICIENT = 0.9;
+var FRICTION_COEFFICIENT = 0.98;
 
 function getTime() {
   return +new Date() / 1;
@@ -84,7 +87,8 @@ function getTime() {
 
 function log() {
   var message = Array.prototype.join.call(arguments, '')
-  console.log('[' + (getTime() - initialTime | 0) + ']', message);
+  console.log.apply(
+    console, ['[' + (getTime() - initialTime | 0) + ']'].concat(message));
 }
 
 function generatePlayer() {
@@ -99,11 +103,11 @@ function generatePlayer() {
 }
 
 function processInput() {
-  log('processInput');
+  //log('processInput');
 }
 
 function update() {
-  log('update');
+  //log('update');
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {
       continue;
@@ -127,21 +131,21 @@ function update() {
       motionButtonPressed = true;
     }
     var normalizer = Math.sqrt(player.dx * player.dx + player.dy * player.dy);
-    if(normalizer) {
-      player.dx *= 1 / normalizer;
-      player.dy *= 1 / normalizer;
+    if(normalizer > 1) {
+      player.dx = player.dx / normalizer;
+      player.dy = player.dy / normalizer;
     }
-    if(!motionButtonPressed) {
-      player.dx *= FRICTION_COEFFICIENT;
-      player.dy *= FRICTION_COEFFICIENT;
-    }
+    player.dx *= 0.1;
+    player.dy *= 0.1;
+    player.dx *= FRICTION_COEFFICIENT;
+    player.dy *= FRICTION_COEFFICIENT;
     player.x += player.dx;
     player.y += player.dy;
   }
 }
 
 function sendNetworkState() {
-  log('network state');
+  //log('network state');
   var state = [];
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {

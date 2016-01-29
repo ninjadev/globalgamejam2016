@@ -41,6 +41,7 @@ window.requestAnimFrame = (function() {
     };
 })();
 
+var MS_PER_FRAME = 15;
 function loop() {
   if (loaded > 0) {
     canvas.width = canvas.width;
@@ -54,9 +55,9 @@ function loop() {
   t = +new Date();
   dt += (t - old_time);
   old_time = t;
-  while (dt > 20) {
+  while (dt > MS_PER_FRAME) {
     sm.update();
-    dt -= 20;
+    dt -= MS_PER_FRAME;
   }
   /* clearing canvas */
   canvas.width = canvas.width;
@@ -133,7 +134,7 @@ function bootstrap() {
 
   /* start the game */
 
-  sm.changeState("menu");
+  sm.changeState("game");
 
   loaded--;
   requestAnimFrame(loop);
@@ -243,7 +244,7 @@ function handleEvent(e) {
   MOUSE.x = position.x;
   MOUSE.y = position.y;
   var eventType = (e.type === "mousemove" || e.type === "touchmove" || e.type === "pointermove" ? "hover" : "click");
-  var clickables;
+  var clickables = [];
   if (typeof sm === "undefined") {
     return;
   } else if (typeof sm.activeState.gameMenuWindow !== "undefined" && sm.activeState.gameMenuWindow.visible) {
