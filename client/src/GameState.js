@@ -17,9 +17,13 @@ GameState.prototype.connectWebsocket = function() {
 
 
 GameState.prototype.init = function() {
-  this.bg = loadImage('res/bg.png');
+  this.bg = loadImage('res/bg.jpg');
   this.vignette = loadImage('res/vignette.png');
   this.connectWebsocket();
+  this.playerCharacter = new PlayerCharacter();
+  this.playerCharacter.init();
+  this.scoreL = 8;
+  this.scoreD = 0;
 };
 
 GameState.prototype.pause = function() {
@@ -39,12 +43,14 @@ GameState.prototype.resume = function() {
 
 GameState.prototype.render = function(ctx) {
   ctx.save();
-  var scaler = 16 * GU / this.bg.width + 0.01 + 0.01 * Math.sin(t / 125);
-  ctx.translate(CENTER.x * GU, CENTER.y * GU);
+  var scaler = 30 * GU / this.bg.width + 0.02 + 0.02 * Math.sin(t / 200);
+  ctx.translate((clamp(-7, (this.scoreL - this.scoreD)/4, 7) + CENTER.x) * GU, CENTER.y * GU);
   ctx.scale(scaler, scaler);
   ctx.translate(-this.bg.width / 2, -this.bg.height / 2);
   ctx.drawImage(this.bg, 0, 0);
   ctx.restore();
+
+  this.scoreL = (new Date()).getSeconds() - 30 + (new Date()).getMilliseconds() / 1000;
 
   ctx.save();
   scaler = 16 * GU / this.vignette.width;
