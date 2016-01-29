@@ -4,11 +4,7 @@ function MenuState() {
 MenuState.prototype.init = function() {
   this.bg_img = loadImage('res/bg.png');
   this.vignette_img = loadImage('res/vignette.png');
-  if (highResolution()) {
-    this.menu_img = loadImage('res/menu@2x.png');
-  } else {
-    this.menu_img = loadImage('res/menu.png?v=2');
-  }
+  this.menu_img = loadImage('res/menu@2x.png');
 
   this.key_cooldown = 0;
 
