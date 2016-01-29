@@ -1,7 +1,7 @@
 function PlayerCharacter() {
   this.breakingCoefficient = 0.04;
   this.accelerationCoefficient = 0.01;
-  this.bodyRadius = 10;
+  this.bodyRadius = 0.2;
 }
 
 PlayerCharacter.prototype.init = function() {
@@ -82,18 +82,18 @@ PlayerCharacter.prototype.applyFrictionForce = function() {
 
 PlayerCharacter.prototype.render = function(ctx) {
   ctx.beginPath();
-  ctx.arc(this.x * GU, this.y * GU, this.bodyRadius, 0, 2 * Math.PI, false);
+  ctx.arc(this.x * GU, this.y * GU, this.bodyRadius * GU, 0, 2 * Math.PI, false);
   ctx.fill();
 
   if (this.isShieldActive) {
     var directionToMouse = Math.atan2(MOUSE.y - this.y, MOUSE.x - this.x);
     ctx.save();
     ctx.beginPath();
-    ctx.lineWidth = 0.15 * this.bodyRadius;
+    ctx.lineWidth = 0.15 * this.bodyRadius * GU;
     ctx.arc(
       this.x * GU,
       this.y * GU,
-      this.bodyRadius * 1.6,
+      1.6 * this.bodyRadius * GU,
       directionToMouse - 0.2 * Math.PI,
       directionToMouse + 0.2 * Math.PI,
       false
