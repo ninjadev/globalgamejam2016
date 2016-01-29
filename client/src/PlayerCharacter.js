@@ -1,5 +1,5 @@
 function PlayerCharacter() {
-  this.maxSpeed = 10;
+  this.breakingCoefficient = 0.04;
 }
 
 PlayerCharacter.prototype.init = function() {
@@ -29,12 +29,19 @@ PlayerCharacter.prototype.update = function() {
     fx += 1;
     targetSpeed = 1;
   }
-  var direction = Math.atan2(fy, fx);
+  var targetDirection = Math.atan2(fy, fx);
 
-  fx = targetSpeed * Math.cos(direction);
-  fy = targetSpeed * Math.sin(direction);
+  fx = targetSpeed * Math.cos(targetDirection);
+  fy = targetSpeed * Math.sin(targetDirection);
 
   this.applyforce(fx, fy);
+
+  // breaking force
+  var actualDirection = Math.atan2(this.dy, this.dx);
+  var currentSpeed = Math.sqrt(Math.pow(this.dx, 2) + Math.pow(this.dy, 2));
+  var breakFx = - this.breakingCoefficient * Math.cos(actualDirection) * Math.pow(currentSpeed, 2);
+  var breakFy = - this.breakingCoefficient * Math.sin(actualDirection) * Math.pow(currentSpeed, 2);
+  this.applyforce(breakFx, breakFy);
 
   this.x += this.dx;
   this.y += this.dy;
@@ -57,5 +64,7 @@ PlayerCharacter.prototype.applyforce = function(fx, fy) {
 };
 
 PlayerCharacter.prototype.render = function(ctx) {
-  ctx.fillRect(this.x, this.y, GU / 4, GU / 4);
+  ctx.beginPath();
+  ctx.arc(this.x, this.y, 10, 0, 2 * Math.PI, false);
+  ctx.fill();
 };

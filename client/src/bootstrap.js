@@ -1,5 +1,5 @@
 DEBUG = true;
-GU = 1;
+GU = 10;
 
 CENTER = {
   x: 8,
