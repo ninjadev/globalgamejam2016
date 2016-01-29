@@ -12,6 +12,15 @@ GameState.prototype.pause = function() {
 };
 
 GameState.prototype.resume = function() {
+  var that = this;
+  this.elements = [
+    [function() {
+    }, {x: 7.5, y: 4, w: 1, h: 1}],
+    [function() {
+      that.audioButton.toggleActivated();
+    }, {x: 15, y: 0, w: 1, h: 1}]
+  ];
+  this.audioButton = new AudioButton();
 };
 
 GameState.prototype.render = function(ctx) {
@@ -30,6 +39,7 @@ GameState.prototype.render = function(ctx) {
   ctx.restore();
 
   this.playerCharacter.render(ctx);
+  this.audioButton.render();
 };
 
 GameState.prototype.update = function() {
