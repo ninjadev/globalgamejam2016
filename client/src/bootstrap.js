@@ -97,7 +97,6 @@ function bootstrap() {
 
   // prevent context menu from appearing on right click
   document.addEventListener('contextmenu', function(e) {
-    console.log("context menu was suppressed");
     if (e.button === 2) {
       e.preventDefault();
       return false;
