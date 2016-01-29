@@ -78,6 +78,9 @@ function bootstrap() {
 
   sm = new StateManager();
 
+  AudioButton.prototype.sprite_on = loadImage("res/audio_on.png");
+  AudioButton.prototype.sprite_off = loadImage("res/audio_off.png");
+
   dt = 0;
   t = 0;
   time = +new Date();
@@ -251,20 +254,18 @@ function handleEvent(e) {
   }
   var coordX, coordY, sizeX, sizeY;
   var hoverOverClickable = false;
-  if (clickables && clickables.hasOwnProperty("length")) {
-    for (var i = 0; i < clickables.length; i++) {
-      coordX = clickables[i][1].x;
-      coordY = clickables[i][1].y;
-      sizeX = clickables[i][1].w;
-      sizeY = clickables[i][1].h;
-      if (MOUSE.x >= coordX && MOUSE.x <= coordX + sizeX && MOUSE.y >= coordY && MOUSE.y <= coordY + sizeY) {
-        if (eventType === "click") {
-          clickables[i][0](clickables[i].slice(2));
-        } else if (eventType === "hover") {
-          hoverOverClickable = true;
-        }
-        break;
+  for (var i = 0; i < clickables.length; i++) {
+    coordX = clickables[i][1].x;
+    coordY = clickables[i][1].y;
+    sizeX = clickables[i][1].w;
+    sizeY = clickables[i][1].h;
+    if (MOUSE.x >= coordX && MOUSE.x <= coordX + sizeX && MOUSE.y >= coordY && MOUSE.y <= coordY + sizeY) {
+      if (eventType === "click") {
+        clickables[i][0](clickables[i].slice(2));
+      } else if (eventType === "hover") {
+        hoverOverClickable = true;
       }
+      break;
     }
   }
   clickables && clickables[i] && clickables[i][1].hover && clickables[i][1].hover();
