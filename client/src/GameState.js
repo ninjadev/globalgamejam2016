@@ -45,7 +45,7 @@ GameState.prototype.init = function() {
   this.bg = loadImage('res/ggj-bg.jpg');
   this.bgDark = loadImage('res/ggj-bg-dark.jpg');
   this.bgLight = loadImage('res/ggj-bg-light.jpg');
-  this.playerImg = loadImage('res/player.png');
+  this.playerImg = loadImage('res/player-light.png');
   this.connectWebsocket();
   this.capture_points = [];
   this.capture_points.push(new CapturePoint(9, 9));
