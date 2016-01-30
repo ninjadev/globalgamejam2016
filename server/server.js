@@ -18,7 +18,7 @@ var wsServer = new WebSocketServer({
 var count = 0;
 var clients = {};
 var bullets = [];
-var fireCooldownTime = 66;
+var fireCooldownTime = 11;
 
 wsServer.on('request', function(r) {
   // Code here to run on connection
@@ -32,7 +32,6 @@ wsServer.on('request', function(r) {
   connection.player = {
     character: new Character(),
     name: '',
-    fireCooldown: 0,
     input: []
   };
 
@@ -100,19 +99,21 @@ function update() {
       continue;
     }
     var player = clients[i].player;
-    player.character.update(player.input);
+    var character = player.character;
+    character.update(player.input);
 
-    if(player.fireCooldown > 0){
-      player.fireCooldown--;
+    if(character.fireCooldown > 0){
+      character.fireCooldown--;
     }
 
-    if(player.input[BUTTONS.FIRE] && player.fireCooldown <= 0){
-      player.fireCooldown = fireCooldownTime;
+
+    if(player.input[BUTTONS.FIRE] && character.fireCooldown <= 0){
+      character.fireCooldown = fireCooldownTime;
       var m_x = player.input[BUTTONS.MOUSE_X];
       var m_y = player.input[BUTTONS.MOUSE_Y];
       
-      var fire_dir_x = m_x - player.character.x;
-      var fire_dir_y = m_y - player.character.y;
+      var fire_dir_x = m_x - character.x;
+      var fire_dir_y = m_y - character.y;
       var fire_dir_len = Math.sqrt(fire_dir_x * fire_dir_x + fire_dir_y * fire_dir_y);
       
       //if you click yourself don't shoot
@@ -120,25 +121,111 @@ function update() {
         //Scale to unit length
         fire_dir_x = fire_dir_x / fire_dir_len;
         fire_dir_y = fire_dir_y / fire_dir_len;
-        
-        //Scale to bullet speed
-        fire_dir_x = fire_dir_x * 0.3;
-        fire_dir_y = fire_dir_y * 0.3;
 
         bullets.push({
-          x: player.character.x,
-          y: player.character.y,
-          dx: fire_dir_x,
-          dy: fire_dir_y
-        });
+          x: character.x + 0.3*fire_dir_x,
+          y: character.y + 0.3*fire_dir_y,
+          dx: fire_dir_x * 0.3 + character.dx,
+          dy: fire_dir_y * 0.3 + character.dy});
       }
     } 
   }
   for(var i = 0; i < bullets.length; i++){
     var bullet = bullets[i];
-    bullet.x += bullet.dx;
-    bullet.y += bullet.dy;
+    var newX = bullet.x + bullet.dx;
+    var newY = bullet.y + bullet.dy;
+    if(checkCollisionWithPlayers(bullet, bullet.x, bullet.y, newX, newY)){
+      bullets[i] = bullets[bullets.length - 1];
+      bullets.length = bullets.length - 1;
+    }else{
+      bullet.x = newX;
+      bullet.y = newY;
+    }
+
+    if(bullet.x > 16 
+      || bullet.y > 9
+      || bullet.y < 0
+      || bullet.y < 0){
+      bullets[i] = bullets[bullets.length - 1];
+      bullets.length = bullets.length - 1;
+      
+      
+    }
+    
   }
+}
+
+function checkCollisionWithPlayers(bullet, oldX, oldY, newX, newY){
+  var hit = false;
+  for(var i in clients) {
+    if(!clients.hasOwnProperty(i)) {
+      continue;
+    }
+    var character = clients[i].player.character;
+    if(intersectLineCircle(oldX, oldY, newX, newY, character.x, character.y, character.bodyRadius)){
+      character.x = 5;
+      character.y = 5;
+      hit = true;
+    }
+  }
+  return hit;
+}
+
+
+function intersectLineCircle(startX, startY, endX, endY, centerX, centerY, radius){
+    // http://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm
+    var d_x = endX - startX;
+    var d_y = endY - startY;
+    
+    var f_x = startX - centerX;
+    var f_y = startY - centerY;
+
+
+    var a =  d_x*d_x + d_y * d_y;
+    var b = 2 * (f_x*d_x + f_y*d_y);
+    var c = (f_x*f_x + f_y*f_y) - radius * radius;
+
+    var discriminant = b*b - 4*a*c;
+
+    if(discriminant < 0){
+      //no intersection
+      return false;
+    }else{
+      discriminant = Math.sqrt(discriminant);
+      // either solution may be on or off the ray so need to test both
+      // t1 is always the smaller value, because BOTH discriminant and
+      // a are nonnegative.
+      var t1 = (-b - discriminant)/(2*a);
+      var t2 = (-b + discriminant)/(2*a);
+
+      // 3x HIT cases:
+      //          -o->             --|-->  |            |  --|->
+      // Impale(t1 hit,t2 hit), Poke(t1 hit,t2>1), ExitWound(t1<0, t2 hit), 
+
+      // 3x MISS cases:
+      //       ->  o                     o ->              | -> |
+      // FallShort (t1>1,t2>1), Past (t1<0,t2<0), CompletelyInside(t1<0, t2>1)
+
+      if( t1 >= 0 && t1 <= 1 )
+      {
+        // t1 is the intersection, and it's closer than t2
+        // (since t1 uses -b - discriminant)
+        // Impale, Poke
+        return true ;
+      }
+
+      // here t1 didn't intersect so we are either started
+      // inside the sphere or completely past it
+      if( t2 >= 0 && t2 <= 1 )
+      {
+        // ExitWound
+        return true ;
+      }
+
+      // no intn: FallShort, Past, CompletelyInside
+      return false ;
+    }
+
 }
 
 function sendNetworkState() {
