@@ -34,15 +34,11 @@
         <!-- src files -->
         <script src=src/GameState.js></script>
         <script src=src/MenuState.js></script>
+        <script src=src/MusicManager.js></script>
         <script src=src/Player.js></script>
         <script src=src/AudioButton.js></script>
     </head>
     <body onload="bootstrap()">
-        <audio id="music" loop>
-            <source src="res/music/music.mp3" type="audio/mpeg">
-            <source src="res/music/music.ogg" type="audio/ogg">
-        </audio>
-
         <div id=wrapper>
             <div class="player-name-container">
                 <input type="text" id="player-name-input">
@@ -51,6 +47,10 @@
         <style>
           * {
             cursor: crosshair;
+          }
+
+          input {
+            cursor: text;
           }
         </style>
     </body>
