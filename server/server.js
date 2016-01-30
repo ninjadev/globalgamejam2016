@@ -201,13 +201,27 @@ function update() {
       bullets.length = bullets.length - 1;
     }
   }
+
+  var lightOwnsAllCapturePoints = true;
+  var darkOwnsAllCapturePoints = true;
+
   for(var i = 0; i < capture_points.length; i++){
     capture_points[i].update(clients);
     if(capture_points[i].ownage_d == 1) {
       dark_points += 1;
+      lightOwnsAllCapturePoints = false;
     } else if(capture_points[i].ownage_d == -1) {
       light_points += 1;
+      darkOwnsAllCapturePoints = false;
+    } else {
+      lightOwnsAllCapturePoints = false;
+      darkOwnsAllCapturePoints = false;
     }
+  }
+  if (lightOwnsAllCapturePoints) {
+    light_points += 30;
+  } else if (darkOwnsAllCapturePoints) {
+    dark_points += 30;
   }
 }
 
