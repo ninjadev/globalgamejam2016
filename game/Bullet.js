@@ -15,6 +15,7 @@ Bullet.prototype.init = function(x, y, dx, dy){
   this.dx = dx;
   this.dy = dy;
   this.active = true;
+  this.direction = Math.atan2(dy, dx);
 }
 
 Bullet.prototype.fire = function(character, fire_dir_x, fire_dir_y){
@@ -46,16 +47,19 @@ Bullet.prototype.update = function(clients){
 }
 
 Bullet.prototype.render = function() {
-  ctx.beginPath();
-  ctx.arc(this.x*GU, this.y*GU, GU*0.2, 0, 2 * Math.PI, false);
-  ctx.fill();
+  ctx.save();
+  ctx.translate(this.x * GU, this.y * GU);
+  ctx.rotate(this.direction);
+  ctx.fillRect(-GU / 2 / 2, - GU / 16 / 2, GU / 2, GU / 16);
+  ctx.restore();
 
 }
 
 Bullet.prototype.getState = function() {
   return {
     x: this.x,
-    y: this.y
+    y: this.y,
+    direction: this.direction
   }
 }
 
