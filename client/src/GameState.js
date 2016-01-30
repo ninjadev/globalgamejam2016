@@ -112,16 +112,15 @@ GameState.prototype.render = function(ctx) {
       tick = states[0].tick; //global variables <3  ...
       console.log("Local tick too long behind");
     }
-    if(tick > states[2].tick){
-      tick = states[2].tick;
+    if(tick >= states[2].tick){
+      tick = states[2].tick - 1; //Don't go past last tick, remember we are adding subticks too
       console.log("Local tick too far ahead");
     }
 
-    var state = tick > states[1].tick ? states[1] : states[0];
-    var state_next = tick > states[1].tick ? states[2] : states[1];
+    var state = tick >= states[1].tick ? states[1] : states[0];
+    var state_next = tick >= states[1].tick ? states[2] : states[1];
 
-    var coeff = (tick - state.tick) / (state_next.tick - state.tick);
-    //coeff += dt/15; //Add partial tick time to interpolation coefficient
+    var coeff = (tick + dt/15 - state.tick) / (state_next.tick - state.tick);
 
     var players      = state.players;
     var players_next = state_next.players;

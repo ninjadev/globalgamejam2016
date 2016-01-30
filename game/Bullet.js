@@ -13,7 +13,6 @@ last_bullet_id = 0;
 
 Bullet.prototype.init = function(x, y, dx, dy){
   this.id = last_bullet_id++;
-  console.log(this.id);
   this.x = x;
   this.y = y;
   this.dx = dx;
