@@ -8,7 +8,7 @@ try {
 function Character() {
   this.breakingCoefficient = 0.04;
   this.accelerationCoefficient = 0.01;
-  this.bodyRadius = 0.2;
+  this.bodyRadius = 0.4;
   this.init();
 }
 
@@ -29,6 +29,11 @@ Character.prototype.getState = function() {
     mouseDirection: this.mouseDirection,
     isShieldActive: this.isShieldActive
   };
+}
+
+Character.prototype.hit = function(bullet) {
+  this.dx += bullet.dx ;
+  this.dy += bullet.dy ;
 }
 
 Character.prototype.update = function(input) {
