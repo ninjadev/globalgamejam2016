@@ -191,7 +191,7 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
   ctx.textAlign = 'center';
   ctx.fillText(name , 0, -2.1 * GU);
 
-  ctx.fillStyle = '#00f600';
+  ctx.fillStyle = 'white';
   ctx.strokeStyle = '#888';
   ctx.lineWidth = 0.05 * GU;
   var hpWidth = 3 * GU;

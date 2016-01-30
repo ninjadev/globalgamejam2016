@@ -2,9 +2,7 @@ function MenuState() {
 };
 
 MenuState.prototype.init = function() {
-  this.bg_img = loadImage('res/bg.png');
-  this.vignette_img = loadImage('res/vignette.png');
-  this.menu_img = loadImage('res/menu@2x.png');
+  this.bg_img = loadImage('res/menu.png');
 
   this.key_cooldown = 0;
 
@@ -12,18 +10,8 @@ MenuState.prototype.init = function() {
   this.elements = [
     [function() {
       sm.changeState('game');
-    }, {x: 0.5, y: 1.8, w: 16, h: 1.5, hover: function() {
+    }, {x: 14.5, y: 1.8, w: 1.5, h: 1, hover: function() {
       that.select(0);
-    }}],
-    [function() {
-      sm.changeState('game');
-    }, {x: 0.5, y: 3.3, w: 16, h: 1.5, hover: function() {
-      that.select(1);
-    }}],
-    [function() {
-      sm.changeState('game');
-    }, {x: 0.5, y: 4.8, w: 16, h: 1.5, hover: function() {
-      that.select(2);
     }}]
   ];
 
@@ -71,31 +59,20 @@ MenuState.prototype.resume = function() {
 };
 
 MenuState.prototype.render = function(ctx) {
-
   ctx.save();
-  var scaler = 16 * GU / this.bg_img.width + 0.01 + 0.01 * Math.sin(t / 125);
+  var scaler = 16 * GU / this.bg_img.width;
   ctx.translate(CENTER.x * GU, CENTER.y * GU);
   ctx.scale(scaler, scaler);
   ctx.translate(-this.bg_img.width / 2, -this.bg_img.height / 2);
   ctx.drawImage(this.bg_img, 0, 0);
   ctx.restore();
+  $('#player-name-input').css({
+    'font-size': 0.5 * GU + 'px',
+    'width': 5.1 * GU + 'px',
+    'margin-top': -0.25 * GU + 'px',
+    'padding-left': 0.2 * GU + 'px'
+  });
 
-  ctx.save();
-  scaler = 16 * GU / this.vignette_img.width;
-  ctx.scale(scaler, scaler);
-  ctx.drawImage(this.vignette_img, 0, 0);
-  ctx.restore();
-
-
-  ctx.fillStyle = '#8742d1';
-  ctx.fillRect(3.9 * GU, this.y * GU, 8.2 * GU, GU);
-
-  ctx.save();
-  ctx.translate(0, 1.32 * GU);
-  scaler = 16 * GU / this.menu_img.width;
-  ctx.scale(scaler, scaler);
-  ctx.drawImage(this.menu_img, 0, 0);
-  ctx.restore();
 };
 
 MenuState.prototype.update = function() {

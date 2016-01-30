@@ -9,8 +9,8 @@ var types = {
 var ready_for_render = false;
 
 GameState.prototype.connectWebsocket = function() {
-  var ws = new WebSocket('ws://localhost:1337', 'echo-protocol');
-  //var ws = new WebSocket('ws://192.168.177.22:1337', 'echo-protocol');
+  //var ws = new WebSocket('ws://localhost:1337', 'echo-protocol');
+  var ws = new WebSocket('ws://192.168.177.11:1337', 'echo-protocol');
   var that = this;
   this.ws = ws;
   this.wsReady = false;
@@ -22,7 +22,7 @@ GameState.prototype.connectWebsocket = function() {
     console.log("Connected");
     ws.send(JSON.stringify({
       type: 'join',
-      name: new Player().name
+      name: that.player.name
     }));
   });
   ws.addEventListener('message', function(e) {
@@ -38,9 +38,6 @@ GameState.prototype.connectWebsocket = function() {
       if(message.you) {
         that.youId = message.id;
         var team = message.team == 0 ? 'light' : 'dark';
-        document.querySelector('body').classList.remove('dark');
-        document.querySelector('body').classList.add('light');
-        document.querySelector('body').classList.add(team);
         ready_for_render = true;
       }
     }
@@ -53,15 +50,8 @@ GameState.prototype.init = function() {
   this.bgDark = loadImage('res/ggj-bg-dark.jpg');
   this.bgLight = loadImage('res/ggj-bg-light.jpg');
   this.playerImgLight = loadImage('res/player-light.png');
-  this.playerImgDark = loadImage('res/player.png');
+  this.playerImgDark = loadImage('res/player-dark.png');
   this.cpNeutralImg = loadImage('res/marker.png');
-  this.connectWebsocket();
-  this.scoreL = 8;
-  this.scoreD = 0;
-  this.cameraZoom = 0.5;
-  this.cameraX = 0;
-  this.cameraY = 0;
-  this.states = [];
 
   var soundPath = 'res/sounds/';
   for (var soundName in SOUNDS.byName) {
@@ -87,6 +77,13 @@ GameState.prototype.resume = function() {
   var playerName = document.getElementById('player-name-input').value;
   this.player = new Player(playerName);
   localStorage.playerName = playerName;
+  this.connectWebsocket();
+  this.scoreL = 8;
+  this.scoreD = 0;
+  this.cameraZoom = 0.5;
+  this.cameraX = 0;
+  this.cameraY = 0;
+  this.states = [];
 };
 
 GameState.prototype.render = function(ctx) {
@@ -181,16 +178,20 @@ GameState.prototype.render = function(ctx) {
     }
 
     ctx.restore();
-    ctx.textAlign = 'right';
+    ctx.textAlign = 'center';
     ctx.font = (0.5 * GU|0) + 'px Arial';
-    ctx.fillStyle = '#c7af0e';
+    ctx.fillStyle = '#191919';
+    ctx.fillRect(6 * GU, 0.2 * GU, 1.8 * GU, 0.6 * GU);
+    ctx.fillStyle = 'white';
+    ctx.fillRect(8.2 * GU, 0.2 * GU, 1.8 * GU, 0.6 * GU);
+    ctx.fillStyle = 'white';
     ctx.fillText(
         '' + (state.light_points / 300 | 0),
-        7.5 * GU, 0.5 * GU);
-    ctx.fillStyle = '#b01616';
+        6.9 * GU, 0.68 * GU);
+    ctx.fillStyle = '#191919';
     ctx.fillText(
         '' + (state.dark_points / 300 | 0),
-        8.5 * GU, 0.5 * GU);
+        9.1 * GU, 0.68 * GU);
 
     if (you) {
       Character.prototype.renderUi.call(you, ctx);
