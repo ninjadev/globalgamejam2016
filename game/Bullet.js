@@ -38,7 +38,7 @@ Bullet.prototype.update = function(clients){
 
     if(this.x > 16 
       || this.y > 9
-      || this.y < 0
+      || this.x < 0
       || this.y < 0){
 
       this.active = false;
