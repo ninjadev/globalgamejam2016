@@ -105,7 +105,7 @@ GameState.prototype.render = function(ctx) {
 
     var you = players[this.youId];
     var you_next = players_next[this.youId];
-    if(you_next){
+    if(you_next && you){
       var you_x = you.x * (1 - coeff) + you_next.x * coeff;
       var you_y = you.y * (1 - coeff) + you_next.y * coeff;
       this.cameraX = you_x;
