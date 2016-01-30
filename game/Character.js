@@ -116,10 +116,15 @@ Character.prototype.applyFrictionForce = function() {
   this.dy += breakFy;
 };
 
-Character.prototype.render = function(ctx, img, name) {
-  var bodyRadius = 0.2;
+Character.prototype.render = function(ctx, player_next, coeff, img, name) {
+  if(!player_next)return; //TODO: When should bullet dissapear?
+  var x = this.x * (1 - coeff) + player_next.x * coeff;
+  var y = this.y * (1 - coeff) + player_next.y * coeff;
+  var hp = this.hp * (1 - coeff) + player_next.hp * coeff;
+
+  var bodyRadius = this.bodyRadius;
   ctx.save();
-  ctx.translate(this.x * GU, this.y * GU);
+  ctx.translate(x * GU, y * GU);
   ctx.scale(GU * 0.005, GU * 0.005);
   ctx.font = (.5 * GU) + 'px Arial';
   var width = ctx.measureText(name).width;
@@ -132,11 +137,10 @@ Character.prototype.render = function(ctx, img, name) {
   ctx.strokeStyle = '#888';
   ctx.lineWidth = 0.05 * GU;
   var hpWidth = 3 * GU;
-  this.hp = 2;
   ctx.fillRect(
       -hpWidth / 2,
       -1.8 * GU,
-      hpWidth * this.hp / 10, 0.2 * GU);
+      hpWidth * hp / 10, 0.2 * GU);
 
   ctx.strokeRect(
       -hpWidth / 2 - 0.1 * GU,

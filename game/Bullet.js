@@ -46,13 +46,20 @@ Bullet.prototype.update = function(clients){
     }
 }
 
-Bullet.prototype.render = function() {
+Bullet.prototype.render = function(ctx, bullet_next, coeff) {
+  //interpolation!
+  if(!bullet_next)return; //TODO: When should bullet dissapear?
+  var x = this.x * (1 - coeff) + bullet_next.x * coeff;
+  var y = this.y * (1 - coeff) + bullet_next.y * coeff;
+
+  console.log("Coeff ", coeff);
+  //draw
+  ctx.fillStyle = '#B0B0E0';
   ctx.save();
-  ctx.translate(this.x * GU, this.y * GU);
+  ctx.translate(x * GU, y * GU);
   ctx.rotate(this.direction);
   ctx.fillRect(-GU / 2 / 2, - GU / 16 / 2, GU / 2, GU / 16);
   ctx.restore();
-
 }
 
 Bullet.prototype.getState = function() {

@@ -61,6 +61,7 @@ function loop() {
     sm.update();
     MOUSE.scrollX = 0;
     MOUSE.scrollY = 0;
+    tick++;
     dt -= MS_PER_FRAME;
   }
   /* clearing canvas */
@@ -87,6 +88,7 @@ function bootstrap() {
   AudioButton.prototype.sprite_off = loadImage("res/audio_off.png");
 
   dt = 0;
+  tick = 0;
   t = 0;
   time = +new Date();
   old_time = time;

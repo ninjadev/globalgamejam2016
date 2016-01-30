@@ -85,16 +85,18 @@ function loop() {
   while(updateTickAccumulator > UPDATE_TICK_LENGTH_IN_MS) {
     updateTickAccumulator -= UPDATE_TICK_LENGTH_IN_MS;  
     update();
+    tick++;
   }
   if(networkTickAccumulator > NETWORK_TICK_LENGTH_IN_MS) {
     networkTickAccumulator = networkTickAccumulator % NETWORK_TICK_LENGTH_IN_MS;
-    sendNetworkState();
+    sendNetworkState(tick);
   }
   setTimeout(loop);
 }
 
 loop();
 
+var tick = 0;
 var initialTime = getTime();
 var time = getTime();
 var oldTime = time;
@@ -161,8 +163,12 @@ function update() {
   }
 }
 
-function sendNetworkState() {
-  var state = [];
+function sendNetworkState(tick) {
+  var state = {};
+  state.tick = tick;
+  state.players = [];
+  state.bullets = [];
+
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {
       continue;
@@ -174,17 +180,19 @@ function sendNetworkState() {
     var characterState = player.character.getState();
     characterState.id = i;
     characterState.type = types.PLAYER;
-    state.push(characterState);
+    state.players.push(characterState);
   }
   for(var i = 0; i < bullets.length; i++){
     var bulletState = bullets[i].getState();
     bulletState.type= types.BULLET;
-    state.push(bulletState);
+    state.bullets.push(bulletState);
   }
+
   var messageAsJSON = JSON.stringify({
     type: 'state',
     state: state
   });
+
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {
       continue;
