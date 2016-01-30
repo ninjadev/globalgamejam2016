@@ -45,7 +45,8 @@ GameState.prototype.init = function() {
   this.bg = loadImage('res/ggj-bg.jpg');
   this.bgDark = loadImage('res/ggj-bg-dark.jpg');
   this.bgLight = loadImage('res/ggj-bg-light.jpg');
-  this.playerImg = loadImage('res/player-light.png');
+  this.playerImgLight = loadImage('res/player-light.png');
+  this.playerImgDark = loadImage('res/player.png');
   this.connectWebsocket();
   this.capture_points = [];
   this.capture_points.push(new CapturePoint(9, 9));
@@ -127,10 +128,15 @@ GameState.prototype.render = function(ctx) {
     for(var i in players) {
       var player = players[i];
       var player_next = players_next[i];
-
-
       var name = this.players[i].name;
-      Character.prototype.render.call(player, ctx, player_next, coeff, this.playerImg, name);
+      Character.prototype.render.call(
+          player,
+          ctx,
+          player_next,
+          coeff,
+          this.playerImgLight,
+          this.playerImgDark,
+          name);
       if(i == this.youId) {
         this.cameraX = player.x * (1 - coeff) + player_next.x * coeff;
         this.cameraY = player.y * (1 - coeff) + player_next.y * coeff;

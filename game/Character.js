@@ -5,11 +5,12 @@ try {
 }
 
 
-function Character() {
+function Character(team) {
   this.breakingCoefficient = 0.04;
   this.accelerationCoefficient = 0.01;
   this.bodyRadius = 0.4;
   this.MAX_HP = 10;
+  this.team = team;
   this.init();
 }
 
@@ -30,7 +31,8 @@ Character.prototype.getState = function() {
     y: this.y,
     hp: this.hp,
     mouseDirection: this.mouseDirection,
-    isShieldActive: this.isShieldActive
+    isShieldActive: this.isShieldActive,
+    team: this.team
   };
 }
 
@@ -116,7 +118,7 @@ Character.prototype.applyFrictionForce = function() {
   this.dy += breakFy;
 };
 
-Character.prototype.render = function(ctx, player_next, coeff, img, name) {
+Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg, name) {
   if(!player_next)return; //TODO: When should bullet dissapear?
   var x = this.x * (1 - coeff) + player_next.x * coeff;
   var y = this.y * (1 - coeff) + player_next.y * coeff;
@@ -148,6 +150,7 @@ Character.prototype.render = function(ctx, player_next, coeff, img, name) {
       hpWidth + 0.2 * GU, 0.4 * GU);
 
   ctx.rotate(this.mouseDirection);
+  var img = this.team == 0 ? lightImg : darkImg;
   ctx.drawImage(img, -img.width / 2, -img.height / 2 - 52);
   
 

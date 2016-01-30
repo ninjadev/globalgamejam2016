@@ -22,6 +22,8 @@ var clients = {};
 var bullets = [];
 var fireCooldownTime = 11;
 
+var teamCount = [0, 0];
+
 wsServer.on('request', function(r) {
   // Code here to run on connection
 
@@ -39,8 +41,19 @@ wsServer.on('request', function(r) {
     if(event.type == 'inputs') {
       connection.player.input = [false].concat(event.inputs);
     } else if (event.type == 'join') {
+      var LIGHT = 0;
+      var DARK = 1;
+      if(teamCount[LIGHT] > teamCount[DARK]) {
+        var team = DARK;
+      } else if(teamCount[DARK] > teamCount[LIGHT]) {
+        var team = LIGHT;
+      } else {
+        team = Math.random() * 2 | 0;
+      }
+      teamCount[team]++;
+
       connection.player = {
-        character: new Character(),
+        character: new Character(team),
         name: event.name,
         input: []
       };
@@ -68,6 +81,8 @@ wsServer.on('request', function(r) {
   });
 
   connection.on('close', function(reasonCode, description) {
+    var client = clients[id];
+    teamCount[client.player.character.team]--;
     delete clients[id];
     console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
   });
