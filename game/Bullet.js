@@ -49,6 +49,14 @@ Bullet.prototype.render = function() {
   ctx.beginPath();
   ctx.arc(this.x*GU, this.y*GU, GU*0.2, 0, 2 * Math.PI, false);
   ctx.fill();
+
+}
+
+Bullet.prototype.getState = function() {
+  return {
+    x: this.x,
+    y: this.y
+  }
 }
 
 function checkCollisionWithPlayers(clients,bullet, oldX, oldY, newX, newY){
@@ -65,5 +73,7 @@ function checkCollisionWithPlayers(clients,bullet, oldX, oldY, newX, newY){
   }
   return hit;
 }
+
+
 
 module.exports = Bullet;
