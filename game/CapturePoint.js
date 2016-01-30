@@ -14,6 +14,15 @@ function CapturePoint(x, y) {
 CapturePoint.prototype.init = function(){
 }
 
+
+function sign(x) {
+  if(x < 0) {
+    return -1;
+  }
+  return 1;
+}
+
+
 CapturePoint.prototype.update = function(clients){
   //calculate number of people standing on me.
   var light = 0;
@@ -41,10 +50,9 @@ CapturePoint.prototype.update = function(clients){
   this.ownage_d += (Math.min(dark, 1) - Math.min(light, 1)) / 120;
 
   this.ownage_d = Math.max(-1, Math.min(1, this.ownage_d));
-
   if(light == 0 && dark == 0 && Math.abs(this.ownage_d) < 1 &&
      Math.abs(this.ownage_d) > 0) {
-    this.ownage_d -= Math.sign(this.ownage_d) * 1 / 120;
+    this.ownage_d -= sign(this.ownage_d) * 1 / 120;
     if(Math.abs(this.ownage_d) <= 1 / 120) {
       this.ownage_d = 0;
     }
