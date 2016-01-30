@@ -185,11 +185,15 @@ module.exports = {
              1444, 871
              ]];
     for(var i = 0; i < points.length; i++) {
-      points[i] *= 64/1920;
-    }
-    for(var i = 0; i < points.length / 2; i += 2) {
-      console.log("Wall");
-      walls.push(new Wall(points[i],points[i + 1], points[i + 2], points[i + 3]));
+        
+      for(var j = 0; j < points[i].length; j++) {
+        points[i][j] *= 64/1920;
+      }
+      for(var j = 0; j < points[i].length - 2; j += 2) {
+        //console.log("Wall");
+        walls.push(new Wall(points[i][j],points[i][j + 1], points[i][j + 2], points[i][j + 3]));
+        if(i==0) console.log(j);
+      }
     }
   },
 };
