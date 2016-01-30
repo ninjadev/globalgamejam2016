@@ -82,7 +82,7 @@ GameState.prototype.render = function(ctx) {
                 4.5 * GU - this.cameraY * GU * this.cameraZoom);
   ctx.scale(this.cameraZoom, this.cameraZoom);
   ctx.save();
-  ctx.scale(16 * GU / 1920, 16 * GU / 1920);
+  ctx.scale(16 * GU / 1920 * 2, 16 * GU / 1920 * 2);
   ctx.drawImage(this.bg, 0, 0);
   ctx.drawImage(this.bgDark, 0, 0);
   ctx.restore();
@@ -127,6 +127,11 @@ GameState.prototype.update = function() {
         this.cameraY = this.state[i].y;
       }
     }
+  }
+
+  if(MOUSE.scrollY) {
+    this.cameraZoom *= 1 / ((MOUSE.scrollY + 1000) / 1000);
+    this.cameraZoom = clamp(0.1, this.cameraZoom, 3);
   }
 
   if(this.wsReady) {
