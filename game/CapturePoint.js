@@ -38,9 +38,14 @@ CapturePoint.prototype.update = function(clients){
     }
   }
 
-  this.ownage_d += (Math.min(dark, 1) - Math.min(light, 1)) / 100;
+  this.ownage_d += (Math.min(dark, 1) - Math.min(light, 1)) / 120;
 
   this.ownage_d = Math.max(-1, Math.min(1, this.ownage_d));
+
+  if(light == 0 && dark == 0 && Math.abs(this.ownage_d) < 1 &&
+     Math.abs(this.ownage_d) > 0) {
+    this.ownage_d -= Math.sign(this.ownage_d) * 1 / 120;
+  }
 }
 
 CapturePoint.prototype.sqDistToPlayer = function(character){
@@ -65,12 +70,12 @@ CapturePoint.prototype.render = function(ctx, cpNext, neutralImg) {
   var outerRadius = 2.6 * GU;
 
   if(this.ownage_d == 1) {
-    ctx.fillStyle = 'rgba(20, 0, 0, 0.2)';
+    ctx.fillStyle = 'rgba(20, 0, 0, 0.4)';
     ctx.beginPath();
     ctx.arc(0, 0, outerRadius, 0, Math.PI * 2);
     ctx.fill();
   } else if(this.ownage_d == -1) {
-    ctx.fillStyle = 'rgba(255, 255, 200, 0.2)';
+    ctx.fillStyle = 'rgba(255, 255, 200, 0.4)';
     ctx.beginPath();
     ctx.arc(0, 0, outerRadius, 0, Math.PI * 2);
     ctx.fill();
@@ -132,7 +137,7 @@ CapturePoint.prototype.getState = function() {
   return {
     x: this.x,
     y: this.y,
-    ownage_d: this.ownage_d,
+    ownage_d: this.ownage_d
   }
 }
 

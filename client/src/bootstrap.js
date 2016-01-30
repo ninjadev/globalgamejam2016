@@ -18,6 +18,10 @@ function smoothstep(a, b, t) {
   return b * v + a * (1 - v);
 }
 
+function lerp(a, b, t){
+      return (a * t) + (b * (1 - t));
+}
+
 function clamp(low, x, high) {
   return Math.max(low, Math.min(x, high));
 }

@@ -37,7 +37,6 @@ GameState.prototype.connectWebsocket = function() {
       if(message.you) {
         that.youId = message.id;
         var team = message.team == 0 ? 'light' : 'dark';
-        console.log('el teamo', team);
         document.querySelector('body').classList.remove('dark');
         document.querySelector('body').classList.add('light');
         document.querySelector('body').classList.add(team);
@@ -120,6 +119,13 @@ GameState.prototype.render = function(ctx) {
       this.cameraY = 5;
     }
 
+    var capture_points      = state.capture_points;
+    var capture_points_next = state_next.capture_points;
+    var total_ownage_d = 0;
+    for(var i in capture_points) {
+      total_ownage_d += capture_points[i].ownage_d;
+    }
+
     ctx.save();
     ctx.translate(8 * GU - this.cameraX * GU * this.cameraZoom,
         4.5 * GU - this.cameraY * GU * this.cameraZoom);
@@ -127,14 +133,12 @@ GameState.prototype.render = function(ctx) {
     ctx.save();
     ctx.scale(16 * GU / 1920 * 4, 16 * GU / 1920 * 4);
     ctx.drawImage(this.bg, 0, 0);
-    ctx.globalAlpha = clamp(0, this.scoreL - this.scoreD - 10, 20) / 40;
+    ctx.globalAlpha = Math.pow(Math.max(0, total_ownage_d / 5), 4);
     ctx.drawImage(this.bgDark, 0, 0);
-    ctx.globalAlpha = clamp(0, this.scoreD - this.scoreL - 10, 20) / 40;
+    ctx.globalAlpha = Math.pow(Math.max(0, -total_ownage_d / 5), 4);
     ctx.drawImage(this.bgLight, 0, 0);
     ctx.restore();
 
-    var capture_points      = state.capture_points;
-    var capture_points_next = state_next.capture_points;
     for(var i in capture_points) {
       CapturePoint.prototype.render.call(
           capture_points[i], 
@@ -167,6 +171,16 @@ GameState.prototype.render = function(ctx) {
     }
 
     ctx.restore();
+    ctx.textAlign = 'right';
+    ctx.font = (0.5 * GU|0) + 'px Arial';
+    ctx.fillStyle = '#c7af0e';
+    ctx.fillText(
+        '' + state.light_points / 300 | 0,
+        7.5 * GU, 0.5 * GU);
+    ctx.fillStyle = '#b01616';
+    ctx.fillText(
+        '' + state.dark_points / 300 | 0,
+        8.5 * GU, 0.5 * GU);
   }
 
   this.audioButton.render();
