@@ -6,6 +6,7 @@ var types = require('./../game/types.js');
 var sounds = require('./../game/sounds.js');
 var Character = require('./../game/Character');
 var Bullet = require('./../game/Bullet');
+var Wall = require('./../game/Wall');
 var CapturePoint = require('./../game/CapturePoint');
 var server = http.createServer(function(request, response) {});
 
@@ -22,6 +23,8 @@ var wsServer = new WebSocketServer({
 var count = 0;
 var clients = {};
 var bullets = [];
+var walls = [];
+utility.populate_walls(walls, Wall);
 var capture_points = [];
 var dark_points = 0;
 var light_points = 0;
@@ -188,7 +191,7 @@ function update() {
   }
   for(var i = 0; i < bullets.length; i++){
     var bullet = bullets[i];
-    bullet.update(clients);
+    bullet.update(clients, walls);
     if(!bullet.active){
       bullets[i] = bullets[bullets.length - 1];
       bullets.length = bullets.length - 1;
