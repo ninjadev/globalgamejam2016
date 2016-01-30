@@ -151,11 +151,9 @@ function sendNetworkState() {
     state.push(characterState);
   }
   for(var i = 0; i < bullets.length; i++){
-    state.push({
-      type: types.BULLET,
-      x: bullets[i].x,
-      y: bullets[i].y
-    });
+    var bulletState = bullets[i].getState();
+    bulletState.type= types.BULLET;
+    state.push(bulletState);
   }
   var stateAsJSON = JSON.stringify(state);
   for(var i in clients) {
