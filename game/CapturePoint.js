@@ -36,8 +36,8 @@ CapturePoint.prototype.update = function(clients){
       continue;
     }
     var character = clients[i].player.character;
-    if(this.sqDistToPlayer(character) < this.radiusSq){
-      switch(character.team){
+    if (!character.timeDied && this.sqDistToPlayer(character) < this.radiusSq) {
+      switch (character.team) {
         case 0:
           light++;
           break;
