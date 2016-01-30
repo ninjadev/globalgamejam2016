@@ -11,7 +11,7 @@ MenuState.prototype.init = function() {
     [function() {
       sm.changeState('game');
       mm.changeState('game');
-    }, {x: 14.5, y: 1.8, w: 1.5, h: 1, hover: function() {
+    }, {x: 13.35, y: 3.9, w: 1.9, h: 1.2, hover: function() {
       that.select(0);
     }}]
   ];
