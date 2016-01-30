@@ -121,21 +121,31 @@ Character.prototype.render = function(ctx, img, name) {
   ctx.save();
   ctx.translate(this.x * GU, this.y * GU);
   ctx.scale(GU * 0.005, GU * 0.005);
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-  ctx.font = (.6 * GU) + 'px Arial';
+  ctx.font = (.5 * GU) + 'px Arial';
   var width = ctx.measureText(name).width;
   var padding = GU * 0.5;
-  ctx.fillRect(-padding - width / 2, -2.7 * GU , width + padding * 2, 1.2 * GU);
   ctx.fillStyle = 'white';
   ctx.textAlign = 'center';
-  ctx.fillText(name , 0, -1.9 * GU);
+  ctx.fillText(name , 0, -2.1 * GU);
+
+  ctx.fillStyle = '#00f600';
+  ctx.strokeStyle = '#888';
+  ctx.lineWidth = 0.05 * GU;
+  var hpWidth = 3 * GU;
+  this.hp = 2;
+  ctx.fillRect(
+      -hpWidth / 2,
+      -1.8 * GU,
+      hpWidth * this.hp / 10, 0.2 * GU);
+
+  ctx.strokeRect(
+      -hpWidth / 2 - 0.1 * GU,
+      -1.9 * GU,
+      hpWidth + 0.2 * GU, 0.4 * GU);
+
   ctx.rotate(this.mouseDirection);
   ctx.drawImage(img, -img.width / 2, -img.height / 2 - 52);
   
-  ctx.fillStyle = 'red';
-  ctx.fillRect(-img.width / 2, -img.height / 2, 100, 20);
-  ctx.fillStyle = 'green';
-  ctx.fillRect(-img.width / 2, -img.height / 2, 10*this.hp, 20);
 
 
   if (this.isShieldActive) {
