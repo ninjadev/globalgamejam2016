@@ -180,15 +180,15 @@ GameState.prototype.render = function(ctx) {
     ctx.restore();
     ctx.textAlign = 'center';
     ctx.font = (0.5 * GU|0) + 'px Arial';
-    ctx.fillStyle = '#191919';
+    ctx.fillStyle = 'white';
     ctx.fillRect(6 * GU, 0.2 * GU, 1.8 * GU, 0.6 * GU);
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = '#191919';
     ctx.fillRect(8.2 * GU, 0.2 * GU, 1.8 * GU, 0.6 * GU);
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = '#191919';
     ctx.fillText(
         '' + (state.light_points / 300 | 0),
         6.9 * GU, 0.68 * GU);
-    ctx.fillStyle = '#191919';
+    ctx.fillStyle = 'white';
     ctx.fillText(
         '' + (state.dark_points / 300 | 0),
         9.1 * GU, 0.68 * GU);
