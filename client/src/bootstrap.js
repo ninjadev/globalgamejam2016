@@ -1,5 +1,7 @@
 DEBUG = true;
 GU = 10;
+module = {};
+function require() {}
 
 CENTER = {
   x: 8,
