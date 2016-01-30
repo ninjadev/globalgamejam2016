@@ -52,7 +52,6 @@ Bullet.prototype.render = function(ctx, bullet_next, coeff) {
   var x = this.x * (1 - coeff) + bullet_next.x * coeff;
   var y = this.y * (1 - coeff) + bullet_next.y * coeff;
 
-  console.log("Coeff ", coeff);
   //draw
   ctx.fillStyle = '#B0B0E0';
   ctx.save();

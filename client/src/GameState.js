@@ -116,9 +116,16 @@ GameState.prototype.render = function(ctx) {
     for(var i = 0; i < players.length; i++) {
       var player = players[i];
       var player_next = players_next[i];
+
+
       var name = this.players[player.id].name;
       Character.prototype.render.call(player, ctx, player_next, coeff, this.playerImg, name);
+      if(player.id == this.youId) {
+        this.cameraX = player.x * (1 - coeff) + player_next.x * coeff;
+        this.cameraY = player.y * (1 - coeff) + player_next.y * coeff;
+      }
     }
+
 
     var bullets      = state.bullets;
     var bullets_next = state_next.bullets;
@@ -139,23 +146,11 @@ GameState.prototype.render = function(ctx) {
 GameState.prototype.update = function() {
   var that = this;
 
-  /*
-   if(this.state) {
-    for(var i = 0; i < this.state.length; i++) {
-      if(this.state[i].type == types.PLAYER && this.state[i].id == this.youId) {
-        this.cameraX = this.state[i].x;
-        this.cameraY = this.state[i].y;
-      }
-    }
-  }*/
 
   if(MOUSE.scrollY) {
     this.cameraZoom *= 1 / ((MOUSE.scrollY + 1000) / 1000);
     this.cameraZoom = clamp(0.1, this.cameraZoom, 3);
   }
-
-  this.cameraX = 8;
-  this.cameraY = 8;
 
   if(this.wsReady) {
     var inputs = [];
