@@ -110,9 +110,12 @@ GameState.prototype.render = function(ctx) {
       var you_y = you.y * (1 - coeff) + you_next.y * coeff;
       this.cameraX = you_x;
       this.cameraY = you_y;
-    }else{
+    }else if(you){
       this.cameraX = you.x;
       this.cameraY = you.y;
+    }else{
+      this.cameraX = 5;
+      this.cameraY = 5;
     }
 
     ctx.save();
