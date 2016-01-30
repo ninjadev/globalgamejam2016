@@ -42,6 +42,10 @@ Character.prototype.getState = function() {
 };
 
 Character.prototype.hit = function(bullet) {
+  if(bullet.team == this.team){
+    return;
+  }
+
   if (this.canShieldTakeBullet(bullet)) {
     this.shieldEnergy *= 0.25;
   } else {
