@@ -8,6 +8,7 @@ try {
 function Character() {
   this.breakingCoefficient = 0.04;
   this.accelerationCoefficient = 0.01;
+  this.bodyRadius = 0.2;
   this.init();
 }
 
