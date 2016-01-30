@@ -86,25 +86,8 @@ GameState.prototype.resume = function() {
 };
 
 GameState.prototype.render = function(ctx) {
-  ctx.save();
-  ctx.translate(8 * GU - this.cameraX * GU * this.cameraZoom,
-      4.5 * GU - this.cameraY * GU * this.cameraZoom);
-  ctx.scale(this.cameraZoom, this.cameraZoom);
-  ctx.save();
-  ctx.scale(16 * GU / 1920 * 4, 16 * GU / 1920 * 4);
-  ctx.drawImage(this.bg, 0, 0);
-  ctx.globalAlpha = clamp(0, this.scoreL - this.scoreD - 10, 20) / 40;
-  ctx.drawImage(this.bgDark, 0, 0);
-  ctx.globalAlpha = clamp(0, this.scoreD - this.scoreL - 10, 20) / 40;
-  ctx.drawImage(this.bgLight, 0, 0);
-  ctx.restore();
-
   this.scoreL = 10 + 10 * Math.sin(+new Date() / 10000);
   this.scoreD = 10;
-
-  for(var i = 0; i < this.capture_points.length; i++) {
-    this.capture_points[i].render(ctx);
-  }
 
   //important to copy this to a local variable, as this.states can change at any time
   var states = this.states; 
@@ -125,6 +108,31 @@ GameState.prototype.render = function(ctx) {
 
     var players      = state.players;
     var players_next = state_next.players;
+
+    var you = players[this.youId];
+    var you_next = players_next[this.youId];
+    var you_x = you.x * (1 - coeff) + you_next.x * coeff;
+    var you_y = you.y * (1 - coeff) + you_next.y * coeff;
+    this.cameraX = you_x;
+    this.cameraY = you_y;
+
+    ctx.save();
+    ctx.translate(8 * GU - this.cameraX * GU * this.cameraZoom,
+        4.5 * GU - this.cameraY * GU * this.cameraZoom);
+    ctx.scale(this.cameraZoom, this.cameraZoom);
+    ctx.save();
+    ctx.scale(16 * GU / 1920 * 4, 16 * GU / 1920 * 4);
+    ctx.drawImage(this.bg, 0, 0);
+    ctx.globalAlpha = clamp(0, this.scoreL - this.scoreD - 10, 20) / 40;
+    ctx.drawImage(this.bgDark, 0, 0);
+    ctx.globalAlpha = clamp(0, this.scoreD - this.scoreL - 10, 20) / 40;
+    ctx.drawImage(this.bgLight, 0, 0);
+    ctx.restore();
+
+    for(var i = 0; i < this.capture_points.length; i++) {
+      this.capture_points[i].render(ctx);
+    }
+
     for(var i in players) {
       var player = players[i];
       var player_next = players_next[i];
@@ -137,10 +145,6 @@ GameState.prototype.render = function(ctx) {
           this.playerImgLight,
           this.playerImgDark,
           name);
-      if(i == this.youId) {
-        this.cameraX = player.x * (1 - coeff) + player_next.x * coeff;
-        this.cameraY = player.y * (1 - coeff) + player_next.y * coeff;
-      }
     }
 
 
@@ -151,8 +155,9 @@ GameState.prototype.render = function(ctx) {
       var bullet_next = bullets_next[i];
       Bullet.prototype.render.call(bullet, ctx, bullet_next, coeff);
     }
+
+    ctx.restore();
   }
-  ctx.restore();
 
   this.audioButton.render();
 };
