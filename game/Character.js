@@ -266,7 +266,7 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
   
   if (this.isShieldActive) {
     ctx.beginPath();
-    ctx.strokeStyle = 'cyan';
+    ctx.strokeStyle = '#BCBCBC';
     ctx.lineWidth = 20  + 20 * this.shieldEnergy;
     ctx.arc(
       0,
