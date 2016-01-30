@@ -264,8 +264,12 @@ Character.prototype.renderUi = function(ctx) {
   if (this.overheated) {
     fillAlpha += Math.sin(0.02 * t);
   }
-  ctx.fillStyle = 'rgba(176, 22, 22, ' + fillAlpha + ')';
-  ctx.strokeStyle = 'rgba(93, 25, 25, 1)';
+  if(fillAlpha > 0.5) {
+    ctx.fillStyle = 'rgba(255, 255, 255, ' + fillAlpha + ')';
+  } else {
+    ctx.fillStyle = 'rgba(255, 2555, 255, ' + fillAlpha + ')';
+  }
+  ctx.strokeStyle = 'rgba(255, 255, 255, .5)';
   ctx.strokeWidth = 0.1 * GU;
   ctx.fillRect(0.5 * GU, 8.5 * GU, GU * this.weaponHeat, 0.2 * GU);
   ctx.strokeRect(0.5 * GU, 8.5 * GU, GU * Character.OVERHEAT_THRESHOLD, 0.2 * GU);
