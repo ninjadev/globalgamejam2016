@@ -29,6 +29,7 @@ GameState.prototype.connectWebsocket = function() {
 GameState.prototype.init = function() {
   this.bg = loadImage('res/bg.jpg');
   this.vignette = loadImage('res/vignette.png');
+  this.playerImg = loadImage('res/player.png');
   this.connectWebsocket();
   this.capture_points = [];
   this.capture_points.push(new CapturePoint(8, 8));
@@ -76,7 +77,7 @@ GameState.prototype.render = function(ctx) {
       switch(this.state[i].type){
         case types.PLAYER:
           var player = this.state[i];
-          Character.prototype.render.call(player, ctx);
+          Character.prototype.render.call(player, ctx, this.playerImg);
           break;
         case types.BULLET:
           var bullet = this.state[i];
