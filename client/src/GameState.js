@@ -100,17 +100,20 @@ GameState.prototype.render = function(ctx) {
 
     var coeff = (tick + dt/15 - state.tick) / (state_next.tick - state.tick);
 
-
-
     var players      = state.players;
     var players_next = state_next.players;
 
     var you = players[this.youId];
     var you_next = players_next[this.youId];
-    var you_x = you.x * (1 - coeff) + you_next.x * coeff;
-    var you_y = you.y * (1 - coeff) + you_next.y * coeff;
-    this.cameraX = you_x;
-    this.cameraY = you_y;
+    if(you_next){
+      var you_x = you.x * (1 - coeff) + you_next.x * coeff;
+      var you_y = you.y * (1 - coeff) + you_next.y * coeff;
+      this.cameraX = you_x;
+      this.cameraY = you_y;
+    }else{
+      this.cameraX = you.x;
+      this.cameraY = you.y;
+    }
 
     ctx.save();
     ctx.translate(8 * GU - this.cameraX * GU * this.cameraZoom,
