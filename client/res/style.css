@@ -337,15 +337,7 @@ strong {
 }
 
 .player-name-container {
-    text-align: center;
-    margin-top: 4%;
-    font-size: 200%;
-    height: 100%;
-}
-
-
-.player-name-container input {
-    width: 20%;
-    height: 5%;
-    font-size: 120%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
 }

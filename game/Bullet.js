@@ -59,7 +59,7 @@ Bullet.prototype.render = function(ctx, bullet_next, coeff) {
 
   //draw
   var light = 0;
-  ctx.fillStyle = this.team == light ? '#cac185' : '#b01616';
+  ctx.fillStyle = this.team == light ? 'white' : '#191919';
   ctx.save();
   ctx.translate(x * GU, y * GU);
   ctx.rotate(this.direction);

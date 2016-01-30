@@ -81,12 +81,12 @@ CapturePoint.prototype.render = function(ctx, cpNext, neutralImg) {
   var outerRadius = 2.6 * GU;
 
   if(this.ownage_d == 1) {
-    ctx.fillStyle = 'rgba(20, 0, 0, 0.4)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
     ctx.beginPath();
     ctx.arc(0, 0, outerRadius, 0, Math.PI * 2);
     ctx.fill();
   } else if(this.ownage_d == -1) {
-    ctx.fillStyle = 'rgba(255, 255, 200, 0.4)';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
     ctx.beginPath();
     ctx.arc(0, 0, outerRadius, 0, Math.PI * 2);
     ctx.fill();
@@ -126,9 +126,9 @@ CapturePoint.prototype.render = function(ctx, cpNext, neutralImg) {
   ctx.stroke();
   ctx.beginPath();
   if(this.ownage_d > 0) {
-    ctx.strokeStyle = '#b01616';
+    ctx.strokeStyle = '#191919';
   } else if(this.ownage_d < 0) {
-    ctx.strokeStyle = '#c7af0e';
+    ctx.strokeStyle = '#ffffff';
   }
   ctx.arc(0, 0, outerRadius, 0, Math.abs(this.ownage_d) * Math.PI * 2);
   ctx.stroke();

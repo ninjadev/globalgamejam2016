@@ -155,7 +155,7 @@ function bootstrap() {
 
   sm.changeState("menu");
   if (DEBUG) {
-    sm.changeState("game"); // temporary hack to get in the game quickly
+    //sm.changeState("game"); // temporary hack to get in the game quickly
   }
 
   loaded--;
