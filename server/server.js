@@ -24,7 +24,7 @@ var count = 0;
 var clients = {};
 var bullets = [];
 var walls = [];
-walls.push(new Wall(9,9,9,55));
+utility.populate_walls(walls, Wall);
 var capture_points = [];
 var dark_points = 0;
 var light_points = 0;
