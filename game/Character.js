@@ -93,6 +93,7 @@ Character.prototype.update = function(input, walls, utility) {
     if (timeUntilRespawn <= 0) {
       this.init();
     }
+    return;
   }
 
   this.applyMovementForce(input);
