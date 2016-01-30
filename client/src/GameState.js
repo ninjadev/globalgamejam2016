@@ -3,8 +3,7 @@ function GameState() { }
 var types = {
   PLAYER: 1,
   BULLET: 2
-}
-
+};
 
 var ready_for_render = false;
 
@@ -13,7 +12,6 @@ GameState.prototype.connectWebsocket = function() {
   var that = this;
   this.ws = ws;
   this.wsReady = false;
-  var that = this;
   this.players = {};
   console.log("connecting to websocket");
   ws.addEventListener('open', function(e) {
