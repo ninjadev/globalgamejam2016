@@ -148,7 +148,7 @@ function getTime() {
 }
 
 function log() {
-  var message = Array.prototype.join.call(arguments, '')
+  var message = Array.prototype.join.call(arguments, '');
   console.log.apply(
     console, ['[' + (getTime() - initialTime | 0) + ']'].concat(message));
 }
@@ -159,7 +159,7 @@ function update() {
       continue;
     }
     var player = clients[i].player;
-    if(!player) {
+    if (!player) {
       continue;
     }
     var character = player.character;
@@ -169,7 +169,7 @@ function update() {
       character.fireCooldown--;
     }
 
-    if(player.input[BUTTONS.FIRE] && character.fireCooldown <= 0 && !character.overheated) {
+    if (player.input[BUTTONS.FIRE] && character.fireCooldown <= 0 && !character.overheated && !character.timeDied) {
       character.fireCooldown = fireCooldownTime;
       var m_x = player.input[BUTTONS.MOUSE_X];
       var m_y = player.input[BUTTONS.MOUSE_Y];
@@ -179,14 +179,14 @@ function update() {
       var fire_dir_len = Math.sqrt(fire_dir_x * fire_dir_x + fire_dir_y * fire_dir_y);
       
       //if you click yourself don't shoot
-      if(fire_dir_len > 0.01) {
+      if (fire_dir_len > 0.01) {
         //Scale to unit length
         fire_dir_x = fire_dir_x / fire_dir_len;
         fire_dir_y = fire_dir_y / fire_dir_len;
 
         var blocked_by_wall = false;
-        for(var i = 0; i < walls.length; i++) {
-          if(utility.lineIntersect(character.x,
+        for (var i = 0; i < walls.length; i++) {
+          if (utility.lineIntersect(character.x,
                                    character.y,
                                    character.x + (character.bodyRadius + 0.2) * fire_dir_x,
                                    character.y + (character.bodyRadius + 0.2) * fire_dir_y,
@@ -197,7 +197,7 @@ function update() {
             blocked_by_wall = true;
           }
         }
-        if(!blocked_by_wall) {
+        if (!blocked_by_wall) {
           // fire
           bullets.push((new Bullet()).fire(character, fire_dir_x, fire_dir_y));
         }
