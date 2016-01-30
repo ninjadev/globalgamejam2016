@@ -100,6 +100,7 @@ function checkCollisionWithWalls(walls, bullet, oldX, oldY, newX, newY){
 
     if(utility.lineIntersect(oldX, oldY, newX, newY, walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y)) {
       hit = true;
+      console.log(walls[i].start_x *1920/64, walls[i].start_y*1920/64, walls[i].end_x*1920/64, walls[i].end_y*1920/64);
     }
   }
   return hit;

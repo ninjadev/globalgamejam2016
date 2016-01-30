@@ -164,7 +164,7 @@ module.exports = {
              1083, 1356,
              1081, 1211,
              889, 1209, 
-             888, 116,
+             888, 1116,
              736, 1114
              ],
              [1031, 881,
@@ -187,12 +187,10 @@ module.exports = {
     for(var i = 0; i < points.length; i++) {
         
       for(var j = 0; j < points[i].length; j++) {
-        points[i][j] *= 64/1920;
+        points[i][j] = Math.round( points[i][j] * 64/1920);
       }
-      for(var j = 0; j < points[i].length - 2; j += 2) {
-        //console.log("Wall");
+      for(var j = 0; j < points[i].length; j += 2) {
         walls.push(new Wall(points[i][j],points[i][j + 1], points[i][j + 2], points[i][j + 3]));
-        if(i==0) console.log(j);
       }
     }
   },
