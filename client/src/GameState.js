@@ -1,5 +1,4 @@
-function GameState() {
-}
+function GameState() { }
 
 var types = {
   PLAYER: 1,
@@ -43,12 +42,16 @@ GameState.prototype.connectWebsocket = function() {
 
 GameState.prototype.init = function() {
   this.bg = loadImage('res/ggj-bg.jpg');
-  this.bgDark = loadImage('res/ggj-bg-light.png');
-  this.vignette = loadImage('res/vignette.png');
+  this.bgDark = loadImage('res/ggj-bg-dark.jpg');
+  this.bgLight = loadImage('res/ggj-bg-light.jpg');
   this.playerImg = loadImage('res/player.png');
   this.connectWebsocket();
   this.capture_points = [];
-  this.capture_points.push(new CapturePoint(8, 8));
+  this.capture_points.push(new CapturePoint(9, 9));
+  this.capture_points.push(new CapturePoint(9, 55));
+  this.capture_points.push(new CapturePoint(32, 32));
+  this.capture_points.push(new CapturePoint(55, 9));
+  this.capture_points.push(new CapturePoint(55, 55));
   this.scoreL = 8;
   this.scoreD = 0;
   this.cameraZoom = 0.5;
@@ -86,12 +89,20 @@ GameState.prototype.render = function(ctx) {
       4.5 * GU - this.cameraY * GU * this.cameraZoom);
   ctx.scale(this.cameraZoom, this.cameraZoom);
   ctx.save();
-  ctx.scale(16 * GU / 1920 * 2, 16 * GU / 1920 * 2);
+  ctx.scale(16 * GU / 1920 * 4, 16 * GU / 1920 * 4);
   ctx.drawImage(this.bg, 0, 0);
+  ctx.globalAlpha = clamp(0, this.scoreL - this.scoreD - 10, 20) / 40;
   ctx.drawImage(this.bgDark, 0, 0);
+  ctx.globalAlpha = clamp(0, this.scoreD - this.scoreL - 10, 20) / 40;
+  ctx.drawImage(this.bgLight, 0, 0);
   ctx.restore();
 
-  this.scoreL = (new Date()).getSeconds() - 30 + (new Date()).getMilliseconds() / 1000;
+  this.scoreL = 10 + 10 * Math.sin(+new Date() / 10000);
+  this.scoreD = 10;
+
+  for(var i = 0; i < this.capture_points.length; i++) {
+    this.capture_points[i].render(ctx);
+  }
 
   //important to copy this to a local variable, as this.states can change at any time
   var states = this.states; 
@@ -138,9 +149,6 @@ GameState.prototype.render = function(ctx) {
   ctx.restore();
 
   this.audioButton.render();
-  for(var i = 0; i < this.capture_points.length; i++) {
-    this.capture_points[i].render(ctx);
-  }
 };
 
 GameState.prototype.update = function() {
@@ -172,19 +180,3 @@ GameState.prototype.update = function() {
     this.capture_points[i].update();
   }
 };
-
-GameState.prototype.setScoreD = function(scoreD) {
-  this.scoreD = scoreD;
-}
-
-GameState.prototype.getScoreD = function() {
-  return this.scoreD;
-}
-
-GameState.prototype.setScoreL = function(scoreL) {
-  this.scoreL = scoreL;
-}
-
-GameState.prototype.getScoreL = function() {
-  return this.scoreL;
-}
