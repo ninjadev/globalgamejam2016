@@ -34,7 +34,7 @@ Bullet.prototype.fire = function(character, fire_dir_x, fire_dir_y){
 Bullet.prototype.update = function(clients, walls){
     var newX = this.x + this.dx;
     var newY = this.y + this.dy;
-    if(checkCollisionWithPlayers(clients,this, this.x, this.y, newX, newY) || 
+    if(checkCollisionWithPlayers(clients,this, this.x, this.y, newX, newY) ||
        checkCollisionWithWalls(walls, this, this.x, this.y, newX, newY)) {
       this.active = false;
     }else{
