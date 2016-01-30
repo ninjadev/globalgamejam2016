@@ -116,8 +116,8 @@ GameState.prototype.render = function(ctx) {
       this.cameraX = you.x;
       this.cameraY = you.y;
 
-    } else{
-      this.cameraX = 5;
+    } else {
+      this.cameraX = 8;
       this.cameraY = 5;
     }
 

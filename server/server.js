@@ -20,6 +20,9 @@ var wsServer = new WebSocketServer({
   httpServer: server
 });
 
+var LIGHT = 0;
+var DARK = 1;
+
 var count = 0;
 var clients = {};
 var bullets = [];
@@ -55,19 +58,20 @@ wsServer.on('request', function(r) {
       if(!connection.player) return;
       connection.player.input = [false].concat(event.inputs);
     } else if (event.type == 'join') {
-      var LIGHT = 0;
-      var DARK = 1;
-      if(teamCount[LIGHT] > teamCount[DARK]) {
-        var team = DARK;
+      var team = null;
+      if (teamCount[LIGHT] > teamCount[DARK]) {
+        team = DARK;
       } else if(teamCount[DARK] > teamCount[LIGHT]) {
-        var team = LIGHT;
+        team = LIGHT;
       } else {
         team = Math.random() * 2 | 0;
       }
       teamCount[team]++;
 
+      var spawnPoint = Character.getRandomSpawnPoint(team, capture_points);
+
       connection.player = {
-        character: new Character(team),
+        character: new Character(team, spawnPoint),
         name: event.name,
         input: []
       };
@@ -159,7 +163,7 @@ function update() {
       continue;
     }
     var character = player.character;
-    character.update(player.input, walls, utility);
+    character.update(player.input, walls, utility, capture_points);
 
     if(character.fireCooldown > 0){
       character.fireCooldown--;
@@ -217,7 +221,6 @@ function update() {
 
   var lightOwnsAllCapturePoints = true;
   var darkOwnsAllCapturePoints = true;
-
   for(var i = 0; i < capture_points.length; i++){
     capture_points[i].update(clients);
     if(capture_points[i].ownage_d == 1) {
@@ -236,7 +239,7 @@ function update() {
   } else if (darkOwnsAllCapturePoints) {
     dark_points += 30;
   }
-  if(dark_points > 30000 || light_points > 30000) {
+  if(dark_points >= 30000 || light_points >= 30000) {
     reset_game();
   }
 }
@@ -295,6 +298,12 @@ function sendNetworkState(tick) {
   soundsToPlay = {};
 }
 
+function shuffle(o){
+  // http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
+  for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+  return o;
+}
+
 function reset_game() {
 
   capture_points = [];
@@ -307,6 +316,13 @@ function reset_game() {
   capture_points.push(new CapturePoint(33, 25));
   capture_points.push(new CapturePoint(32, 38));
   capture_points.push(new CapturePoint(51, 37.8));
+
+  var randomizedCapturePointIds = shuffle([0, 1, 2, 3, 4]);
+  capture_points[randomizedCapturePointIds[0]].team = DARK;
+  capture_points[randomizedCapturePointIds[0]].ownage_d = 1;
+
+  capture_points[randomizedCapturePointIds[1]].team = LIGHT;
+  capture_points[randomizedCapturePointIds[1]].ownage_d = -1;
 
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {

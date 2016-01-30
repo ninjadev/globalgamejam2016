@@ -4,23 +4,29 @@ try {
   var BUTTONS = require('./input');
 }
 
-
-
-function Character(team) {
+function Character(team, spawnPoint) {
   this.breakingCoefficient = 0.025;
   this.accelerationCoefficient = 0.012;
   this.bodyRadius = 0.4;
   this.MAX_HP = 10;
   this.team = team;
-  this.init();
+  this.init(spawnPoint);
 }
 
 Character.MAX_SHIELD_ARC = 0.2 * Math.PI;
 Character.OVERHEAT_THRESHOLD = 1.5;
 
-Character.prototype.init = function() {
-  this.x = Math.random() * 64;
-  this.y = Math.random() * 64;
+Character.prototype.init = function(spawnPoint) {
+  if (spawnPoint) {
+    this.x = spawnPoint.x;
+    this.y = spawnPoint.y;
+    this.timeDied = null;
+  } else {
+    this.x = 32;
+    this.y = 32;
+    this.timeDied = +new Date();
+  }
+
   this.dx = 0;
   this.dy = 0;
   this.hp = this.MAX_HP;
@@ -29,7 +35,6 @@ Character.prototype.init = function() {
   this.shieldEnergy = 1;
   this.weaponHeat = 0;
   this.overheated = false;
-  this.timeDied = null;
 };
 
 Character.prototype.getState = function() {
@@ -87,11 +92,32 @@ Character.getTimeUntilRespawn = function(timeDied) {
   return Math.max(timeDied + 4000 - currentTime, 0);
 };
 
-Character.prototype.update = function(input, walls, utility) {
+Character.getRandomSpawnPoint = function(team, capturePoints) {
+  var possibleSpawnPoints = [];
+  for (var i = 0; i < capturePoints.length; i++) {
+    var capturePoint = capturePoints[i];
+    if (team === 0 && capturePoint.ownage_d === -1 || team === 1 && capturePoint.ownage_d === 1) {
+      possibleSpawnPoints.push(capturePoint);
+    }
+  }
+  if (possibleSpawnPoints.length) {
+    var spawnPointIndex = Math.floor(possibleSpawnPoints.length * Math.random());
+    console.log('all', capturePoints)
+    console.log('possible', possibleSpawnPoints)
+    console.log('chosen', spawnPointIndex, possibleSpawnPoints[spawnPointIndex]);
+    return possibleSpawnPoints[spawnPointIndex];
+  }
+  return null;
+};
+
+Character.prototype.update = function(input, walls, utility, capturePoints) {
   if (this.timeDied) {
     var timeUntilRespawn = Character.getTimeUntilRespawn(this.timeDied);
     if (timeUntilRespawn <= 0) {
-      this.init();
+      var spawnPoint = Character.getRandomSpawnPoint(this.team, capturePoints);
+      if (spawnPoint) {
+        this.init(spawnPoint);
+      }
     }
     return;
   }
