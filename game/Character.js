@@ -9,6 +9,7 @@ function Character() {
   this.breakingCoefficient = 0.04;
   this.accelerationCoefficient = 0.01;
   this.bodyRadius = 0.4;
+  this.MAX_HP = 10;
   this.init();
 }
 
@@ -17,6 +18,7 @@ Character.prototype.init = function() {
   this.y = 0;
   this.dx = 0;
   this.dy = 0;
+  this.hp = this.MAX_HP;
   this.isShieldActive = false;
   this.fireCooldown = 0;
 };
@@ -26,6 +28,7 @@ Character.prototype.getState = function() {
     t: 'C',
     x: this.x,
     y: this.y,
+    hp: this.hp,
     mouseDirection: this.mouseDirection,
     isShieldActive: this.isShieldActive
   };
@@ -34,6 +37,10 @@ Character.prototype.getState = function() {
 Character.prototype.hit = function(bullet) {
   this.dx += bullet.dx ;
   this.dy += bullet.dy ;
+  this.hp --;
+  if(this.hp <= 0){
+    this.init();
+  }
 }
 
 Character.prototype.update = function(input) {
@@ -116,6 +123,11 @@ Character.prototype.render = function(ctx, img) {
   ctx.scale(GU * 0.005, GU * 0.005);
   ctx.rotate(this.mouseDirection);
   ctx.drawImage(img, -img.width / 2, -img.height / 2 - 52);
+  
+  ctx.fillStyle = 'red';
+  ctx.fillRect(-img.width / 2, -img.height / 2, 100, 20);
+  ctx.fillStyle = 'green';
+  ctx.fillRect(-img.width / 2, -img.height / 2, 10*this.hp, 20);
 
   if (this.isShieldActive) {
     ctx.beginPath();
