@@ -168,8 +168,7 @@ function update() {
       character.fireCooldown--;
     }
 
-
-    if(player.input[BUTTONS.FIRE] && character.fireCooldown <= 0){
+    if(player.input[BUTTONS.FIRE] && character.fireCooldown <= 0 && !character.overheated) {
       character.fireCooldown = fireCooldownTime;
       var m_x = player.input[BUTTONS.MOUSE_X];
       var m_y = player.input[BUTTONS.MOUSE_Y];
@@ -185,6 +184,11 @@ function update() {
         fire_dir_y = fire_dir_y / fire_dir_len;
         
         bullets.push((new Bullet()).fire(character, fire_dir_x, fire_dir_y));
+        character.weaponHeat += 0.2;
+        if (character.weaponHeat > Character.OVERHEAT_THRESHOLD) {
+          character.overheated = true;
+          character.weaponHeat = Character.OVERHEAT_THRESHOLD;
+        }
         soundsToPlay['bullet_fired.mp3'] = true;
       }
     }
