@@ -104,27 +104,29 @@ Character.prototype.applyFrictionForce = function() {
   this.dy += breakFy;
 };
 
-Character.prototype.render = function(ctx) {
+Character.prototype.render = function(ctx, img) {
   var bodyRadius = 0.2;
-  ctx.beginPath();
-  ctx.arc(this.x * GU, this.y * GU, bodyRadius * GU, 0, 2 * Math.PI, false);
-  ctx.fill();
+  ctx.save();
+  ctx.translate(this.x * GU, this.y * GU);
+  ctx.scale(GU * 0.005, GU * 0.005);
+  ctx.rotate(this.mouseDirection);
+  ctx.drawImage(img, -img.width / 2, -img.height / 2 - 52);
 
   if (this.isShieldActive) {
-    ctx.save();
     ctx.beginPath();
-    ctx.lineWidth = 0.15 * bodyRadius * GU;
+    ctx.strokeStyle = 'cyan';
+    ctx.lineWidth = 80;
     ctx.arc(
-      this.x * GU,
-      this.y * GU,
-      1.6 * bodyRadius * GU,
-      this.mouseDirection - 0.2 * Math.PI,
-      this.mouseDirection + 0.2 * Math.PI,
+      0,
+      0,
+      300,
+      -0.2 * Math.PI,
+      0.2 * Math.PI,
       false
     );
     ctx.stroke();
-    ctx.restore();
   }
+  ctx.restore();
 };
 
 module.exports = Character;

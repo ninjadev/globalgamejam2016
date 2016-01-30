@@ -27,13 +27,20 @@ GameState.prototype.connectWebsocket = function() {
 
 
 GameState.prototype.init = function() {
-  this.bg = loadImage('res/bg.jpg');
+  this.bg = loadImage('res/ggj-bg.jpg');
+  this.bgDark = loadImage('res/ggj-bg-light.png');
   this.vignette = loadImage('res/vignette.png');
+  this.playerImg = loadImage('res/player.png');
   this.connectWebsocket();
   this.capture_points = [];
   this.capture_points.push(new CapturePoint(8, 8));
   this.scoreL = 8;
   this.scoreD = 0;
+
+  var team = 'dark';
+  document.querySelector('body').classList.remove('dark');
+  document.querySelector('body').classList.add('light');
+  document.querySelector('body').classList.add(team);
 };
 
 GameState.prototype.pause = function() {
@@ -56,27 +63,19 @@ GameState.prototype.resume = function() {
 
 GameState.prototype.render = function(ctx) {
   ctx.save();
-  var scaler = 30 * GU / this.bg.width + 0.02 + 0.02 * Math.sin(t / 200);
-  ctx.translate((clamp(-7, (this.scoreL - this.scoreD)/4, 7) + CENTER.x) * GU, CENTER.y * GU);
-  ctx.scale(scaler, scaler);
-  ctx.translate(-this.bg.width / 2, -this.bg.height / 2);
+  ctx.scale(16 * GU / 1920, 16 * GU / 1920);
   ctx.drawImage(this.bg, 0, 0);
+  ctx.drawImage(this.bgDark, 0, 0);
   ctx.restore();
 
   this.scoreL = (new Date()).getSeconds() - 30 + (new Date()).getMilliseconds() / 1000;
-
-  ctx.save();
-  scaler = 16 * GU / this.vignette.width;
-  ctx.scale(scaler, scaler);
-  ctx.drawImage(this.vignette, 0, 0);
-  ctx.restore();
 
   if(this.state) {
     for(var i = 0; i < this.state.length; i++) {
       switch(this.state[i].type){
         case types.PLAYER:
           var player = this.state[i];
-          Character.prototype.render.call(player, ctx);
+          Character.prototype.render.call(player, ctx, this.playerImg);
           break;
         case types.BULLET:
           var bullet = this.state[i];
