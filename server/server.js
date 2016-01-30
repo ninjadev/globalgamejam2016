@@ -47,6 +47,7 @@ wsServer.on('request', function(r) {
 
     var event = JSON.parse(message.utf8Data);
     if(event.type == 'inputs') {
+      if(!connection.player) return;
       connection.player.input = [false].concat(event.inputs);
     } else if (event.type == 'join') {
       var LIGHT = 0;
@@ -92,7 +93,9 @@ wsServer.on('request', function(r) {
 
   connection.on('close', function(reasonCode, description) {
     var client = clients[id];
-    teamCount[client.player.character.team]--;
+    if(client.player){
+      teamCount[client.player.character.team]--;
+    }
     delete clients[id];
     console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
   });
