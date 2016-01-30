@@ -16,7 +16,7 @@ bullet.prototype.update = function(){
 
 bullet.prototype.render = function() {
   ctx.beginPath();
-  ctx.arc(this.x, this.y, 10, 0, 2 * Math.PI, false);
+  ctx.arc(this.x*GU, this.y*GU, GU*0.2, 0, 2 * Math.PI, false);
   ctx.fill();
 }
 
