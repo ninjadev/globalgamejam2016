@@ -5,6 +5,7 @@ try {
 }
 
 
+
 function Character(team) {
   this.breakingCoefficient = 0.04;
   this.accelerationCoefficient = 0.01;
@@ -14,6 +15,8 @@ function Character(team) {
   this.init();
 }
 
+Character.MAX_SHIELD_ARC = 0.2 * Math.PI;
+
 Character.prototype.init = function() {
   this.x = Math.random() * 64;
   this.y = Math.random() * 64;
@@ -22,6 +25,7 @@ Character.prototype.init = function() {
   this.hp = this.MAX_HP;
   this.isShieldActive = false;
   this.fireCooldown = 0;
+  this.shieldEnergy = 1;
 };
 
 Character.prototype.getState = function() {
@@ -32,18 +36,39 @@ Character.prototype.getState = function() {
     hp: this.hp,
     mouseDirection: this.mouseDirection,
     isShieldActive: this.isShieldActive,
+    shieldEnergy: this.shieldEnergy,
     team: this.team
   };
-}
+};
 
 Character.prototype.hit = function(bullet) {
-  this.dx += bullet.dx ;
-  this.dy += bullet.dy ;
-  this.hp --;
-  if(this.hp <= 0){
-    this.init();
+  if (this.canShieldTakeBullet(bullet)) {
+    this.shieldEnergy *= 0.25;
+  } else {
+    this.dx += bullet.dx;
+    this.dy += bullet.dy;
+
+    this.hp --;
+    if(this.hp <= 0){
+      this.init();
+    }
   }
-}
+};
+
+Character.prototype.canShieldTakeBullet = function(bullet) {
+  if (!this.isShieldActive) {
+    return false;
+  }
+  var mouseDirection = this.mouseDirection;
+  if (mouseDirection < 0) {
+    mouseDirection += 2 * Math.PI;
+  }
+  var oppositeShieldDirection = mouseDirection + Math.PI;
+  var minShieldDirection = oppositeShieldDirection - Character.MAX_SHIELD_ARC * this.shieldEnergy;
+  var maxShieldDirection = oppositeShieldDirection + Character.MAX_SHIELD_ARC * this.shieldEnergy;
+  var bulletDirection = bullet.direction + 2 * Math.PI;
+  return bulletDirection <= maxShieldDirection && bulletDirection >= minShieldDirection;
+};
 
 Character.prototype.update = function(input) {
   this.applyMovementForce(input);
@@ -55,6 +80,10 @@ Character.prototype.update = function(input) {
     mouse_x - this.x);
 
   this.isShieldActive = input[BUTTONS.ALTERNATE_FIRE];
+  this.shieldEnergy += 0.003;
+  if (this.shieldEnergy > 1) {
+    this.shieldEnergy = 1;
+  }
 
   // move
   this.x += this.dx;
@@ -155,18 +184,16 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
   var img = this.team == 0 ? lightImg : darkImg;
   ctx.drawImage(img, -img.width / 2, -img.height / 2 - 52);
   
-
-
   if (this.isShieldActive) {
     ctx.beginPath();
     ctx.strokeStyle = 'cyan';
-    ctx.lineWidth = 80;
+    ctx.lineWidth = 20  + 20 * this.shieldEnergy;
     ctx.arc(
       0,
       0,
       300,
-      -0.2 * Math.PI,
-      0.2 * Math.PI,
+      -Character.MAX_SHIELD_ARC * this.shieldEnergy,
+      Character.MAX_SHIELD_ARC * this.shieldEnergy,
       false
     );
     ctx.stroke();
