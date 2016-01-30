@@ -54,7 +54,6 @@ GameState.prototype.init = function() {
   this.playerImgDark = loadImage('res/player.png');
   this.cpNeutralImg = loadImage('res/marker.png');
   this.connectWebsocket();
-  this.capture_points = [];
   this.scoreL = 8;
   this.scoreD = 0;
   this.cameraZoom = 0.5;
@@ -101,15 +100,6 @@ GameState.prototype.render = function(ctx) {
 
     var coeff = (tick + dt/15 - state.tick) / (state_next.tick - state.tick);
 
-    var capture_points      = state.capture_points;
-    var capture_points_next = state_next.capture_points;
-    for(var i in capture_points) {
-      CapturePoint.prototype.render.call(
-          capture_points[i], 
-          ctx,
-          capture_points_next[i],
-          this.cpNeutralImg);
-    }
 
 
     var players      = state.players;
@@ -135,8 +125,14 @@ GameState.prototype.render = function(ctx) {
     ctx.drawImage(this.bgLight, 0, 0);
     ctx.restore();
 
-    for(var i = 0; i < this.capture_points.length; i++) {
-      this.capture_points[i].render(ctx);
+    var capture_points      = state.capture_points;
+    var capture_points_next = state_next.capture_points;
+    for(var i in capture_points) {
+      CapturePoint.prototype.render.call(
+          capture_points[i], 
+          ctx,
+          capture_points_next[i],
+          this.cpNeutralImg);
     }
 
     for(var i in players) {
