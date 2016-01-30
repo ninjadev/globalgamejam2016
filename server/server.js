@@ -166,8 +166,8 @@ function update() {
 function sendNetworkState(tick) {
   var state = {};
   state.tick = tick;
-  state.players = [];
-  state.bullets = [];
+  state.players = {};
+  state.bullets = {};
 
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {
@@ -178,14 +178,12 @@ function sendNetworkState(tick) {
       continue;
     }
     var characterState = player.character.getState();
-    characterState.id = i;
-    characterState.type = types.PLAYER;
-    state.players.push(characterState);
+    state.players[i] = characterState;
   }
   for(var i = 0; i < bullets.length; i++){
     var bulletState = bullets[i].getState();
-    bulletState.type= types.BULLET;
-    state.bullets.push(bulletState);
+    var id = bullets[i].id;
+    state.bullets[id] = bulletState;
   }
 
   var messageAsJSON = JSON.stringify({

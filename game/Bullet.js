@@ -9,7 +9,10 @@ function Bullet() {
   this.WEAPON_DISTANCE = 0.1;
 }
 
+last_bullet_id = 0;
+
 Bullet.prototype.init = function(x, y, dx, dy){
+  this.id = last_bullet_id++;
   this.x = x;
   this.y = y;
   this.dx = dx;
