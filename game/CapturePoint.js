@@ -57,6 +57,8 @@ CapturePoint.prototype.update = function(clients){
     this.locked_ownage = 1;
   if(this.ownage_d == -1)
     this.locked_ownage = -1;
+  if(this.locked_ownage!=0 && sign(this.locked_ownage) != sign(this.ownage_d))
+    this.locked_ownage = 0;
 
   if(light == 0 && dark == 0 && Math.abs(this.ownage_d) < 1 &&
      Math.abs(this.ownage_d) > 0) {
