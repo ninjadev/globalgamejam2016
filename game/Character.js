@@ -116,11 +116,19 @@ Character.prototype.applyFrictionForce = function() {
   this.dy += breakFy;
 };
 
-Character.prototype.render = function(ctx, img) {
+Character.prototype.render = function(ctx, img, name) {
   var bodyRadius = 0.2;
   ctx.save();
   ctx.translate(this.x * GU, this.y * GU);
   ctx.scale(GU * 0.005, GU * 0.005);
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.font = (.6 * GU) + 'px Arial';
+  var width = ctx.measureText(name).width;
+  var padding = GU * 0.5;
+  ctx.fillRect(-padding - width / 2, -2.7 * GU , width + padding * 2, 1.2 * GU);
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center';
+  ctx.fillText(name , 0, -1.9 * GU);
   ctx.rotate(this.mouseDirection);
   ctx.drawImage(img, -img.width / 2, -img.height / 2 - 52);
   
@@ -128,6 +136,7 @@ Character.prototype.render = function(ctx, img) {
   ctx.fillRect(-img.width / 2, -img.height / 2, 100, 20);
   ctx.fillStyle = 'green';
   ctx.fillRect(-img.width / 2, -img.height / 2, 10*this.hp, 20);
+
 
   if (this.isShieldActive) {
     ctx.beginPath();

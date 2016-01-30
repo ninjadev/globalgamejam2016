@@ -9,19 +9,31 @@ var types = {
 
 
 GameState.prototype.connectWebsocket = function() {
-  var ws = new WebSocket('ws://localhost:1337', 'echo-protocol');
+  var ws = new WebSocket('ws://192.168.177.11:1337', 'echo-protocol');
   var that = this;
   this.ws = ws;
   this.wsReady = false;
   var that = this;
+  this.players = {};
   console.log("connecting to websocket");
   ws.addEventListener('open', function(e) {
     that.wsReady = true;
     console.log("Connected");
+    ws.send(JSON.stringify({
+      type: 'join',
+      name: new Player().name
+    }));
   });
   ws.addEventListener('message', function(e) {
-    that.state = JSON.parse(e.data);
-    //console.log(that.state[0]);
+    message = JSON.parse(e.data);
+    if(message.type == 'state') {
+      that.state = message.state;
+    } else if(message.type == 'join') {
+      that.players[message.id] = new Player(message.name);
+      if(message.you) {
+      that.youId = message.id;
+      }
+    }
   });
 };
 
@@ -82,7 +94,11 @@ GameState.prototype.render = function(ctx) {
       switch(this.state[i].type){
         case types.PLAYER:
           var player = this.state[i];
-          Character.prototype.render.call(player, ctx, this.playerImg);
+          if(!player) {
+            continue;
+          }
+          var name = this.players[player.id].name;
+          Character.prototype.render.call(player, ctx, this.playerImg, name);
           break;
         case types.BULLET:
           var bullet = this.state[i];
@@ -105,8 +121,12 @@ GameState.prototype.update = function() {
   var that = this;
 
   if(this.state) {
-    this.cameraX = this.state[0].x;
-    this.cameraY = this.state[0].y;
+    for(var i = 0; i < this.state.length; i++) {
+      if(this.state[i].type == types.PLAYER && this.state[i].id == this.youId) {
+        this.cameraX = this.state[i].x;
+        this.cameraY = this.state[i].y;
+      }
+    }
   }
 
   if(this.wsReady) {

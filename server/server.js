@@ -31,12 +31,6 @@ wsServer.on('request', function(r) {
   var id = count++;
   // Store the connection method so we can loop through & contact all clients
   clients[id] = connection;
-  connection.player = {
-    character: new Character(),
-    name: '',
-    input: []
-  };
-
   console.log((new Date()) + ' Connection accepted [' + id + ']');
 
   connection.on('message', function(message) {
@@ -44,6 +38,32 @@ wsServer.on('request', function(r) {
     var event = JSON.parse(message.utf8Data);
     if(event.type == 'inputs') {
       connection.player.input = [false].concat(event.inputs);
+    } else if (event.type == 'join') {
+      connection.player = {
+        character: new Character(),
+        name: event.name,
+        input: []
+      };
+      for(var i in clients) {
+        if(!clients.hasOwnProperty(i)) {
+          continue;
+        }
+        clients[i].send(JSON.stringify({
+          type: 'join',
+          name: connection.player.name,
+          id: id,
+          you: i == id
+        }));
+
+        if(i != id) {
+          connection.send(JSON.stringify({
+              type: 'join',
+              name: clients[i].player.name,
+              id: i,
+              you: false
+          }));
+        }
+      }
     }
   });
 
@@ -101,6 +121,9 @@ function update() {
       continue;
     }
     var player = clients[i].player;
+    if(!player) {
+      continue;
+    }
     var character = player.character;
     character.update(player.input);
 
@@ -145,6 +168,9 @@ function sendNetworkState() {
       continue;
     }
     var player = clients[i].player;
+    if(!player) {
+      continue;
+    }
     var characterState = player.character.getState();
     characterState.id = i;
     characterState.type = types.PLAYER;
@@ -157,11 +183,14 @@ function sendNetworkState() {
       y: bullets[i].y
     });
   }
-  var stateAsJSON = JSON.stringify(state);
+  var messageAsJSON = JSON.stringify({
+    type: 'state',
+    state: state
+  });
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {
       continue;
     }
-    clients[i].sendUTF(stateAsJSON);
+    clients[i].sendUTF(messageAsJSON);
   }
 }
