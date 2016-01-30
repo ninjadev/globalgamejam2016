@@ -5,6 +5,7 @@ var http = require('http');
 var types = require('./../game/types.js');
 var Character = require('./../game/Character');
 var Bullet = require('./../game/Bullet');
+var Wall = require('./../game/Wall');
 var CapturePoint = require('./../game/CapturePoint');
 var server = http.createServer(function(request, response) {});
 
@@ -21,6 +22,8 @@ var wsServer = new WebSocketServer({
 var count = 0;
 var clients = {};
 var bullets = [];
+var walls = [];
+walls.push(new Wall(9,9,9,55));
 var capture_points = [];
 capture_points.push(new CapturePoint(14, 41));
 capture_points.push(new CapturePoint(33.8, 45.2));
@@ -183,7 +186,7 @@ function update() {
   }
   for(var i = 0; i < bullets.length; i++){
     var bullet = bullets[i];
-    bullet.update(clients);
+    bullet.update(clients, walls);
     if(!bullet.active){
       bullets[i] = bullets[bullets.length - 1];
       bullets.length = bullets.length - 1;
