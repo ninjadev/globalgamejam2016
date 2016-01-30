@@ -61,13 +61,13 @@ Character.prototype.update = function(input) {
   // stay within bounds
   if (this.x < 0) {
     this.x = 0;
-  } else if (this.x > 32) {
-    this.x = 32;
+  } else if (this.x > 64) {
+    this.x = 64;
   }
   if (this.y < 0) {
     this.y = 0;
-  } else if (this.y > 18) {
-    this.y = 18;
+  } else if (this.y > 64) {
+    this.y = 64;
   }
 };
 

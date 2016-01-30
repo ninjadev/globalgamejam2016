@@ -37,8 +37,8 @@ Bullet.prototype.update = function(clients){
       this.y = newY;
     }
 
-    if(this.x > 32 
-      || this.y > 18
+    if(this.x > 64 
+      || this.y > 64
       || this.x < 0
       || this.y < 0){
 
