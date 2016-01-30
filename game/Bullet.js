@@ -31,10 +31,11 @@ Bullet.prototype.fire = function(character, fire_dir_x, fire_dir_y){
           return this;
 }
 
-Bullet.prototype.update = function(clients){
+Bullet.prototype.update = function(clients, walls){
     var newX = this.x + this.dx;
     var newY = this.y + this.dy;
-    if(checkCollisionWithPlayers(clients,this, this.x, this.y, newX, newY)){
+    if(checkCollisionWithPlayers(clients,this, this.x, this.y, newX, newY) || 
+       checkCollisionWithWalls(walls, this, this.x, this.y, newX, newY)) {
       this.active = false;
     }else{
       this.x = newX;
@@ -75,7 +76,7 @@ Bullet.prototype.getState = function() {
   }
 }
 
-function checkCollisionWithPlayers(clients,bullet, oldX, oldY, newX, newY){
+function checkCollisionWithPlayers(clients, bullet, oldX, oldY, newX, newY){
   var hit = false;
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {
@@ -85,7 +86,7 @@ function checkCollisionWithPlayers(clients,bullet, oldX, oldY, newX, newY){
       continue;
     }
     var character = clients[i].player.character;
-    if(utility.intersectLineCircle(oldX, oldY, newX, newY, character.x, character.y, character.bodyRadius)){
+    if(utility.intersectLineCircle(oldX, oldY, newX, newY, character.x, character.y, character.bodyRadius)) {
       character.hit(bullet);
       hit = true;
     }
@@ -93,6 +94,15 @@ function checkCollisionWithPlayers(clients,bullet, oldX, oldY, newX, newY){
   return hit;
 }
 
+function checkCollisionWithWalls(walls, bullet, oldX, oldY, newX, newY){
+  var hit = false;
+  for(var i = 0; i < walls.length; i++) {
 
+    if(utility.lineIntersect(oldX, oldY, newX, newY, walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y)) {
+      hit = true;
+    }
+  }
+  return hit;
+}
 
 module.exports = Bullet;
