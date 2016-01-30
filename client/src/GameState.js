@@ -70,18 +70,17 @@ GameState.prototype.render = function(ctx) {
   ctx.drawImage(this.vignette, 0, 0);
   ctx.restore();
 
-  ctx.fillStyle = 'blue';
   if(this.state) {
     for(var i = 0; i < this.state.length; i++) {
       switch(this.state[i].type){
         case types.PLAYER:
           var player = this.state[i];
-          ctx.fillStyle = 'red';
+          ctx.fillStyle = '#E0B0B0';
           ctx.fillRect(player.x * GU, player.y * GU, GU / 4, GU / 4);
           break;
         case types.BULLET:
           var bullet = this.state[i];
-          ctx.fillStyle = 'blue';
+          ctx.fillStyle = '#B0B0E0';
           ctx.fillRect(bullet.x * GU, bullet.y * GU, GU / 8, GU / 8);
           break;
 
@@ -120,3 +119,19 @@ GameState.prototype.update = function() {
     }));
   }
 };
+
+GameState.prototype.setScoreD = function(scoreD) {
+  this.scoreD = scoreD;
+}
+
+GameState.prototype.getScoreD = function() {
+  return this.scoreD;
+}
+
+GameState.prototype.setScoreL = function(scoreL) {
+  this.scoreL = scoreL;
+}
+
+GameState.prototype.getScoreL = function() {
+  return this.scoreL;
+}
