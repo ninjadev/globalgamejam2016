@@ -9,6 +9,7 @@ var types = {
 
 GameState.prototype.connectWebsocket = function() {
   var ws = new WebSocket('ws://localhost:1337', 'echo-protocol');
+  //var ws = new WebSocket('ws://192.168.177.22:1337', 'echo-protocol');
   var that = this;
   this.ws = ws;
   this.wsReady = false;
@@ -124,14 +125,14 @@ GameState.prototype.render = function(ctx) {
 
     var players      = state.players;
     var players_next = state_next.players;
-    for(var i = 0; i < players.length; i++) {
+    for(var i in players) {
       var player = players[i];
       var player_next = players_next[i];
 
 
-      var name = this.players[player.id].name;
+      var name = this.players[i].name;
       Character.prototype.render.call(player, ctx, player_next, coeff, this.playerImg, name);
-      if(player.id == this.youId) {
+      if(i == this.youId) {
         this.cameraX = player.x * (1 - coeff) + player_next.x * coeff;
         this.cameraY = player.y * (1 - coeff) + player_next.y * coeff;
       }
@@ -140,7 +141,7 @@ GameState.prototype.render = function(ctx) {
 
     var bullets      = state.bullets;
     var bullets_next = state_next.bullets;
-    for(var i = 0; i < bullets.length; i++) {
+    for(var i in bullets) {
       var bullet = bullets[i];
       var bullet_next = bullets_next[i];
       Bullet.prototype.render.call(bullet, ctx, bullet_next, coeff);
