@@ -1,8 +1,10 @@
 'use strict';
 
+var utility = require('./../game/utility.js');
 var http = require('http');
 var types = require('./../game/types.js');
 var Character = require('./../game/Character');
+var Bullet = require('./../game/Bullet');
 var server = http.createServer(function(request, response) {});
 
 
@@ -121,111 +123,19 @@ function update() {
         //Scale to unit length
         fire_dir_x = fire_dir_x / fire_dir_len;
         fire_dir_y = fire_dir_y / fire_dir_len;
-
-        bullets.push({
-          x: character.x + 0.3*fire_dir_x,
-          y: character.y + 0.3*fire_dir_y,
-          dx: fire_dir_x * 0.3 + character.dx,
-          dy: fire_dir_y * 0.3 + character.dy});
+        
+        bullets.push((new Bullet()).fire(character, fire_dir_x, fire_dir_y));
       }
     } 
   }
   for(var i = 0; i < bullets.length; i++){
     var bullet = bullets[i];
-    var newX = bullet.x + bullet.dx;
-    var newY = bullet.y + bullet.dy;
-    if(checkCollisionWithPlayers(bullet, bullet.x, bullet.y, newX, newY)){
+    bullet.update(clients);
+    if(!bullet.active){
       bullets[i] = bullets[bullets.length - 1];
       bullets.length = bullets.length - 1;
-    }else{
-      bullet.x = newX;
-      bullet.y = newY;
-    }
-
-    if(bullet.x > 16 
-      || bullet.y > 9
-      || bullet.y < 0
-      || bullet.y < 0){
-      bullets[i] = bullets[bullets.length - 1];
-      bullets.length = bullets.length - 1;
-      
-      
-    }
-    
-  }
-}
-
-function checkCollisionWithPlayers(bullet, oldX, oldY, newX, newY){
-  var hit = false;
-  for(var i in clients) {
-    if(!clients.hasOwnProperty(i)) {
-      continue;
-    }
-    var character = clients[i].player.character;
-    if(intersectLineCircle(oldX, oldY, newX, newY, character.x, character.y, character.bodyRadius)){
-      character.x = 5;
-      character.y = 5;
-      hit = true;
     }
   }
-  return hit;
-}
-
-
-function intersectLineCircle(startX, startY, endX, endY, centerX, centerY, radius){
-    // http://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm
-    var d_x = endX - startX;
-    var d_y = endY - startY;
-    
-    var f_x = startX - centerX;
-    var f_y = startY - centerY;
-
-
-    var a =  d_x*d_x + d_y * d_y;
-    var b = 2 * (f_x*d_x + f_y*d_y);
-    var c = (f_x*f_x + f_y*f_y) - radius * radius;
-
-    var discriminant = b*b - 4*a*c;
-
-    if(discriminant < 0){
-      //no intersection
-      return false;
-    }else{
-      discriminant = Math.sqrt(discriminant);
-      // either solution may be on or off the ray so need to test both
-      // t1 is always the smaller value, because BOTH discriminant and
-      // a are nonnegative.
-      var t1 = (-b - discriminant)/(2*a);
-      var t2 = (-b + discriminant)/(2*a);
-
-      // 3x HIT cases:
-      //          -o->             --|-->  |            |  --|->
-      // Impale(t1 hit,t2 hit), Poke(t1 hit,t2>1), ExitWound(t1<0, t2 hit), 
-
-      // 3x MISS cases:
-      //       ->  o                     o ->              | -> |
-      // FallShort (t1>1,t2>1), Past (t1<0,t2<0), CompletelyInside(t1<0, t2>1)
-
-      if( t1 >= 0 && t1 <= 1 )
-      {
-        // t1 is the intersection, and it's closer than t2
-        // (since t1 uses -b - discriminant)
-        // Impale, Poke
-        return true ;
-      }
-
-      // here t1 didn't intersect so we are either started
-      // inside the sphere or completely past it
-      if( t2 >= 0 && t2 <= 1 )
-      {
-        // ExitWound
-        return true ;
-      }
-
-      // no intn: FallShort, Past, CompletelyInside
-      return false ;
-    }
-
 }
 
 function sendNetworkState() {
