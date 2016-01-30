@@ -101,7 +101,6 @@ Character.prototype.update = function(input) {
   if (this.weaponHeat < 1) {
     this.overheated = false;
   }
-  console.log(this.weaponHeat);
 
   // move
   this.x += this.dx;
