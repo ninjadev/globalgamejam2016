@@ -32,7 +32,8 @@ GameState.prototype.connectWebsocket = function() {
       that.states = [that.states[1]
                     ,that.states[2]
                     ,message.state];
-    } else if(message.type == 'join') {
+      that.playSounds(message.state.sounds);
+    } else if (message.type == 'join') {
       that.players[message.id] = new Player(message.name);
       if(message.you) {
         that.youId = message.id;
@@ -61,6 +62,13 @@ GameState.prototype.init = function() {
   this.cameraX = 0;
   this.cameraY = 0;
   this.states = [];
+
+  var soundPath = 'res/sounds/';
+  for (var soundName in SOUNDS.byName) {
+    if (SOUNDS.byName.hasOwnProperty(soundName)) {
+      createjs.Sound.registerSound(soundPath + soundName, soundName);
+    }
+  }
 };
 
 GameState.prototype.pause = function() {
@@ -210,5 +218,12 @@ GameState.prototype.update = function() {
       MOUSE.y - 4.5 + this.cameraY
       ]
     }));
+  }
+};
+
+GameState.prototype.playSounds = function(soundIds) {
+  for (var i = 0; i < soundIds.length; i++) {
+    var soundName = SOUNDS.byId[soundIds[i]];
+    createjs.Sound.play(soundName);
   }
 };

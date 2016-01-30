@@ -3,6 +3,7 @@
 var utility = require('./../game/utility.js');
 var http = require('http');
 var types = require('./../game/types.js');
+var sounds = require('./../game/sounds.js');
 var Character = require('./../game/Character');
 var Bullet = require('./../game/Bullet');
 var CapturePoint = require('./../game/CapturePoint');
@@ -24,6 +25,8 @@ var bullets = [];
 var capture_points = [];
 var dark_points = 0;
 var light_points = 0;
+var soundsToPlay = {};
+
 capture_points.push(new CapturePoint(14, 41));
 capture_points.push(new CapturePoint(33.8, 45.2));
 capture_points.push(new CapturePoint(33, 25));
@@ -135,7 +138,6 @@ var updateTickAccumulator = 0;
 var networkTickAccumulator = 0;
 var UPDATE_TICK_LENGTH_IN_MS = 15;
 var NETWORK_TICK_LENGTH_IN_MS = 50;
-var FRICTION_COEFFICIENT = 0.98;
 
 function getTime() {
   return +new Date();
@@ -180,8 +182,9 @@ function update() {
         fire_dir_y = fire_dir_y / fire_dir_len;
         
         bullets.push((new Bullet()).fire(character, fire_dir_x, fire_dir_y));
+        soundsToPlay['bullet_fired.mp3'] = true;
       }
-    } 
+    }
   }
   for(var i = 0; i < bullets.length; i++){
     var bullet = bullets[i];
@@ -209,6 +212,7 @@ function sendNetworkState(tick) {
   state.capture_points = {};
   state.dark_points = dark_points;
   state.light_points = light_points;
+  state.sounds = [];
 
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {
@@ -233,6 +237,13 @@ function sendNetworkState(tick) {
     state.capture_points[id] = cpState;
   }
 
+  for (var sound in soundsToPlay) {
+    if(soundsToPlay.hasOwnProperty(sound)) {
+      var soundId = sounds.byName[sound];
+      state.sounds.push(soundId)
+    }
+  }
+
   var messageAsJSON = JSON.stringify({
     type: 'state',
     state: state
@@ -244,4 +255,5 @@ function sendNetworkState(tick) {
     }
     clients[i].sendUTF(messageAsJSON);
   }
+  soundsToPlay = {};
 }
