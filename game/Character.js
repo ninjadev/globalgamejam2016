@@ -102,9 +102,6 @@ Character.getRandomSpawnPoint = function(team, capturePoints) {
   }
   if (possibleSpawnPoints.length) {
     var spawnPointIndex = Math.floor(possibleSpawnPoints.length * Math.random());
-    console.log('all', capturePoints)
-    console.log('possible', possibleSpawnPoints)
-    console.log('chosen', spawnPointIndex, possibleSpawnPoints[spawnPointIndex]);
     return possibleSpawnPoints[spawnPointIndex];
   }
   return null;
