@@ -169,7 +169,7 @@ function update() {
       character.fireCooldown--;
     }
 
-    if(player.input[BUTTONS.FIRE] && character.fireCooldown <= 0 && !character.overheated) {
+    if (player.input[BUTTONS.FIRE] && character.fireCooldown <= 0 && !character.overheated && !character.timeDied) {
       character.fireCooldown = fireCooldownTime;
       var m_x = player.input[BUTTONS.MOUSE_X];
       var m_y = player.input[BUTTONS.MOUSE_Y];
