@@ -171,11 +171,11 @@ GameState.prototype.update = function() {
     this.ws.send(JSON.stringify({
       type: 'inputs',
       inputs: [
-      KEYS[87], // W
-      KEYS[83], // S
-      KEYS[65], // A
-      KEYS[68],  // D
-      MOUSE.left,
+      KEYS[87] || KEYS[38], // W, up arrow
+      KEYS[83] || KEYS[40], // S, down arrow
+      KEYS[65] || KEYS[37], // A, left arrow
+      KEYS[68] || KEYS[39],  // D, right arrow
+      MOUSE.left || KEYS[13], // enter
       MOUSE.right,
       MOUSE.x - 8 + this.cameraX,
       MOUSE.y - 4.5 + this.cameraY
