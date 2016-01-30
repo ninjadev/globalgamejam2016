@@ -16,6 +16,7 @@ function Character(team) {
 }
 
 Character.MAX_SHIELD_ARC = 0.2 * Math.PI;
+Character.OVERHEAT_THRESHOLD = 1.5;
 
 Character.prototype.init = function() {
   this.x = Math.random() * 64;
@@ -26,6 +27,8 @@ Character.prototype.init = function() {
   this.isShieldActive = false;
   this.fireCooldown = 0;
   this.shieldEnergy = 1;
+  this.weaponHeat = 0;
+  this.overheated = false;
 };
 
 Character.prototype.getState = function() {
@@ -37,7 +40,9 @@ Character.prototype.getState = function() {
     mouseDirection: this.mouseDirection,
     isShieldActive: this.isShieldActive,
     shieldEnergy: this.shieldEnergy,
-    team: this.team
+    team: this.team,
+    weaponHeat: this.weaponHeat,
+    overheated: this.overheated
   };
 };
 
@@ -88,6 +93,15 @@ Character.prototype.update = function(input) {
   if (this.shieldEnergy > 1) {
     this.shieldEnergy = 1;
   }
+
+  this.weaponHeat -= this.overheated ? 0.005 : 0.01;
+  if (this.weaponHeat < 0) {
+    this.weaponHeat = 0;
+  }
+  if (this.weaponHeat < 1) {
+    this.overheated = false;
+  }
+  console.log(this.weaponHeat);
 
   // move
   this.x += this.dx;
@@ -202,6 +216,21 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
     );
     ctx.stroke();
   }
+  ctx.restore();
+};
+
+Character.prototype.renderUi = function(ctx) {
+  // draw overheat indicator
+  ctx.save();
+  var fillAlpha = 0.5;
+  if (this.overheated) {
+    fillAlpha += Math.sin(0.02 * t);
+  }
+  ctx.fillStyle = 'rgba(176, 22, 22, ' + fillAlpha + ')';
+  ctx.strokeStyle = 'rgba(93, 25, 25, 1)';
+  ctx.strokeWidth = 0.1 * GU;
+  ctx.fillRect(0.5 * GU, 8.5 * GU, GU * this.weaponHeat, 0.2 * GU);
+  ctx.strokeRect(0.5 * GU, 8.5 * GU, GU * Character.OVERHEAT_THRESHOLD, 0.2 * GU);
   ctx.restore();
 };
 

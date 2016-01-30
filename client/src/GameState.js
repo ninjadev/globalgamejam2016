@@ -119,10 +119,12 @@ GameState.prototype.render = function(ctx) {
       var you_y = you.y * (1 - coeff) + you_next.y * coeff;
       this.cameraX = you_x;
       this.cameraY = you_y;
-    }else if(you){
+
+    } else if(you){
       this.cameraX = you.x;
       this.cameraY = you.y;
-    }else{
+
+    } else{
       this.cameraX = 5;
       this.cameraY = 5;
     }
@@ -183,12 +185,16 @@ GameState.prototype.render = function(ctx) {
     ctx.font = (0.5 * GU|0) + 'px Arial';
     ctx.fillStyle = '#c7af0e';
     ctx.fillText(
-        '' + state.light_points / 300 | 0,
+        '' + (state.light_points / 300 | 0),
         7.5 * GU, 0.5 * GU);
     ctx.fillStyle = '#b01616';
     ctx.fillText(
-        '' + state.dark_points / 300 | 0,
+        '' + (state.dark_points / 300 | 0),
         8.5 * GU, 0.5 * GU);
+
+    if (you) {
+      Character.prototype.renderUi.call(you, ctx);
+    }
   }
 
   this.audioButton.render();
