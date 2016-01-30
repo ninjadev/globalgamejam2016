@@ -36,6 +36,9 @@ GameState.prototype.init = function() {
   this.capture_points.push(new CapturePoint(8, 8));
   this.scoreL = 8;
   this.scoreD = 0;
+  this.cameraZoom = 0.5;
+  this.cameraX = 0;
+  this.cameraY = 0;
 
   var team = 'dark';
   document.querySelector('body').classList.remove('dark');
@@ -63,6 +66,10 @@ GameState.prototype.resume = function() {
 
 GameState.prototype.render = function(ctx) {
   ctx.save();
+  ctx.translate(8 * GU - this.cameraX * GU * this.cameraZoom,
+                4.5 * GU - this.cameraY * GU * this.cameraZoom);
+  ctx.scale(this.cameraZoom, this.cameraZoom);
+  ctx.save();
   ctx.scale(16 * GU / 1920, 16 * GU / 1920);
   ctx.drawImage(this.bg, 0, 0);
   ctx.drawImage(this.bgDark, 0, 0);
@@ -86,6 +93,7 @@ GameState.prototype.render = function(ctx) {
       }
     }
   }
+  ctx.restore();
 
   this.audioButton.render();
   for(var i = 0; i < this.capture_points.length; i++) {
@@ -95,6 +103,11 @@ GameState.prototype.render = function(ctx) {
 
 GameState.prototype.update = function() {
   var that = this;
+
+  if(this.state) {
+    this.cameraX = this.state[0].x;
+    this.cameraY = this.state[0].y;
+  }
 
   if(this.wsReady) {
     var inputs = [];
@@ -107,8 +120,8 @@ GameState.prototype.update = function() {
         KEYS[68],  // D
         MOUSE.left,
         MOUSE.right,
-        MOUSE.x,
-        MOUSE.y
+        MOUSE.x - 8 + this.cameraX,
+        MOUSE.y - 4.5 + this.cameraY
       ]
     }));
   }
