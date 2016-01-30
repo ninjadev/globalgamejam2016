@@ -23,7 +23,7 @@ var count = 0;
 var clients = {};
 var bullets = [];
 var walls = [];
-walls.push(new Wall(9,9,9,55));
+utility.populate_walls(walls, Wall);
 var capture_points = [];
 capture_points.push(new CapturePoint(14, 41));
 capture_points.push(new CapturePoint(33.8, 45.2));
