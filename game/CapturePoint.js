@@ -4,7 +4,7 @@ last_cp_id = 0;
 function CapturePoint(x, y) {
   this.x = x;
   this.y = y;
-  this.radius = 3;
+  this.radius = 2.2;
   this.radiusSq = this.radius * this.radius;
   this.id = last_cp_id++;
   this.ownage_d = 0;
@@ -45,6 +45,9 @@ CapturePoint.prototype.update = function(clients){
   if(light == 0 && dark == 0 && Math.abs(this.ownage_d) < 1 &&
      Math.abs(this.ownage_d) > 0) {
     this.ownage_d -= Math.sign(this.ownage_d) * 1 / 120;
+    if(Math.abs(this.ownage_d) <= 1 / 120) {
+      this.ownage_d = 0;
+    }
   }
 }
 
