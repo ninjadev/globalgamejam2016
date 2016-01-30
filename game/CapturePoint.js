@@ -38,7 +38,7 @@ CapturePoint.prototype.update = function(clients){
     }
   }
 
-  this.ownage_d += (dark - light) / 666;
+  this.ownage_d += (Math.min(dark, 1) - Math.min(light, 1)) / 100;
 
   this.ownage_d = Math.max(-1, Math.min(1, this.ownage_d));
 }
@@ -54,16 +54,31 @@ CapturePoint.prototype.render = function(ctx, cpNext, neutralImg) {
   ctx.translate(this.x * GU, this.y * GU);
   var scale = 0.6;
   ctx.scale(scale, scale);
+  /*
   ctx.drawImage(
       neutralImg,
       -neutralImg.width / 2,
       -neutralImg.height / 2);
+  */
 
   var radius = 1.6 * GU; //pentagram radius
+  var outerRadius = 2.6 * GU;
+
+  if(this.ownage_d == 1) {
+    ctx.fillStyle = 'rgba(20, 0, 0, 0.2)';
+    ctx.beginPath();
+    ctx.arc(0, 0, outerRadius, 0, Math.PI * 2);
+    ctx.fill();
+  } else if(this.ownage_d == -1) {
+    ctx.fillStyle = 'rgba(255, 255, 200, 0.2)';
+    ctx.beginPath();
+    ctx.arc(0, 0, outerRadius, 0, Math.PI * 2);
+    ctx.fill();
+  }
   ctx.strokeStyle = 'black';
   ctx.beginPath();
   var step = 216 / 360 * Math.PI * 2;
-  ctx.setLineDash([375+375 * this.ownage_d, 2000])
+  ctx.setLineDash([Math.max(this.ownage_d, 0) * 15.4 * GU, 999999])
   ctx.lineWidth = 0.05 * GU;
   ctx.lineTo(Math.sin(step) * radius,
              Math.cos(step) * radius);
@@ -78,6 +93,30 @@ CapturePoint.prototype.render = function(ctx, cpNext, neutralImg) {
   ctx.lineTo(Math.sin(step * 6) * radius,
              Math.cos(step * 6) * radius);
   ctx.stroke();
+
+  ctx.beginPath();
+  ctx.setLineDash([Math.max(-this.ownage_d, 0) * 7.4 * GU, 999999])
+  ctx.arc(0.5 * GU, 0, GU, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(-0.5 * GU, 0, GU, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+  ctx.beginPath();
+  ctx.setLineDash([outerRadius * Math.PI * 2 / 16, outerRadius * Math.PI * 2 / 16]);
+  ctx.lineWidth = 0.3 * GU;
+  ctx.arc(0, 0, outerRadius, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  if(this.ownage_d > 0) {
+    ctx.strokeStyle = '#b01616';
+  } else if(this.ownage_d < 0) {
+    ctx.strokeStyle = '#c7af0e';
+  }
+  ctx.arc(0, 0, outerRadius, 0, Math.abs(this.ownage_d) * Math.PI * 2);
+  ctx.stroke();
+
   ctx.restore();
 }
 
