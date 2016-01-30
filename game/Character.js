@@ -79,7 +79,7 @@ Character.prototype.canShieldTakeBullet = function(bullet) {
   return bulletDirection <= maxShieldDirection && bulletDirection >= minShieldDirection;
 };
 
-Character.prototype.update = function(input) {
+Character.prototype.update = function(input, walls, utility) {
   this.applyMovementForce(input);
   this.applyFrictionForce();
   var mouse_x = input[BUTTONS.MOUSE_X] || 0;
@@ -102,10 +102,18 @@ Character.prototype.update = function(input) {
     this.overheated = false;
   }
 
-  // move
-  this.x += this.dx;
-  this.y += this.dy;
-
+  var coliding = false;
+  for(var i = 0; i < walls.length; i++) {
+    if(utility.lineIntersect(this.x, this.y, this.x + this.dx, this.y + this.dy, walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y)) {
+      coliding = true;
+    }
+  }
+  if(!coliding) {
+    // move
+    this.x += this.dx;
+    this.y += this.dy;
+  }
+  
   // stay within bounds
   if (this.x < 0) {
     this.x = 0;

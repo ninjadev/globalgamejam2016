@@ -162,7 +162,7 @@ function update() {
       continue;
     }
     var character = player.character;
-    character.update(player.input);
+    character.update(player.input, walls, utility);
 
     if(character.fireCooldown > 0){
       character.fireCooldown--;
@@ -182,12 +182,28 @@ function update() {
         //Scale to unit length
         fire_dir_x = fire_dir_x / fire_dir_len;
         fire_dir_y = fire_dir_y / fire_dir_len;
-        
-        bullets.push((new Bullet()).fire(character, fire_dir_x, fire_dir_y));
-        character.weaponHeat += 0.2;
-        if (character.weaponHeat > Character.OVERHEAT_THRESHOLD) {
-          character.overheated = true;
-          character.weaponHeat = Character.OVERHEAT_THRESHOLD;
+
+        var blocked_by_wall = false;
+        for(var i = 0; i < walls.length; i++) {
+          if(utility.lineIntersect(character.x,
+                                   character.y,
+                                   character.x + (character.bodyRadius + 0.2) * fire_dir_x,
+                                   character.y + (character.bodyRadius + 0.2) * fire_dir_y,
+                                   walls[i].start_x,
+                                   walls[i].start_y,
+                                   walls[i].end_x,
+                                   walls[i].end_y)) {
+            blocked_by_wall = true;
+          }
+        }
+        if(!blocked_by_wall) {
+          // fire
+          bullets.push((new Bullet()).fire(character, fire_dir_x, fire_dir_y));
+          character.weaponHeat += 0.2;
+          if (character.weaponHeat > Character.OVERHEAT_THRESHOLD) {
+            character.overheated = true;
+            character.weaponHeat = Character.OVERHEAT_THRESHOLD;
+          }
         }
         soundsToPlay['bullet_fired.mp3'] = true;
       }
