@@ -116,8 +116,8 @@ Character.prototype.applyFrictionForce = function() {
   this.dy += breakFy;
 };
 
-Character.prototype.render = function(ctx, img, name) {
-  var bodyRadius = 0.2;
+Character.prototype.render = function(ctx, player_next, coeff, img, name) {
+  var bodyRadius = this.bodyRadius;
   ctx.save();
   ctx.translate(this.x * GU, this.y * GU);
   ctx.scale(GU * 0.005, GU * 0.005);
