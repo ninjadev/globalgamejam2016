@@ -65,6 +65,7 @@ wsServer.on('request', function(r) {
           type: 'join',
           name: connection.player.name,
           id: id,
+          team: connection.player.character.team,
           you: i == id
         }));
 
@@ -72,6 +73,7 @@ wsServer.on('request', function(r) {
           connection.send(JSON.stringify({
               type: 'join',
               name: clients[i].player.name,
+              team: clients[i].player.character.team,
               id: i,
               you: false
           }));

@@ -35,6 +35,11 @@ GameState.prototype.connectWebsocket = function() {
       that.players[message.id] = new Player(message.name);
       if(message.you) {
         that.youId = message.id;
+        var team = message.team == 0 ? 'light' : 'dark';
+        console.log('el teamo', team);
+        document.querySelector('body').classList.remove('dark');
+        document.querySelector('body').classList.add('light');
+        document.querySelector('body').classList.add(team);
       }
     }
   });
@@ -60,11 +65,6 @@ GameState.prototype.init = function() {
   this.cameraX = 0;
   this.cameraY = 0;
   this.states = [];
-
-  var team = 'dark';
-  document.querySelector('body').classList.remove('dark');
-  document.querySelector('body').classList.add('light');
-  document.querySelector('body').classList.add(team);
 };
 
 GameState.prototype.pause = function() {

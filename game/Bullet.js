@@ -11,7 +11,7 @@ function Bullet() {
 
 last_bullet_id = 0;
 
-Bullet.prototype.init = function(x, y, dx, dy){
+Bullet.prototype.init = function(x, y, dx, dy, team){
   this.id = last_bullet_id++;
   this.x = x;
   this.y = y;
@@ -19,6 +19,7 @@ Bullet.prototype.init = function(x, y, dx, dy){
   this.dy = dy;
   this.active = true;
   this.direction = Math.atan2(dy, dx);
+  this.team = team;
 }
 
 Bullet.prototype.fire = function(character, fire_dir_x, fire_dir_y){
@@ -26,7 +27,7 @@ Bullet.prototype.fire = function(character, fire_dir_x, fire_dir_y){
           var y = character.y + (character.bodyRadius + this.WEAPON_DISTANCE) * fire_dir_y;
           var dx = fire_dir_x * this.SPEED + character.dx;
           var dy = fire_dir_y * this.SPEED + character.dy;
-          this.init(x, y, dx, dy);
+          this.init(x, y, dx, dy, character.team);
           return this;
 }
 
@@ -56,7 +57,8 @@ Bullet.prototype.render = function(ctx, bullet_next, coeff) {
   var y = this.y * (1 - coeff) + bullet_next.y * coeff;
 
   //draw
-  ctx.fillStyle = '#B0B0E0';
+  var light = 0;
+  ctx.fillStyle = this.team == light ? '#cac185' : '#b01616';
   ctx.save();
   ctx.translate(x * GU, y * GU);
   ctx.rotate(this.direction);
@@ -68,7 +70,8 @@ Bullet.prototype.getState = function() {
   return {
     x: this.x,
     y: this.y,
-    direction: this.direction
+    direction: this.direction,
+    team: this.team
   }
 }
 
