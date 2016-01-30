@@ -22,6 +22,8 @@ var count = 0;
 var clients = {};
 var bullets = [];
 var capture_points = [];
+var dark_points = 0;
+var light_points = 0;
 capture_points.push(new CapturePoint(14, 41));
 capture_points.push(new CapturePoint(33.8, 45.2));
 capture_points.push(new CapturePoint(33, 25));
@@ -191,6 +193,11 @@ function update() {
   }
   for(var i = 0; i < capture_points.length; i++){
     capture_points[i].update(clients);
+    if(capture_points[i].ownage_d == 1) {
+      dark_points += 1;
+    } else if(capture_points[i].ownage_d == -1) {
+      light_points += 1;
+    }
   }
 }
 
@@ -200,6 +207,8 @@ function sendNetworkState(tick) {
   state.players = {};
   state.bullets = {};
   state.capture_points = {};
+  state.dark_points = dark_points;
+  state.light_points = light_points;
 
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {
