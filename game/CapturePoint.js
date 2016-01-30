@@ -52,6 +52,8 @@ CapturePoint.prototype.sqDistToPlayer = function(character){
 CapturePoint.prototype.render = function(ctx, cpNext, neutralImg) {
   ctx.save();
   ctx.translate(this.x * GU, this.y * GU);
+  var scale = 0.6;
+  ctx.scale(scale, scale);
   ctx.drawImage(
       neutralImg,
       -neutralImg.width / 2,

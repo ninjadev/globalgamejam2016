@@ -22,11 +22,11 @@ var count = 0;
 var clients = {};
 var bullets = [];
 var capture_points = [];
-capture_points.push(new CapturePoint(9, 9));
-capture_points.push(new CapturePoint(9, 55));
-capture_points.push(new CapturePoint(32, 32));
-capture_points.push(new CapturePoint(55, 9));
-capture_points.push(new CapturePoint(55, 55));
+capture_points.push(new CapturePoint(14, 41));
+capture_points.push(new CapturePoint(33.8, 45.2));
+capture_points.push(new CapturePoint(33, 25));
+capture_points.push(new CapturePoint(32, 38));
+capture_points.push(new CapturePoint(51, 37.8));
 
 var fireCooldownTime = 11;
 
