@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = BUTTONS = {
   MOVE_UP: 1,
   MOVE_DOWN: 2,
   MOVE_LEFT: 3,
