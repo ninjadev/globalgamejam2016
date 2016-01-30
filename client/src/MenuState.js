@@ -47,9 +47,6 @@ MenuState.prototype.resume = function() {
   var that = this;
   this.fullscreenHandler = document.addEventListener('keypress', function(e) {
     if (e.keyCode == 13 && that.selected == 0) {
-      document.body.requestFullscreen && document.body.requestFullscreen();
-      document.body.webkitRequestFullscreen && document.body.webkitRequestFullscreen();
-      document.body.mozRequestFullscreen && document.body.mozRequestFullScreen();
     }
   });
   var logo = $('.logo.template').clone().removeClass('template');
