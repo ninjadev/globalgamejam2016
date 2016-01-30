@@ -1,14 +1,23 @@
 function GameState() {
 }
 
+var types = {
+  PLAYER: 1,
+  BULLET: 2
+}
+
+
+
 GameState.prototype.connectWebsocket = function() {
   var ws = new WebSocket('ws://localhost:1337', 'echo-protocol');
   var that = this;
   this.ws = ws;
   this.wsReady = false;
   var that = this;
+  console.log("connecting to websocket");
   ws.addEventListener('open', function(e) {
     that.wsReady = true;
+    console.log("Connected");
   });
   ws.addEventListener('message', function(e) {
     that.state = JSON.parse(e.data);
@@ -62,11 +71,21 @@ GameState.prototype.render = function(ctx) {
   ctx.restore();
 
   ctx.fillStyle = 'blue';
-  ctx.fillStyle = 'red';
   if(this.state) {
     for(var i = 0; i < this.state.length; i++) {
-      var player = this.state[i];
-      ctx.fillRect(player.x * GU, player.y * GU, GU / 4, GU / 4);
+      switch(this.state[i].type){
+        case types.PLAYER:
+          var player = this.state[i];
+          ctx.fillStyle = 'red';
+          ctx.fillRect(player.x * GU, player.y * GU, GU / 4, GU / 4);
+          break;
+        case types.BULLET:
+          var bullet = this.state[i];
+          ctx.fillStyle = 'blue';
+          ctx.fillRect(bullet.x * GU, bullet.y * GU, GU / 8, GU / 8);
+          break;
+
+      }
     }
   }
 
@@ -86,18 +105,6 @@ GameState.prototype.update = function() {
 
   if(this.wsReady) {
     var inputs = [];
-    if (KEYS[87]) { // W
-      inputs.push(buttons.MOVE_UP);
-    }
-    if (KEYS[83]) { // S
-      inputs.push(buttons.MOVE_DOWN);
-    }
-    if (KEYS[65]) { // A
-      inputs.push(buttons.MOVE_LEFT);
-    }
-    if (KEYS[68]) { // D
-      inputs.push(buttons.MOVE_RIGHT);
-    }
     this.ws.send(JSON.stringify({
       type: 'inputs',
       inputs: [
@@ -105,8 +112,10 @@ GameState.prototype.update = function() {
         KEYS[83], // S
         KEYS[65], // A
         KEYS[68],  // D
-        false,
-        false
+        MOUSE.left,
+        MOUSE.right,
+        MOUSE.x,
+        MOUSE.y
       ]
     }));
   }

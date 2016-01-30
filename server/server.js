@@ -3,6 +3,7 @@
 
 var http = require('http');
 var buttons = require('./input.js');
+var types = require('./types.js');
 var server = http.createServer(function(request, response) {});
 
 
@@ -17,6 +18,7 @@ var wsServer = new WebSocketServer({
 
 var count = 0;
 var clients = {};
+var bullets = [];
 
 wsServer.on('request', function(r) {
   // Code here to run on connection
@@ -141,6 +143,12 @@ function update() {
     player.dy *= FRICTION_COEFFICIENT;
     player.x += player.dx;
     player.y += player.dy;
+
+
+    if(player.input[buttons.FIRE]){
+      console.log("FIRE!");
+      bullets.push({x: Math.random() * 16, y: Math.random() * 9})
+    }
   }
 }
 
@@ -153,9 +161,17 @@ function sendNetworkState() {
     }
     var player = clients[i].player;
     state.push({
+      type: types.PLAYER,
       id: i,
       x: player.x,
       y: player.y
+    });
+  }
+  for(var i = 0; i<bullets.length; i++){
+    state.push({
+      type: types.BULLET,
+      x: bullets[i].x,
+      y: bullets[i].y
     });
   }
   var stateAsJSON = JSON.stringify(state);
