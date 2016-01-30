@@ -6,6 +6,7 @@ var types = {
 }
 
 
+var ready_for_render = false;
 
 GameState.prototype.connectWebsocket = function() {
   var ws = new WebSocket('ws://localhost:1337', 'echo-protocol');
@@ -40,6 +41,7 @@ GameState.prototype.connectWebsocket = function() {
         document.querySelector('body').classList.remove('dark');
         document.querySelector('body').classList.add('light');
         document.querySelector('body').classList.add(team);
+        ready_for_render = true;
       }
     }
   });
@@ -85,7 +87,7 @@ GameState.prototype.render = function(ctx) {
   this.scoreD = 10;
 
   var states = this.states; 
-  if(states[0]) {
+  if(states[0] && ready_for_render) {
     if(tick < states[0].tick){
       tick = states[0].tick; //global variables <3  ...
       console.log("Local tick too long behind");
