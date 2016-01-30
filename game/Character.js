@@ -7,8 +7,8 @@ try {
 
 
 function Character(team) {
-  this.breakingCoefficient = 0.04;
-  this.accelerationCoefficient = 0.01;
+  this.breakingCoefficient = 0.025;
+  this.accelerationCoefficient = 0.012;
   this.bodyRadius = 0.4;
   this.MAX_HP = 10;
   this.team = team;
@@ -181,8 +181,8 @@ Character.prototype.getCurrentDirection = function() {
 Character.prototype.applyFrictionForce = function() {
   var currentDirection = this.getCurrentDirection();
   var currentSpeed = Math.sqrt(Math.pow(this.dx, 2) + Math.pow(this.dy, 2));
-  var activeShieldFactor = this.isShieldActive ? 2.5 : 1; // more friction while shield is active
-  var frictionScalar = - activeShieldFactor * this.breakingCoefficient * Math.pow(currentSpeed * 5, 2);
+  var activeShieldFactor = this.isShieldActive ? 2.2 : 1; // more friction while shield is active
+  var frictionScalar = - activeShieldFactor * this.breakingCoefficient * Math.pow(currentSpeed * 5 +.15, 2);
   var breakFx = frictionScalar * Math.cos(currentDirection);
   var breakFy = frictionScalar * Math.sin(currentDirection);
   this.dx += breakFx;
