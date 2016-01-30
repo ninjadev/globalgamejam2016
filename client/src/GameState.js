@@ -39,6 +39,9 @@ GameState.prototype.resume = function() {
     }, {x: 15, y: 0, w: 1, h: 1}]
   ];
   this.audioButton = new AudioButton();
+  var playerName = document.getElementById('player-name-input').value;
+  this.player = new Player(playerName);
+  localStorage.playerName = playerName;
 };
 
 GameState.prototype.render = function(ctx) {

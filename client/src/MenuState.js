@@ -52,6 +52,7 @@ MenuState.prototype.select = function(selected) {
 MenuState.prototype.pause = function() {
   document.removeEventListener('keypress', this.fullscreenHandler);
   $("#wrapper > .logo").remove();
+  $('.player-name-container').hide();
 };
 
 MenuState.prototype.resume = function() {
@@ -65,6 +66,8 @@ MenuState.prototype.resume = function() {
   });
   var logo = $('.logo.template').clone().removeClass('template');
   $('#wrapper').append(logo);
+  $('.player-name-container').show();
+  $('#player-name-input').val(localStorage.playerName);
 };
 
 MenuState.prototype.render = function(ctx) {
