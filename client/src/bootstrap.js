@@ -295,7 +295,7 @@ function handleEvent(e) {
     }
   }
   clickables && clickables[i] && clickables[i][1].hover && clickables[i][1].hover();
-  $("body").css('cursor', hoverOverClickable ? "pointer" : "auto");
+  $("body").css('cursor', hoverOverClickable ? "pointer" : "crosshair");
 }
 
 window.addEventListener('resize', resize);
