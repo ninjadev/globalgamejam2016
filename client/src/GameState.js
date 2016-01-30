@@ -36,6 +36,11 @@ GameState.prototype.init = function() {
   this.capture_points.push(new CapturePoint(8, 8));
   this.scoreL = 8;
   this.scoreD = 0;
+
+  var team = 'dark';
+  document.querySelector('body').classList.remove('dark');
+  document.querySelector('body').classList.add('light');
+  document.querySelector('body').classList.add(team);
 };
 
 GameState.prototype.pause = function() {
