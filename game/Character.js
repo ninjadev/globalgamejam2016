@@ -17,6 +17,7 @@ Character.prototype.init = function() {
   this.dx = 0;
   this.dy = 0;
   this.isShieldActive = false;
+  this.fireCooldown = 0;
 };
 
 Character.prototype.getState = function() {
