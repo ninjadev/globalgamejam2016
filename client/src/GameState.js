@@ -90,8 +90,6 @@ GameState.prototype.resume = function() {
 };
 
 GameState.prototype.render = function(ctx) {
-  this.scoreL = 10 + 10 * Math.sin(+new Date() / 10000);
-  this.scoreD = 10;
 
   var states = this.states; 
   if(states[0] && ready_for_render) {

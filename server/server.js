@@ -30,11 +30,8 @@ var dark_points = 0;
 var light_points = 0;
 var soundsToPlay = {};
 
-capture_points.push(new CapturePoint(14, 41));
-capture_points.push(new CapturePoint(33.8, 45.2));
-capture_points.push(new CapturePoint(33, 25));
-capture_points.push(new CapturePoint(32, 38));
-capture_points.push(new CapturePoint(51, 37.8));
+reset_game();
+
 
 var fireCooldownTime = 11;
 
@@ -239,6 +236,9 @@ function update() {
   } else if (darkOwnsAllCapturePoints) {
     dark_points += 30;
   }
+  if(dark_points > 30000 || light_points > 30000) {
+    reset_game();
+  }
 }
 
 function sendNetworkState(tick) {
@@ -293,4 +293,27 @@ function sendNetworkState(tick) {
     clients[i].sendUTF(messageAsJSON);
   }
   soundsToPlay = {};
+}
+
+function reset_game() {
+
+  capture_points = [];
+  bullets = [];
+  dark_points = 0;
+  light_points = 0;
+
+  capture_points.push(new CapturePoint(14, 41));
+  capture_points.push(new CapturePoint(33.8, 45.2));
+  capture_points.push(new CapturePoint(33, 25));
+  capture_points.push(new CapturePoint(32, 38));
+  capture_points.push(new CapturePoint(51, 37.8));
+
+  for(var i in clients) {
+    if(!clients.hasOwnProperty(i)) {
+      continue;
+    }
+    clients[i].player.hp = 10;
+    clients[i].player.weaponHeat = 0;
+    clients[i].player.overheated = false;
+  }
 }
