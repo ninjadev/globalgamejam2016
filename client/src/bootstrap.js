@@ -59,6 +59,8 @@ function loop() {
   old_time = t;
   while (dt > MS_PER_FRAME) {
     sm.update();
+    MOUSE.scrollX = 0;
+    MOUSE.scrollY = 0;
     dt -= MS_PER_FRAME;
   }
   /* clearing canvas */
@@ -123,6 +125,13 @@ function bootstrap() {
     } else if (e.button === 2) {
       MOUSE.right = false;
     }
+  });
+
+  MOUSE.scrollX = 0;
+  MOUSE.scrollY = 0;
+  document.addEventListener('wheel', function(e) {
+    MOUSE.scrollX += e.deltaX;
+    MOUSE.scrollY += e.deltaY;
   });
 
   /* add game states here */
