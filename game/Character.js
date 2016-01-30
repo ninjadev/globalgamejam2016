@@ -29,6 +29,7 @@ Character.prototype.init = function() {
   this.shieldEnergy = 1;
   this.weaponHeat = 0;
   this.overheated = false;
+  this.timeDied = null;
 };
 
 Character.prototype.getState = function() {
@@ -42,7 +43,8 @@ Character.prototype.getState = function() {
     shieldEnergy: this.shieldEnergy,
     team: this.team,
     weaponHeat: this.weaponHeat,
-    overheated: this.overheated
+    overheated: this.overheated,
+    timeDied: this.timeDied
   };
 };
 
@@ -58,8 +60,9 @@ Character.prototype.hit = function(bullet) {
     this.dy += bullet.dy;
 
     this.hp --;
-    if(this.hp <= 0){
-      this.init();
+    if (this.hp <= 0){
+      this.hp = 0;
+      this.timeDied = +new Date();
     }
   }
 };
@@ -79,7 +82,19 @@ Character.prototype.canShieldTakeBullet = function(bullet) {
   return bulletDirection <= maxShieldDirection && bulletDirection >= minShieldDirection;
 };
 
+Character.getTimeUntilRespawn = function(timeDied) {
+  var currentTime = +new Date();
+  return Math.max(timeDied + 4000 - currentTime, 0);
+};
+
 Character.prototype.update = function(input, walls, utility) {
+  if (this.timeDied) {
+    var timeUntilRespawn = Character.getTimeUntilRespawn(this.timeDied);
+    if (timeUntilRespawn <= 0) {
+      this.init();
+    }
+  }
+
   this.applyMovementForce(input);
   this.applyFrictionForce();
   var mouse_x = input[BUTTONS.MOUSE_X] || 0;
@@ -175,9 +190,25 @@ Character.prototype.applyFrictionForce = function() {
 };
 
 Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg, name) {
-  if(!player_next)return; //TODO: When should bullet dissapear?
+  if (!player_next) {
+    return;
+  }
   var x = this.x * (1 - coeff) + player_next.x * coeff;
   var y = this.y * (1 - coeff) + player_next.y * coeff;
+
+  if (this.timeDied) {
+    ctx.save();
+    ctx.translate(x * GU, y * GU);
+    ctx.scale(GU * 0.01, GU * 0.01);
+    ctx.font = GU + 'px Arial';
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    var timeUntilRespawn = Character.getTimeUntilRespawn(this.timeDied);
+    ctx.fillText(name + ' is dead (' + Math.ceil(timeUntilRespawn / 1000).toString() + ')', 0, 0);
+    ctx.restore();
+    return;
+  }
+
   var hp = this.hp * (1 - coeff) + player_next.hp * coeff;
 
   var bodyRadius = this.bodyRadius;
