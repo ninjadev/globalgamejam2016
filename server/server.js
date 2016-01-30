@@ -146,9 +146,31 @@ function update() {
 
 
     if(player.input[buttons.FIRE]){
-      console.log("FIRE!");
-      bullets.push({x: Math.random() * 16, y: Math.random() * 9})
-    }
+      var m_x = player.input[buttons.MOUSE_X]
+      var m_y = player.input[buttons.MOUSE_Y]
+      
+      var fire_dir_x = m_x - player.x;
+      var fire_dir_y = m_y - player.y;
+      var fire_dir_len = Math.sqrt(fire_dir_x * fire_dir_x + fire_dir_y * fire_dir_y);
+      
+      //if you click yourself don't shoot
+      if(fire_dir_len > 0.01) {
+        //Scale to unit length
+        fire_dir_x = fire_dir_x / fire_dir_len;
+        fire_dir_y = fire_dir_y / fire_dir_len;
+        
+        //Scale to bullet speed
+        fire_dir_x = fire_dir_x * 0.05;
+        fire_dir_y = fire_dir_y * 0.05;
+
+        bullets.push({x: player.x, y: player.y, dx: fire_dir_x + player.dx, dy: fire_dir_y + player.dy})
+      }
+    } 
+  }
+  for(var i = 0; i < bullets.length; i++){
+    var bullet = bullets[i];
+    bullet.x += bullet.dx;
+    bullet.y += bullet.dy;
   }
 }
 
