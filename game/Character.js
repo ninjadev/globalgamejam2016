@@ -15,8 +15,8 @@ function Character(team) {
 }
 
 Character.prototype.init = function() {
-  this.x = 0;
-  this.y = 0;
+  this.x = Math.random() * 64;
+  this.y = Math.random() * 64;
   this.dx = 0;
   this.dy = 0;
   this.hp = this.MAX_HP;
