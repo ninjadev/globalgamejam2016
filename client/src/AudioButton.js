@@ -1,15 +1,20 @@
 function AudioButton() {
+  var that = this;
   this.position = {
     x: 15.5,
     y: 0.5
   };
 
-  if (typeof localStorage.musicActivated === 'undefined') {
-    localStorage.musicActivated = "1";
+  if (typeof localStorage.soundActivated === 'undefined') {
+    localStorage.soundActivated = "1";
   }
 
-  this.on = localStorage.musicActivated;
-  createjs.Sound.setMute(!this.on);
+  this.on = !!localStorage.soundActivated;
+  setTimeout(function() {
+    createjs.Sound.setMute(!that.on);
+    console.log('should mute', !that.on);
+  }, 10);
+
   this.musicElement = $("#music")[0];
   if (this.on) {
     this.musicElement.play && this.musicElement.play();
@@ -28,7 +33,7 @@ AudioButton.prototype.render = function() {
 
 AudioButton.prototype.pause = function() {
   this.musicElement.pause && this.musicElement.pause();
-  localStorage.musicActivated = "";
+  localStorage.soundActivated = "";
 };
 
 AudioButton.prototype.toggleActivated = function() {
@@ -40,5 +45,5 @@ AudioButton.prototype.toggleActivated = function() {
     this.musicElement.pause && this.musicElement.pause();
   }
 
-  localStorage.musicActivated = this.on ? "1" : "";
+  localStorage.soundActivated = this.on ? "1" : "";
 };
