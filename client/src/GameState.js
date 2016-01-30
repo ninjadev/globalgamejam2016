@@ -47,13 +47,9 @@ GameState.prototype.init = function() {
   this.bgLight = loadImage('res/ggj-bg-light.jpg');
   this.playerImgLight = loadImage('res/player-light.png');
   this.playerImgDark = loadImage('res/player.png');
+  this.cpNeutralImg = loadImage('res/marker.png');
   this.connectWebsocket();
   this.capture_points = [];
-  this.capture_points.push(new CapturePoint(9, 9));
-  this.capture_points.push(new CapturePoint(9, 55));
-  this.capture_points.push(new CapturePoint(32, 32));
-  this.capture_points.push(new CapturePoint(55, 9));
-  this.capture_points.push(new CapturePoint(55, 55));
   this.scoreL = 8;
   this.scoreD = 0;
   this.cameraZoom = 0.5;
@@ -102,9 +98,6 @@ GameState.prototype.render = function(ctx) {
   this.scoreL = 10 + 10 * Math.sin(+new Date() / 10000);
   this.scoreD = 10;
 
-  for(var i = 0; i < this.capture_points.length; i++) {
-    this.capture_points[i].render(ctx);
-  }
 
   //important to copy this to a local variable, as this.states can change at any time
   var states = this.states; 
@@ -122,6 +115,17 @@ GameState.prototype.render = function(ctx) {
     var state_next = tick >= states[1].tick ? states[2] : states[1];
 
     var coeff = (tick + dt/15 - state.tick) / (state_next.tick - state.tick);
+
+    var capture_points      = state.capture_points;
+    var capture_points_next = state_next.capture_points;
+    for(var i in capture_points) {
+      CapturePoint.prototype.render.call(
+          capture_points[i], 
+          ctx,
+          capture_points_next[i],
+          this.cpNeutralImg);
+    }
+
 
     var players      = state.players;
     var players_next = state_next.players;
@@ -181,8 +185,5 @@ GameState.prototype.update = function() {
       MOUSE.y - 4.5 + this.cameraY
       ]
     }));
-  }
-  for(var i = 0; i < this.capture_points.length; i++) {
-    this.capture_points[i].update();
   }
 };

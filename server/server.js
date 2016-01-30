@@ -5,6 +5,7 @@ var http = require('http');
 var types = require('./../game/types.js');
 var Character = require('./../game/Character');
 var Bullet = require('./../game/Bullet');
+var CapturePoint = require('./../game/CapturePoint');
 var server = http.createServer(function(request, response) {});
 
 
@@ -20,6 +21,13 @@ var wsServer = new WebSocketServer({
 var count = 0;
 var clients = {};
 var bullets = [];
+var capture_points = [];
+capture_points.push(new CapturePoint(9, 9));
+capture_points.push(new CapturePoint(9, 55));
+capture_points.push(new CapturePoint(32, 32));
+capture_points.push(new CapturePoint(55, 9));
+capture_points.push(new CapturePoint(55, 55));
+
 var fireCooldownTime = 11;
 
 var teamCount = [0, 0];
@@ -176,6 +184,9 @@ function update() {
       bullets.length = bullets.length - 1;
     }
   }
+  for(var i = 0; i < capture_points.length; i++){
+    capture_points[i].update(clients);
+  }
 }
 
 function sendNetworkState(tick) {
@@ -183,6 +194,7 @@ function sendNetworkState(tick) {
   state.tick = tick;
   state.players = {};
   state.bullets = {};
+  state.capture_points = {};
 
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {
@@ -199,6 +211,12 @@ function sendNetworkState(tick) {
     var bulletState = bullets[i].getState();
     var id = bullets[i].id;
     state.bullets[id] = bulletState;
+  }
+
+  for(var i = 0; i < capture_points.length; i++){
+    var cpState = capture_points[i].getState();
+    var id = capture_points[i].id;
+    state.capture_points[id] = cpState;
   }
 
   var messageAsJSON = JSON.stringify({
