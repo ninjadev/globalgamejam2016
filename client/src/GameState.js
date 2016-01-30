@@ -103,7 +103,7 @@ GameState.prototype.render = function(ctx) {
         case types.BULLET:
           var bullet = this.state[i];
           ctx.fillStyle = '#B0B0E0';
-          ctx.fillRect(bullet.x * GU, bullet.y * GU, GU / 8, GU / 8);
+          Bullet.prototype.render.call(bullet, ctx);
           break;
 
       }
