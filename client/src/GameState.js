@@ -30,6 +30,8 @@ GameState.prototype.init = function() {
   this.bg = loadImage('res/bg.jpg');
   this.vignette = loadImage('res/vignette.png');
   this.connectWebsocket();
+  this.capture_points = [];
+  this.capture_points.push(new CapturePoint(8, 8));
   this.scoreL = 8;
   this.scoreD = 0;
 };
@@ -87,6 +89,9 @@ GameState.prototype.render = function(ctx) {
   }
 
   this.audioButton.render();
+  for(var i = 0; i < this.capture_points.length; i++) {
+    this.capture_points[i].render(ctx);
+  }
 };
 
 GameState.prototype.update = function() {
@@ -107,6 +112,9 @@ GameState.prototype.update = function() {
         MOUSE.y
       ]
     }));
+  }
+  for(var i = 0; i < this.capture_points.length; i++) {
+    this.capture_points[i].update();
   }
 };
 
