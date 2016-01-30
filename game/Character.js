@@ -104,7 +104,7 @@ Character.prototype.update = function(input, walls, utility) {
 
   var coliding = false;
   for(var i = 0; i < walls.length; i++) {
-    if(utility.lineIntersect(this.x, this.y, this.x + this.dx, this.y + this.dy, walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y)) {
+    if(utility.intersectLineCircle(walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y, this.x + this.dx, this.y + this.dy, this.bodyRadius)) {
       coliding = true;
     }
   }
