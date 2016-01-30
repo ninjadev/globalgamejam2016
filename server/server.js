@@ -199,11 +199,11 @@ function update() {
         if(!blocked_by_wall) {
           // fire
           bullets.push((new Bullet()).fire(character, fire_dir_x, fire_dir_y));
-          character.weaponHeat += 0.2;
-          if (character.weaponHeat > Character.OVERHEAT_THRESHOLD) {
-            character.overheated = true;
-            character.weaponHeat = Character.OVERHEAT_THRESHOLD;
-          }
+        }
+        character.weaponHeat += 0.2;
+        if (character.weaponHeat > Character.OVERHEAT_THRESHOLD) {
+          character.overheated = true;
+          character.weaponHeat = Character.OVERHEAT_THRESHOLD;
         }
         soundsToPlay['bullet_fired.mp3'] = true;
       }
