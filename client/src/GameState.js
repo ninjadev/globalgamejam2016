@@ -9,8 +9,7 @@ var types = {
 var ready_for_render = false;
 
 GameState.prototype.connectWebsocket = function() {
-  //var ws = new WebSocket('ws://localhost:1337', 'echo-protocol');
-  var ws = new WebSocket('ws://192.168.177.11:1337', 'echo-protocol');
+  var ws = new WebSocket('ws://localhost:1337', 'echo-protocol');
   var that = this;
   this.ws = ws;
   this.wsReady = false;
