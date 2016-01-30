@@ -61,8 +61,10 @@ function loop() {
   t = +new Date();
   dt += (t - old_time);
   old_time = t;
+  songTime = mm.music.currentTime;
   while (dt > MS_PER_FRAME) {
     sm.update();
+    mm.update();
     MOUSE.scrollX = 0;
     MOUSE.scrollY = 0;
     tick++;
@@ -87,6 +89,7 @@ function bootstrap() {
   game_data = readData();
 
   sm = new StateManager();
+  mm = new MusicManager();
 
   AudioButton.prototype.sprite_on = loadImage("res/audio_on.png");
   AudioButton.prototype.sprite_off = loadImage("res/audio_off.png");
@@ -154,6 +157,7 @@ function bootstrap() {
   /* start the game */
 
   sm.changeState("menu");
+  mm.changeState('menu');
   if (DEBUG) {
     //sm.changeState("game"); // temporary hack to get in the game quickly
   }

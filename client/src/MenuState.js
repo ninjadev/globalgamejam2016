@@ -10,6 +10,7 @@ MenuState.prototype.init = function() {
   this.elements = [
     [function() {
       sm.changeState('game');
+      mm.changeState('game');
     }, {x: 14.5, y: 1.8, w: 1.5, h: 1, hover: function() {
       that.select(0);
     }}]
@@ -94,7 +95,8 @@ MenuState.prototype.update = function() {
     }
     if (KEYS[13]) { /* key enter */
       this.key_cooldown = 10;
-      sm.changeState(['game', 'achievements', 'credits'][this.selected]);
+      sm.changeState('game');
+      mm.changeState('game');
     }
   }
 };

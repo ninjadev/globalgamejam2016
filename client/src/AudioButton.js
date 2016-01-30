@@ -12,13 +12,8 @@ function AudioButton() {
   this.on = !!localStorage.soundActivated;
   setTimeout(function() {
     createjs.Sound.setMute(!that.on);
-    console.log('should mute', !that.on);
+    mm.music.volume = !!that.on * 0.4;
   }, 10);
-
-  this.musicElement = $("#music")[0];
-  if (this.on) {
-    this.musicElement.play && this.musicElement.play();
-  }
 }
 
 AudioButton.prototype.render = function() {
@@ -39,11 +34,7 @@ AudioButton.prototype.pause = function() {
 AudioButton.prototype.toggleActivated = function() {
   this.on = !this.on;
   createjs.Sound.setMute(!this.on);
-  if (this.on) {
-    this.musicElement.play && this.musicElement.play();
-  } else {
-    this.musicElement.pause && this.musicElement.pause();
-  }
+  mm.music.volume = !!that.on * 0.4;
 
   localStorage.soundActivated = this.on ? "1" : "";
 };
