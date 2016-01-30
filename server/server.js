@@ -19,6 +19,7 @@ var wsServer = new WebSocketServer({
 var count = 0;
 var clients = {};
 var bullets = [];
+var fireCooldownTime = 66;
 
 wsServer.on('request', function(r) {
   // Code here to run on connection
@@ -100,7 +101,8 @@ function generatePlayer() {
     y: Math.random() * 9,
     dx: 0,
     dy: 0,
-    input: []
+    input: [],
+    fireCooldown: 0
   };
 }
 
@@ -143,9 +145,13 @@ function update() {
     player.dy *= FRICTION_COEFFICIENT;
     player.x += player.dx;
     player.y += player.dy;
+    
+    if(player.fireCooldown > 0){
+      player.fireCooldown--;
+    }
 
-
-    if(player.input[buttons.FIRE]){
+    if(player.input[buttons.FIRE] && player.fireCooldown <= 0){
+      player.fireCooldown = fireCooldownTime;
       var m_x = player.input[buttons.MOUSE_X]
       var m_y = player.input[buttons.MOUSE_Y]
       
@@ -160,8 +166,8 @@ function update() {
         fire_dir_y = fire_dir_y / fire_dir_len;
         
         //Scale to bullet speed
-        fire_dir_x = fire_dir_x * 0.05;
-        fire_dir_y = fire_dir_y * 0.05;
+        fire_dir_x = fire_dir_x * 0.3;
+        fire_dir_y = fire_dir_y * 0.3;
 
         bullets.push({x: player.x, y: player.y, dx: fire_dir_x + player.dx, dy: fire_dir_y + player.dy})
       }
