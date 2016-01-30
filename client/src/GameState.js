@@ -21,6 +21,7 @@ GameState.prototype.connectWebsocket = function() {
   });
   ws.addEventListener('message', function(e) {
     that.state = JSON.parse(e.data);
+    //console.log(that.state[0]);
   });
 };
 
@@ -29,8 +30,6 @@ GameState.prototype.init = function() {
   this.bg = loadImage('res/bg.jpg');
   this.vignette = loadImage('res/vignette.png');
   this.connectWebsocket();
-  this.playerCharacter = new PlayerCharacter();
-  this.playerCharacter.init();
   this.scoreL = 8;
   this.scoreD = 0;
 };
@@ -75,8 +74,7 @@ GameState.prototype.render = function(ctx) {
       switch(this.state[i].type){
         case types.PLAYER:
           var player = this.state[i];
-          ctx.fillStyle = '#E0B0B0';
-          ctx.fillRect(player.x * GU, player.y * GU, GU / 4, GU / 4);
+          Character.prototype.render.call(player, ctx);
           break;
         case types.BULLET:
           var bullet = this.state[i];
@@ -93,14 +91,6 @@ GameState.prototype.render = function(ctx) {
 
 GameState.prototype.update = function() {
   var that = this;
-  var buttons = {
-    MOVE_UP: 1,
-    MOVE_DOWN: 2,
-    MOVE_LEFT: 3,
-    MOVE_RIGHT: 4,
-    FIRE: 5,
-    ALTERNATE_FIRE: 6
-  };
 
   if(this.wsReady) {
     var inputs = [];
