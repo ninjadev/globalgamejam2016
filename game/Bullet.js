@@ -81,7 +81,7 @@ function checkCollisionWithPlayers(clients,bullet, oldX, oldY, newX, newY){
     if(!clients.hasOwnProperty(i)) {
       continue;
     }
-    if(|clients[i].player){
+    if(!clients[i].player){
       continue;
     }
     var character = clients[i].player.character;
