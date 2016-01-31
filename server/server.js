@@ -32,6 +32,7 @@ var capture_points = [];
 var dark_points = 0;
 var light_points = 0;
 var soundsToPlay = {};
+var announce_timer = 0;
 
 reset_game();
 
@@ -154,6 +155,16 @@ function log() {
 }
 
 function update() {
+// Determine if the game is over and freeze everything for five seconds before resetting everything.
+  if(dark_points >= 30000 || light_points >= 30000) {
+    if(announce_timer == 0) {
+      announce_timer = time + 5000;
+    } else if(announce_timer<time) {
+      reset_game();
+    }
+    return ;
+  }
+
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {
       continue;
@@ -239,9 +250,6 @@ function update() {
   } else if (darkOwnsAllCapturePoints) {
     dark_points += 30;
   }
-  if(dark_points >= 30000 || light_points >= 30000) {
-    reset_game();
-  }
 }
 
 function sendNetworkState(tick) {
@@ -310,6 +318,7 @@ function reset_game() {
   bullets = [];
   dark_points = 0;
   light_points = 0;
+  announce_timer = 0;
 
   capture_points.push(new CapturePoint(14, 41));
   capture_points.push(new CapturePoint(33.8, 45.2));

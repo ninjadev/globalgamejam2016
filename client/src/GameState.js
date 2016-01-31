@@ -188,6 +188,23 @@ GameState.prototype.render = function(ctx) {
         '' + (state.dark_points / 300 | 0),
         9.1 * GU, 0.68 * GU);
 
+    // Announce the winner if the winning condition is met.
+    if (state.dark_points > 30000) {
+      ctx.fillStyle = '#191919';
+      ctx.fillRect(4 * GU, 6 * GU, 8 * GU, 1.6 * GU);
+      ctx.fillStyle = 'white';
+      ctx.fillText(
+        'Dark team wins! Restarting game...',
+        8 * GU, 7 * GU);
+    }
+    if (state.light_points > 30000) {
+      ctx.fillStyle = 'white';
+      ctx.fillRect(3 * GU, 6 * GU, 10 * GU, 1.6 * GU);
+      ctx.fillStyle = '#191919';
+      ctx.fillText(
+        'LIGHT TEAM WINS! Restarting game...',
+        8 * GU, 7 * GU);
+    }
     if (you) {
       Character.prototype.renderUi.call(you, ctx);
     }
