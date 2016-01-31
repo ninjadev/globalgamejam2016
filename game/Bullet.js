@@ -20,15 +20,17 @@ Bullet.prototype.init = function(x, y, dx, dy, team){
   this.active = true;
   this.direction = Math.atan2(dy, dx);
   this.team = team;
+  this.character;
 }
 
 Bullet.prototype.fire = function(character, fire_dir_x, fire_dir_y){
-          var x = character.x + (character.bodyRadius + this.WEAPON_DISTANCE) * fire_dir_x;
-          var y = character.y + (character.bodyRadius + this.WEAPON_DISTANCE) * fire_dir_y;
-          var dx = fire_dir_x * this.SPEED + character.dx;
-          var dy = fire_dir_y * this.SPEED + character.dy;
-          this.init(x, y, dx, dy, character.team);
-          return this;
+  this.character = character;
+  var x = character.x + (character.bodyRadius + this.WEAPON_DISTANCE) * fire_dir_x;
+  var y = character.y + (character.bodyRadius + this.WEAPON_DISTANCE) * fire_dir_y;
+  var dx = fire_dir_x * this.SPEED + character.dx;
+  var dy = fire_dir_y * this.SPEED + character.dy;
+  this.init(x, y, dx, dy, character.team);
+  return this;
 }
 
 Bullet.prototype.update = function(clients, walls){

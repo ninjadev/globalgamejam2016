@@ -32,15 +32,16 @@ TabOverlay.render = function(ctx, players, local_players){
       var player = players[i];
       var name = local_players[i].name;
       var team = player.team;
+      console.log(player);
       switch(team){
         case 0:
           //light
-          ctx.fillText(name, light_pos, light_line * line_height + col_start);
+          ctx.fillText(player.kills + ' ' + name, light_pos, light_line * line_height + col_start);
           light_line++;
           break;
         case 1:
           //dark
-          ctx.fillText(name, dark_pos, dark_line * line_height + col_start);
+          ctx.fillText(player.kills + ' ' + name, dark_pos, dark_line * line_height + col_start);
           dark_line++;
           break;
       }

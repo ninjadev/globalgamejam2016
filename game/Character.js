@@ -21,6 +21,7 @@ Character.prototype.init = function(spawnPoint) {
     this.x = spawnPoint.x;
     this.y = spawnPoint.y;
     this.timeDied = null;
+    this.kills = 0;
   } else {
     this.x = 32;
     this.y = 32;
@@ -45,6 +46,7 @@ Character.prototype.getState = function() {
     x: this.x,
     y: this.y,
     hp: this.hp,
+    kills: this.kills,
     respawnTime: this.respawnTime,
     mouseDirection: this.mouseDirection,
     isShieldActive: this.isShieldActive,
@@ -69,10 +71,18 @@ Character.prototype.hit = function(bullet) {
 
     this.hp --;
     if (this.hp <= 0){
+      if(bullet.character){
+        bullet.character.killed(this);
+      }
       this.die();
     }
   }
 };
+
+Character.prototype.killed = function(enemy){
+  //YEEY
+  this.kills++;
+}
 
 
 Character.prototype.die = function(){
