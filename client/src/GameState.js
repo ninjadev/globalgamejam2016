@@ -68,10 +68,9 @@ GameState.prototype.resume = function() {
     [function() {
     }, {x: 7.5, y: 4, w: 1, h: 1}],
     [function() {
-      that.audioButton.toggleActivated();
+      mm.audioButton.toggleActivated();
     }, {x: 15, y: 0, w: 1, h: 1}]
   ];
-  this.audioButton = new AudioButton();
   var playerName = document.getElementById('player-name-input').value;
   this.player = new Player(playerName);
   localStorage.playerName = playerName;
@@ -234,7 +233,7 @@ GameState.prototype.render = function(ctx) {
     }
   }
 
-  this.audioButton.render();
+  mm.audioButton.render();
 };
 
 GameState.prototype.update = function() {

@@ -13,7 +13,10 @@ MenuState.prototype.init = function() {
       mm.changeState('game');
     }, {x: 13.35, y: 3.9, w: 1.9, h: 1.2, hover: function() {
       that.select(0);
-    }}]
+    }}],
+    [function() {
+      mm.audioButton.toggleActivated();
+    }, {x: 15, y: 0, w: 1, h: 1}]
   ];
 
   this.y_values = [1.8, 3.3, 4.8];
@@ -70,6 +73,8 @@ MenuState.prototype.render = function(ctx) {
     'margin-top': -0.25 * GU + 'px',
     'padding-left': 0.2 * GU + 'px'
   });
+
+  mm.audioButton.render(ctx);
 
 };
 
