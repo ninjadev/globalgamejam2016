@@ -34,7 +34,7 @@ AudioButton.prototype.pause = function() {
 AudioButton.prototype.toggleActivated = function() {
   this.on = !this.on;
   createjs.Sound.setMute(!this.on);
-  mm.music.volume = !!that.on * 0.4;
+  mm.music.volume = !!this.on * 0.4;
 
   localStorage.soundActivated = this.on ? "1" : "";
 };

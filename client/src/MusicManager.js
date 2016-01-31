@@ -1,4 +1,5 @@
 function MusicManager(){
+  this.audioButton = new AudioButton();
 	this.music = new Audio();
     this.loaded = false;
     var that = this;
