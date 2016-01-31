@@ -11,6 +11,8 @@ function Character(team, spawnPoint) {
   this.MAX_HP = 10;
   this.team = team;
   this.onCP = false;
+  this.kills = 0;
+  this.deaths = 0;
   this.init(spawnPoint);
 }
 
@@ -22,7 +24,6 @@ Character.prototype.init = function(spawnPoint) {
     this.x = spawnPoint.x;
     this.y = spawnPoint.y;
     this.timeDied = null;
-    this.kills = 0;
   } else {
     this.x = 32;
     this.y = 32;
@@ -48,6 +49,7 @@ Character.prototype.getState = function() {
     y: this.y,
     hp: this.hp,
     kills: this.kills,
+    deaths: this.deaths,
     respawnTime: this.respawnTime,
     mouseDirection: this.mouseDirection,
     isShieldActive: this.isShieldActive,
@@ -72,6 +74,7 @@ Character.prototype.hit = function(bullet) {
 
     this.hp --;
     if (this.hp <= 0){
+      this.deaths++;
       if(bullet.character){
         bullet.character.killed(this);
       }
