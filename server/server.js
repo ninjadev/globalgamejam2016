@@ -182,43 +182,36 @@ function update() {
 
     if (player.input[BUTTONS.FIRE] && character.fireCooldown <= 0 && !character.overheated && !character.timeDied) {
       character.fireCooldown = fireCooldownTime;
-      var m_x = player.input[BUTTONS.MOUSE_X];
-      var m_y = player.input[BUTTONS.MOUSE_Y];
-      
-      var fire_dir_x = m_x - character.x;
-      var fire_dir_y = m_y - character.y;
-      var fire_dir_len = Math.sqrt(fire_dir_x * fire_dir_x + fire_dir_y * fire_dir_y);
-      
-      //if you click yourself don't shoot
-      if (fire_dir_len > 0.01) {
-        //Scale to unit length
-        fire_dir_x = fire_dir_x / fire_dir_len;
-        fire_dir_y = fire_dir_y / fire_dir_len;
+      var m_dir = player.input[BUTTONS.MOUSE_DIR];
 
-        var blocked_by_wall = false;
-        for (var i = 0; i < walls.length; i++) {
-          if (utility.lineIntersect(character.x,
-                                   character.y,
-                                   character.x + (character.bodyRadius + 0.2) * fire_dir_x,
-                                   character.y + (character.bodyRadius + 0.2) * fire_dir_y,
-                                   walls[i].start_x,
-                                   walls[i].start_y,
-                                   walls[i].end_x,
-                                   walls[i].end_y)) {
-            blocked_by_wall = true;
-          }
+
+      var fire_dir_x = Math.cos(m_dir);
+      var fire_dir_y = Math.sin(m_dir);
+
+
+      var blocked_by_wall = false;
+      for (var i = 0; i < walls.length; i++) {
+        if (utility.lineIntersect(character.x,
+              character.y,
+              character.x + (character.bodyRadius + 0.2) * fire_dir_x,
+              character.y + (character.bodyRadius + 0.2) * fire_dir_y,
+              walls[i].start_x,
+              walls[i].start_y,
+              walls[i].end_x,
+              walls[i].end_y)) {
+          blocked_by_wall = true;
         }
-        if (!blocked_by_wall) {
-          // fire
-          bullets.push((new Bullet()).fire(character, fire_dir_x, fire_dir_y));
-        }
-        character.weaponHeat += 0.2;
-        if (character.weaponHeat > Character.OVERHEAT_THRESHOLD) {
-          character.overheated = true;
-          character.weaponHeat = Character.OVERHEAT_THRESHOLD;
-        }
-        soundsToPlay['bullet_fired.mp3'] = true;
       }
+      if (!blocked_by_wall) {
+        // fire
+        bullets.push((new Bullet()).fire(character, fire_dir_x, fire_dir_y));
+      }
+      character.weaponHeat += 0.2;
+      if (character.weaponHeat > Character.OVERHEAT_THRESHOLD) {
+        character.overheated = true;
+        character.weaponHeat = Character.OVERHEAT_THRESHOLD;
+      }
+      soundsToPlay['bullet_fired.mp3'] = true;
     }
   }
   for(var i = 0; i < bullets.length; i++){

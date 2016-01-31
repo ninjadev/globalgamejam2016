@@ -5,6 +5,5 @@ module.exports = BUTTONS = {
   MOVE_RIGHT: 4,
   FIRE: 5,
   ALTERNATE_FIRE: 6,
-  MOUSE_X: 7,
-  MOUSE_Y: 8
+  MOUSE_DIR: 7,
 };
