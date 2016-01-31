@@ -110,7 +110,7 @@ Character.getRandomSpawnPoint = function(team, capturePoints) {
 Character.prototype.update = function(input, walls, utility, capturePoints) {
   if (this.timeDied) {
     var timeUntilRespawn = Character.getTimeUntilRespawn(this.timeDied);
-    if (timeUntilRespawn <= 0) {
+    if (capturePoints && timeUntilRespawn <= 0) {
       var spawnPoint = Character.getRandomSpawnPoint(this.team, capturePoints);
       if (spawnPoint) {
         this.init(spawnPoint);
@@ -142,7 +142,7 @@ Character.prototype.update = function(input, walls, utility, capturePoints) {
   }
 
   var coliding = false;
-  for(var i = 0; i < walls.length; i++) {
+  for(var i = 0; walls && i < walls.length; i++) {
     if(utility.intersectLineCircle(walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y, this.x + this.dx, this.y + this.dy, this.bodyRadius)) {
       coliding = true;
     }
@@ -213,29 +213,39 @@ Character.prototype.applyFrictionForce = function() {
   this.dy += breakFy;
 };
 
+Character.prototype.renderSelf = function(ctx, player0, player1, player2, lightImg, darkImg, name) {
+
+  drawCharacter(ctx, this.x, this.y, this.mouseDirection, this.hp, this.timeDied, name, this.team == 0 ? lightImg : darkImg);
+
+}
+
 Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg, name) {
   if (!player_next) {
     return;
   }
   var x = this.x * (1 - coeff) + player_next.x * coeff;
   var y = this.y * (1 - coeff) + player_next.y * coeff;
+  var hp = this.hp * (1 - coeff) + player_next.hp * coeff;
 
-  if (this.timeDied) {
+  drawCharacter(ctx, x, y, this.mouseDirection, hp, this.timeDied, name, this.team == 0 ? lightImg : darkImg);
+
+};
+
+
+function drawCharacter(ctx, x, y, rotation, hp, timeDied, name, img) {
+  if (timeDied) {
     ctx.save();
     ctx.translate(x * GU, y * GU);
     ctx.scale(GU * 0.01, GU * 0.01);
     ctx.font = GU + 'px Arial';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
-    var timeUntilRespawn = Character.getTimeUntilRespawn(this.timeDied);
+    var timeUntilRespawn = Character.getTimeUntilRespawn(timeDied);
     ctx.fillText(name + ' is dead (' + Math.ceil(timeUntilRespawn / 1000).toString() + ')', 0, 0);
     ctx.restore();
     return;
   }
 
-  var hp = this.hp * (1 - coeff) + player_next.hp * coeff;
-
-  var bodyRadius = this.bodyRadius;
   ctx.save();
   ctx.translate(x * GU, y * GU);
   ctx.scale(GU * 0.005, GU * 0.005);
@@ -260,8 +270,7 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
       -1.9 * GU,
       hpWidth + 0.2 * GU, 0.4 * GU);
 
-  ctx.rotate(this.mouseDirection);
-  var img = this.team == 0 ? lightImg : darkImg;
+  ctx.rotate(rotation);
   ctx.drawImage(img, -img.width / 2, -img.height / 2 - 52);
   
   if (this.isShieldActive) {
@@ -279,7 +288,7 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
     ctx.stroke();
   }
   ctx.restore();
-};
+}
 
 Character.prototype.renderUi = function(ctx) {
   // draw overheat indicator

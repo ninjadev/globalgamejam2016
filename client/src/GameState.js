@@ -50,6 +50,8 @@ GameState.prototype.init = function() {
   this.playerImgDark = loadImage('res/player-dark.png');
   this.cpNeutralImg = loadImage('res/marker.png');
 
+  this.youCharacter = new Character();
+
   var soundPath = 'res/sounds/';
   for (var soundName in SOUNDS.byName) {
     if (SOUNDS.byName.hasOwnProperty(soundName)) {
@@ -153,6 +155,15 @@ GameState.prototype.render = function(ctx) {
       var player = players[i];
       var player_next = players_next[i];
       var name = this.players[i].name;
+      if(i == this.youId){
+        this.youCharacter.renderSelf(ctx, 
+                                    states[0].players[i], 
+                                    states[1].players[i],
+                                    states[2].players[i],
+                                    this.playerImgLight,
+                                    this.playerImgDark,
+                                    name);
+      }
       Character.prototype.render.call(
           player,
           ctx,
@@ -205,20 +216,21 @@ GameState.prototype.update = function() {
     this.cameraZoom = clamp(0.1, this.cameraZoom, 3);
   }
 
+  var inputs = [
+    KEYS[87] || KEYS[38], // W, up arrow
+    KEYS[83] || KEYS[40], // S, down arrow
+    KEYS[65] || KEYS[37], // A, left arrow
+    KEYS[68] || KEYS[39],  // D, right arrow
+    MOUSE.left,
+    MOUSE.right,
+    MOUSE.x - 8 + this.cameraX,
+    MOUSE.y - 4.5 + this.cameraY
+      ];
+  this.youCharacter.update(inputs);
   if(this.wsReady) {
-    var inputs = [];
     this.ws.send(JSON.stringify({
       type: 'inputs',
-      inputs: [
-      KEYS[87] || KEYS[38], // W, up arrow
-      KEYS[83] || KEYS[40], // S, down arrow
-      KEYS[65] || KEYS[37], // A, left arrow
-      KEYS[68] || KEYS[39],  // D, right arrow
-      MOUSE.left,
-      MOUSE.right,
-      MOUSE.x - 8 + this.cameraX,
-      MOUSE.y - 4.5 + this.cameraY
-      ]
+      inputs: inputs    
     }));
   }
 };
