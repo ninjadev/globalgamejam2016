@@ -105,10 +105,16 @@ function bootstrap() {
   }
 
   document.addEventListener("keydown", function(e) {
+    if(e.keyCode == 9){ //TAB
+      e.preventDefault();
+    }
     KEYS[e.keyCode] = true;
   });
 
   document.addEventListener("keyup", function(e) {
+    if(e.keyCode == 9){ //TAB
+      e.preventDefault();
+    }
     KEYS[e.keyCode] = false;
   });
 
