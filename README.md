@@ -1,5 +1,21 @@
-# globalgamejam2016
-This is Ninjadevs contribution to the global gamejam 2016
+# Shrine Quest: Light and Dark
+
+This game is Ninjadev's contribution to Global Game Jam 2016
+
+## About the game
+
+Capture the ritual sites and shoot your enemies! "Shrine Quest: Light and Dark" is a global multiplayer-only browser game. Everyone can join in on the perpetual ongoing strife between the light and dark forces performing arcane rituals to capture shrines and dominate the battlefield.
+
+## Controls
+
+* WASD/arrow keys to move
+* Mouse move to aim
+* Left click to shoot
+* Right click to shield
+
+## Technology
+
+The game is a vanilla JS browser-based game rendered in a non-webgl 2D canvas. The accompanying server is written in vanilla JS and run with node.js.
 
 ## Setup
 
