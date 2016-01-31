@@ -236,7 +236,7 @@ function update() {
   }
   for(var i = 0; i < bullets.length; i++){
     var bullet = bullets[i];
-    bullet.update(clients, walls);
+    bullet.update(clients, walls, soundsToPlay);
     if(!bullet.active){
       bullets[i] = bullets[bullets.length - 1];
       bullets.length = bullets.length - 1;

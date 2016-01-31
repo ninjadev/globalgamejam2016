@@ -20,8 +20,7 @@ Bullet.prototype.init = function(x, y, dx, dy, team){
   this.active = true;
   this.direction = Math.atan2(dy, dx);
   this.team = team;
-  this.character;
-}
+};
 
 Bullet.prototype.fire = function(character, fire_dir_x, fire_dir_y){
   this.character = character;
@@ -31,15 +30,15 @@ Bullet.prototype.fire = function(character, fire_dir_x, fire_dir_y){
   var dy = fire_dir_y * this.SPEED;
   this.init(x, y, dx, dy, character.team);
   return this;
-}
+};
 
-Bullet.prototype.update = function(clients, walls){
+Bullet.prototype.update = function(clients, walls, soundsToPlay){
     var newX = this.x + this.dx;
     var newY = this.y + this.dy;
-    if(checkCollisionWithPlayers(clients,this, this.x, this.y, newX, newY) ||
-       checkCollisionWithWalls(walls, this, this.x, this.y, newX, newY)) {
+    if (checkCollisionWithWalls(walls, this, this.x, this.y, newX, newY)
+      || checkCollisionWithPlayers(clients,this, this.x, this.y, newX, newY, soundsToPlay)) {
       this.active = false;
-    }else{
+    } else{
       this.x = newX;
       this.y = newY;
     }
@@ -51,7 +50,7 @@ Bullet.prototype.update = function(clients, walls){
 
       this.active = false;
     }
-}
+};
 
 Bullet.prototype.render = function(ctx, bullet_next, coeff) {
   //interpolation!
@@ -78,7 +77,7 @@ Bullet.prototype.getState = function() {
   }
 }
 
-function checkCollisionWithPlayers(clients, bullet, oldX, oldY, newX, newY){
+function checkCollisionWithPlayers(clients, bullet, oldX, oldY, newX, newY, soundsToPlay){
   var hit = false;
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {
@@ -89,7 +88,7 @@ function checkCollisionWithPlayers(clients, bullet, oldX, oldY, newX, newY){
     }
     var character = clients[i].player.character;
     if (!character.timeDied && utility.intersectLineCircle(oldX, oldY, newX, newY, character.x, character.y, character.bodyRadius)) {
-      character.hit(bullet);
+      character.hit(bullet, soundsToPlay);
       hit = true;
     }
   }
