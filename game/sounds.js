@@ -8,6 +8,12 @@ var sounds = {
     'game-over-light-wins.mp3': '5',
     'game-over-dark-wins.mp3': '6',
   },
+  message: {
+    'dark-ritual-complete.mp3': 'DARK RITUAL!',
+    'light-ritual-complete.mp3': 'LIGHT RITUAL!',
+    'game-over-light-wins.mp3': 'GAME OVER! LIGHT WINS!',
+    'game-over-dark-wins.mp3': 'GAME OVER! DARK WINS!',
+  },
   byId: {}
 };
 for (var soundName in sounds.byName) {
