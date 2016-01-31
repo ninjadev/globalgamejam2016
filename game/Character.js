@@ -141,17 +141,45 @@ Character.prototype.update = function(input, walls, utility, capturePoints) {
     this.overheated = false;
   }
 
-  var coliding = false;
+
   for(var i = 0; i < walls.length; i++) {
-    if(utility.intersectLineCircle(walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y, this.x + this.dx, this.y + this.dy, this.bodyRadius)) {
-      coliding = true;
+    if(utility.intersectLineCircle(walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y, this.x, this.y, this.bodyRadius)) {
+      var p = walls[i].getPushVector(this.x, this.y, this.bodyRadius);
+      
+      //Decompose velocity!
+      var newDx = 0;
+      var newDy = 0;
+
+      
+      var p_l = Math.sqrt(p.x * p.x + p.y * p.y);
+      if(p_l > 0.0001){
+        p = { x: p.x/p_l, y: p.y / p_l }
+
+        var newSpeed = p.x * this.dx + p.y * this.dy;
+        if(newSpeed > 0){ //Moving away from wall. this is ok.
+          newDx += p.x * newSpeed;
+          newDy += p.y * newSpeed;
+        }
+
+      }
+
+      var n = { x: -p.y, y: p.x };
+      var n_l = Math.sqrt(n.x * n.x + n.y * n.y);
+      if(n_l > 0.0001){
+        n = { x: n.x/n_l, y: n.y / n_l }
+
+        var newSpeed = n.x * this.dx + n.y * this.dy;
+        newDx += n.x * newSpeed;
+        newDy += n.y * newSpeed;
+      }
+
+      this.dx = newDx;
+      this.dy = newDy;
     }
   }
-  if(!coliding) {
-    // move
-    this.x += this.dx;
-    this.y += this.dy;
-  }
+    
+  this.x += this.dx;
+  this.y += this.dy;
   
   // stay within bounds
   if (this.x < 0) {
