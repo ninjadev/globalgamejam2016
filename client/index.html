@@ -16,6 +16,8 @@
 
         <!-- lib files -->
         <script src="lib/modernizr-custom.js"></script>
+        <script src="lib/mobile-detect.min.js"></script>
+        <script src="lib/mobile-detect-modernizr.js"></script>
         <script src=lib/jquery.min.js></script>
         <script src=lib/StateManager.js></script>
         <script src=lib/pointToLine.js></script>
@@ -24,8 +26,14 @@
         <script>
             if (!Modernizr.websockets) {
                 alert(
-                    'Your browser seems to lack support for WebSockets, which this game requires.' +
-                    ' Try to use a more modern browser'
+                    'Error Your browser seems to lack support for WebSockets, which this game' +
+                    ' requires. Try to use a more modern browser'
+                )
+            }
+            if (Modernizr.mobile || Modernizr.tablet || Modernizr.phone) {
+                alert(
+                    'Warning: This game is designed to work only on computers with keyboard' +
+                    ' and mouse control. Quick, go find your laptop/desktop computer!'
                 )
             }
         </script>
