@@ -13,6 +13,7 @@ GameState.prototype.connectWebsocket = function() {
   this.ws = ws;
   this.wsReady = false;
   this.players = {};
+
   console.log("connecting to websocket");
   ws.addEventListener('open', function(e) {
     that.wsReady = true;
@@ -211,6 +212,18 @@ GameState.prototype.render = function(ctx) {
           67 / 1920 * 16 * GU);
     }
 
+    if(this.activeSoundDisplayTimer) {
+      ctx.save();
+      ctx.globalAlpha =  clamp(0, this.activeSoundDisplayTimer / 100, 1);
+      ctx.font = (0.4 * GU) + 'px Arial';
+
+      ctx.textAlign = 'left';
+      ctx.fillText('🔊' + ' ' + this.activeSoundDisplayMessage,
+          7 * GU - this.activeSoundDisplayTimer / 100 * GU * 0.5,
+          0.17 * GU);
+      ctx.restore();
+    }
+
     ctx.save();
     ctx.globalAlpha = 0.5;
     ctx.translate(13.5 * GU, 6.5 * GU);
@@ -265,6 +278,9 @@ GameState.prototype.update = function() {
   var that = this;
   this.ps.update();
 
+  if(this.activeSoundDisplayTimer) {
+    this.activeSoundDisplayTimer--;
+  }
 
   if(MOUSE.scrollY) {
     this.cameraZoom *= 1 / ((MOUSE.scrollY + 1000) / 1000);
@@ -292,9 +308,15 @@ GameState.prototype.update = function() {
   }
 };
 
+
 GameState.prototype.playSounds = function(soundIds) {
   for (var i = 0; i < soundIds.length; i++) {
     var soundName = SOUNDS.byId[soundIds[i]];
     createjs.Sound.play(soundName);
+    var message = SOUNDS.message[soundName];
+    if(message) {
+      this.activeSoundDisplayTimer = 200;
+      this.activeSoundDisplayMessage = message;
+    }
   }
 };
