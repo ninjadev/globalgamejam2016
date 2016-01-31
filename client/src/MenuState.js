@@ -56,7 +56,7 @@ MenuState.prototype.resume = function() {
   var logo = $('.logo.template').clone().removeClass('template');
   $('#wrapper').append(logo);
   $('.player-name-container').show();
-  $('#player-name-input').val(localStorage.playerName);
+  $('#player-name-input').val(localStorage.playerName || new Player().name);
 };
 
 MenuState.prototype.render = function(ctx) {
