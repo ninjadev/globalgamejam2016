@@ -192,6 +192,7 @@ function update() {
         && character.fireCooldown <= 0 
         && !character.overheated 
         && !character.onCP 
+        && !character.isShieldActive 
         && !character.timeDied) {
       character.fireCooldown = fireCooldownTime;
       var m_dir = player.input[BUTTONS.MOUSE_DIR];
