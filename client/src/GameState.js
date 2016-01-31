@@ -232,7 +232,10 @@ GameState.prototype.render = function(ctx) {
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 0.05 * GU;
     ctx.strokeRect(0, 0, this.bg.width, this.bg.height);
-    ctx.scale(0.325, 0.325);
+    ctx.restore();
+    ctx.save();
+    ctx.translate(13.5 * GU, 6.5 * GU);
+    ctx.scale(1 / 64 * 0.15 * 16, 1 / 64 * 0.15 * 16);
     ctx.globalAlpha = 0.8;
     for(var i in capture_points) {
       CapturePoint.prototype.render.call(
