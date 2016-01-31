@@ -23,7 +23,8 @@ Character.prototype.init = function(spawnPoint) {
   if (spawnPoint) {
     this.x = spawnPoint.x;
     this.y = spawnPoint.y;
-    this.timeToRespawn = null;
+    this.timeDied = null;
+    this.timeToRespawn = 0;
   } else {
     this.x = 32;
     this.y = 32;
@@ -58,6 +59,7 @@ Character.prototype.getState = function() {
     weaponHeat: this.weaponHeat,
     overheated: this.overheated,
     respawnTime: this.respawnTime,
+    timeDied: this.timeDied,
     timeToRespawn: this.timeToRespawn
   };
 };
