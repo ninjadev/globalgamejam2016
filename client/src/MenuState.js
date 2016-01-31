@@ -3,6 +3,8 @@ function MenuState() {
 
 MenuState.prototype.init = function() {
   this.bg_img = loadImage('res/menu.png');
+  this.stickerbg = loadImage('res/stickerbg.png');
+  this.stickertext = loadImage('res/stickertext.png');
 
   this.key_cooldown = 0;
 
@@ -67,6 +69,22 @@ MenuState.prototype.render = function(ctx) {
   ctx.translate(-this.bg_img.width / 2, -this.bg_img.height / 2);
   ctx.drawImage(this.bg_img, 0, 0);
   ctx.restore();
+
+  ctx.save();
+  ctx.translate(13.5 * GU, 2 * GU);
+  var scaler = 3 * GU / this.stickerbg.width * (1 + Math.sin(t / 100) * 0.02);
+  ctx.scale(scaler, scaler);
+  ctx.rotate(((t / 2000) % Math.PI * 2));
+  ctx.drawImage(this.stickerbg, -this.stickerbg.width / 2, -this.stickerbg.width / 2);
+  ctx.restore();
+  ctx.save();
+  var scaler = 3 * GU / this.stickerbg.width * (1 + Math.sin(t / 100) * 0.02);
+  ctx.translate(13.5 * GU, 2 * GU);
+  ctx.scale(scaler, scaler);
+  ctx.rotate(0.1);
+  ctx.drawImage(this.stickertext, -this.stickerbg.width / 2, -this.stickerbg.width / 2);
+  ctx.restore();
+
   $('#player-name-input').css({
     'font-size': 0.5 * GU + 'px',
     'width': 5.1 * GU + 'px',
