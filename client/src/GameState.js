@@ -218,7 +218,7 @@ GameState.prototype.render = function(ctx) {
       ctx.font = (0.4 * GU) + 'px Arial';
 
       ctx.textAlign = 'left';
-      ctx.fillText('🔊' + ' ' + this.activeSoundDisplayMessage,
+      ctx.fillText('\uD83D\uDD0A ' + this.activeSoundDisplayMessage,
           7 * GU - this.activeSoundDisplayTimer / 100 * GU * 0.5,
           0.17 * GU);
       ctx.restore();
@@ -312,6 +312,7 @@ GameState.prototype.update = function() {
 GameState.prototype.playSounds = function(soundIds) {
   for (var i = 0; i < soundIds.length; i++) {
     var soundName = SOUNDS.byId[soundIds[i]];
+    console.log('playing', soundName);
     createjs.Sound.play(soundName);
     var message = SOUNDS.message[soundName];
     if(message) {
