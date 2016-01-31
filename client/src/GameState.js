@@ -49,7 +49,7 @@ GameState.prototype.init = function() {
   this.playerImgLight = loadImage('res/player-light.png');
   this.playerImgDark = loadImage('res/player-dark.png');
   this.cpNeutralImg = loadImage('res/marker.png');
-
+  this.ps = new ParticleSystem();
 
   var soundPath = 'res/sounds/';
   for (var soundName in SOUNDS.byName) {
@@ -170,7 +170,13 @@ GameState.prototype.render = function(ctx) {
       var bullet = bullets[i];
       var bullet_next = bullets_next[i];
       Bullet.prototype.render.call(bullet, ctx, bullet_next, coeff);
+      if(bullet && bullet_next == undefined) {
+        var color = bullet.team == 0 ? 255 : 19;
+        this.ps.explode(bullet.x, bullet.y, color, color, color);
+      }
     }
+
+    this.ps.render(ctx);
 
     ctx.restore();
     ctx.textAlign = 'center';
@@ -238,6 +244,7 @@ GameState.prototype.render = function(ctx) {
 
 GameState.prototype.update = function() {
   var that = this;
+  this.ps.update();
 
 
   if(MOUSE.scrollY) {
