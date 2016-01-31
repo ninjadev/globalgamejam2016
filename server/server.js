@@ -33,6 +33,9 @@ var dark_points = 0;
 var light_points = 0;
 var soundsToPlay = {};
 var announce_timer = 0;
+/* used for triggering sound effects */
+var oldLightCapturePointCount = 0;
+var oldDarkCapturePointCount = 0;
 
 reset_game();
 
@@ -159,6 +162,11 @@ function update() {
   if(dark_points >= 30000 || light_points >= 30000) {
     if(announce_timer == 0) {
       announce_timer = time + 5000;
+      if(dark_points > light_points) {
+        soundsToPlay['game-over-dark-wins.mp3'] = true;
+      } else {
+        soundsToPlay['game-over-light-wins.mp3'] = true;
+      }
     } else if(announce_timer<time) {
       reset_game();
     }
@@ -211,7 +219,8 @@ function update() {
         character.overheated = true;
         character.weaponHeat = Character.OVERHEAT_THRESHOLD;
       }
-      soundsToPlay['bullet_fired.mp3'] = true;
+      soundsToPlay[
+        ['gun-1.mp3', 'gun-2.mp3', 'gun-3.mp3'][Math.random()*3|0]] = true;
     }
   }
   for(var i = 0; i < bullets.length; i++){
@@ -225,14 +234,18 @@ function update() {
 
   var lightOwnsAllCapturePoints = true;
   var darkOwnsAllCapturePoints = true;
+  var lightCapturePointCount = 0;
+  var darkCapturePointCount = 0;
   for(var i = 0; i < capture_points.length; i++){
     capture_points[i].update(clients);
     if(capture_points[i].ownage_d == 1) {
       dark_points += 1;
       lightOwnsAllCapturePoints = false;
+      darkCapturePointCount++;
     } else if(capture_points[i].ownage_d == -1) {
       light_points += 1;
       darkOwnsAllCapturePoints = false;
+      lightCapturePointCount++;
     } else {
       lightOwnsAllCapturePoints = false;
       darkOwnsAllCapturePoints = false;
@@ -243,6 +256,14 @@ function update() {
   } else if (darkOwnsAllCapturePoints) {
     dark_points += 30;
   }
+  if(lightCapturePointCount > oldLightCapturePointCount) {
+    soundsToPlay['light-ritual-complete.mp3'] = true;
+  }
+  if(darkCapturePointCount > oldDarkCapturePointCount) {
+    soundsToPlay['dark-ritual-complete.mp3'] = true;
+  }
+  oldLightCapturePointCount = lightCapturePointCount;
+  oldDarkCapturePointCount = darkCapturePointCount;
 }
 
 function sendNetworkState(tick) {
@@ -312,6 +333,8 @@ function reset_game() {
   dark_points = 0;
   light_points = 0;
   announce_timer = 0;
+  oldLightCapturePointCount = 0;
+  oldDarkCapturePointCount = 0;
 
   capture_points.push(new CapturePoint(14, 41));
   capture_points.push(new CapturePoint(33.8, 45.2));
