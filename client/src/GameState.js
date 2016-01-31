@@ -219,20 +219,22 @@ GameState.prototype.render = function(ctx) {
 
     // Announce the winner if the winning condition is met.
     if (state.dark_points > 30000) {
+      TabOverlay.render(ctx, players, this.players);
       ctx.fillStyle = '#191919';
-      ctx.fillRect(4 * GU, 6 * GU, 8 * GU, 1.6 * GU);
+      ctx.fillRect(4 * GU, 7 * GU, 8 * GU, 1.6 * GU);
       ctx.fillStyle = 'white';
       ctx.fillText(
         'Dark team wins! Restarting game...',
-        8 * GU, 7 * GU);
+        8 * GU, 8 * GU);
     }
     if (state.light_points > 30000) {
+      TabOverlay.render(ctx, players, this.players);
       ctx.fillStyle = 'white';
-      ctx.fillRect(3 * GU, 6 * GU, 10 * GU, 1.6 * GU);
+      ctx.fillRect(3 * GU, 7 * GU, 10 * GU, 1.6 * GU);
       ctx.fillStyle = '#191919';
       ctx.fillText(
         'LIGHT TEAM WINS! Restarting game...',
-        8 * GU, 7 * GU);
+        8 * GU, 8 * GU);
     }
     if (you) {
       Character.prototype.renderUi.call(you, ctx);
