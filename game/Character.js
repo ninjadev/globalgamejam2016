@@ -92,7 +92,7 @@ Character.getTimeUntilRespawn = function(timeDied) {
   return Math.max(timeDied + 4000 - currentTime, 0);
 };
 
-Character.getRandomSpawnPoint = function(team, capturePoints) {
+/*Character.getRandomSpawnPoint = function(team, capturePoints) {
   var possibleSpawnPoints = [];
   for (var i = 0; i < capturePoints.length; i++) {
     var capturePoint = capturePoints[i];
@@ -105,13 +105,31 @@ Character.getRandomSpawnPoint = function(team, capturePoints) {
     return possibleSpawnPoints[spawnPointIndex];
   }
   return null;
-};
+}; */
 
+var defaultSpawn = [{x:5, y:32}, {x:55, y:32}];
+Character.getDefaultPoint = function(team) {
+  return defaultSpawn[team];
+}
+
+Character.getClosestSpawnPoint = function(team, character, capturePoints) {
+  var spawnPoint = defaultSpawn[team];
+  var dist = 999999; //bigger than map.
+  for (var i = 0; i < capturePoints.length; i++) {
+    var capturePoint = capturePoints[i];
+    if (team === 0 && capturePoint.ownage_d === -1 || team === 1 && capturePoint.ownage_d === 1) {
+      if(capturePoint.sqDistanceTo(character) < dist){
+        spawnPoint = capturePoint;
+      }
+    }
+  }
+  return spawnPoint;
+};
 Character.prototype.update = function(input, walls, utility, capturePoints) {
   if (this.timeDied) {
     var timeUntilRespawn = Character.getTimeUntilRespawn(this.timeDied);
     if (timeUntilRespawn <= 0) {
-      var spawnPoint = Character.getRandomSpawnPoint(this.team, capturePoints);
+      var spawnPoint = Character.getClosestSpawnPoint(this.team,this, capturePoints);
       if (spawnPoint) {
         this.init(spawnPoint);
       }
