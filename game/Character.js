@@ -108,6 +108,10 @@ Character.getTimeUntilRespawn = function(timeDied) {
 }; */
 
 var defaultSpawn = [{x:5, y:32}, {x:55, y:32}];
+Character.getDefaultPoint = function(team) {
+  return defaultSpawn[team];
+}
+
 Character.getClosestSpawnPoint = function(team, character, capturePoints) {
   var spawnPoint = defaultSpawn[team];
   var dist = 999999; //bigger than map.

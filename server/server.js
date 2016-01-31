@@ -69,7 +69,7 @@ wsServer.on('request', function(r) {
       }
       teamCount[team]++;
 
-      var spawnPoint = Character.getRandomSpawnPoint(team, capture_points);
+      var spawnPoint = Character.getDefaultPoint(team);
 
       connection.player = {
         character: new Character(team, spawnPoint),
@@ -325,13 +325,6 @@ function reset_game() {
   capture_points.push(new CapturePoint(33, 25));
   capture_points.push(new CapturePoint(32, 38));
   capture_points.push(new CapturePoint(51, 37.8));
-
-  var randomizedCapturePointIds = shuffle([0, 1, 2, 3, 4]);
-  capture_points[randomizedCapturePointIds[0]].team = DARK;
-  capture_points[randomizedCapturePointIds[0]].ownage_d = 1;
-
-  capture_points[randomizedCapturePointIds[1]].team = LIGHT;
-  capture_points[randomizedCapturePointIds[1]].ownage_d = -1;
 
   for(var i in clients) {
     if(!clients.hasOwnProperty(i)) {
