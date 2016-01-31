@@ -19,15 +19,15 @@ TabOverlay.render = function(ctx, players, local_players){
   ctx.translate(0, line_height);
 
   ctx.textAlign = 'left';
-  ctx.font = 0.4 * GU + 'px serif';
+  ctx.font = 0.4 * GU + 'px Arial';
   ctx.fillStyle = 'white';
-  ctx.fillText("Light team", light_pos, light_line * line_height + col_start);
-  ctx.fillText("Dark team", dark_pos, dark_line * line_height + col_start);
+  ctx.fillText("LIGHT", light_pos, light_line * line_height + col_start);
+  ctx.fillText("DARK", dark_pos, dark_line * line_height + col_start);
   dark_line+=2;
   light_line+=2;
 
 
-  ctx.font = 0.3 * GU + 'px serif';
+  ctx.font = 0.3 * GU + 'px monospace';
   ctx.fillStyle = 'white';
 
   for(var i in players) {
@@ -35,7 +35,7 @@ TabOverlay.render = function(ctx, players, local_players){
       var name = local_players[i].name;
       var team = player.team;
       console.log(player);
-      var playerString = name + ' (K:' + player.kills + ' D:'+player.deaths +')'; 
+      var playerString = '' + player.kills + 'K/'+player.deaths +'A  name'; 
       switch(team){
         case 0:
           //light
