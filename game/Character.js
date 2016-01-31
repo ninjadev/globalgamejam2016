@@ -10,6 +10,7 @@ function Character(team, spawnPoint) {
   this.bodyRadius = 0.6;
   this.MAX_HP = 10;
   this.team = team;
+  this.onCP = false;
   this.init(spawnPoint);
 }
 
