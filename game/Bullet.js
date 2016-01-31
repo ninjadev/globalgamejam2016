@@ -2,6 +2,7 @@ try {
   window;
 } catch(e) {
   var utility = require('./../game/utility');
+  var Character = require('./../game/Character');
 }
 
 function Bullet() {
@@ -24,8 +25,8 @@ Bullet.prototype.init = function(x, y, dx, dy, team){
 
 Bullet.prototype.fire = function(character, fire_dir_x, fire_dir_y){
   this.character = character;
-  var x = character.x + (0.5 + this.WEAPON_DISTANCE) * fire_dir_x;
-  var y = character.y + (0.5 +  this.WEAPON_DISTANCE) * fire_dir_y;
+  var x = character.x + (Character.BODY_RADIUS + this.WEAPON_DISTANCE) * fire_dir_x;
+  var y = character.y + (Character.BODY_RADIUS +  this.WEAPON_DISTANCE) * fire_dir_y;
   var dx = fire_dir_x * this.SPEED;
   var dy = fire_dir_y * this.SPEED;
   this.init(x, y, dx, dy, character.team);
@@ -87,7 +88,7 @@ function checkCollisionWithPlayers(clients, bullet, oldX, oldY, newX, newY, soun
       continue;
     }
     var character = clients[i].player.character;
-    if (!character.timeDied && utility.intersectLineCircle(oldX, oldY, newX, newY, character.x, character.y, character.BODY_RADIUS)) {
+    if (!character.timeDied && utility.intersectLineCircle(oldX, oldY, newX, newY, character.x, character.y, Character.BODY_RADIUS)) {
       character.hit(bullet, soundsToPlay);
       hit = true;
     }
