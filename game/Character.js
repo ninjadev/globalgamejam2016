@@ -7,7 +7,6 @@ try {
 function Character(team, spawnPoint) {
   this.breakingCoefficient = 0.025;
   this.accelerationCoefficient = 0.012;
-  this.bodyRadius = 0.6;
   this.MAX_HP = 10;
   this.team = team;
   this.onCP = false;
@@ -18,6 +17,7 @@ function Character(team, spawnPoint) {
 
 Character.MAX_SHIELD_ARC = 0.2 * Math.PI;
 Character.OVERHEAT_THRESHOLD = 1.5;
+Character.BODY_RADIUS = 0.6;
 
 Character.prototype.init = function(spawnPoint) {
   if (spawnPoint) {
@@ -169,8 +169,8 @@ Character.prototype.update = function(input, walls, utility, capturePoints, poin
 
 
   for(var i = 0; i < walls.length; i++) {
-    if(utility.intersectLineCircle(walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y, this.x, this.y, this.bodyRadius)) {
-      var p = walls[i].getPushVector(this.x, this.y, this.bodyRadius);
+    if(utility.intersectLineCircle(walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y, this.x, this.y, Character.BODY_RADIUS)) {
+      var p = walls[i].getPushVector(this.x, this.y, Character.BODY_RADIUS);
       
       //Decompose velocity!
       var newDx = 0;
@@ -288,7 +288,6 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
 
   var hp = this.hp * (1 - coeff) + player_next.hp * coeff;
 
-  var bodyRadius = this.bodyRadius;
   ctx.save();
   ctx.translate(x * GU, y * GU);
   ctx.scale(0.6, 0.6);
@@ -332,11 +331,11 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
   if (this.isShieldActive && this.shieldEnergy > 0) {
     ctx.beginPath();
     ctx.strokeStyle = '#BCBCBC';
-    ctx.lineWidth = 10  + 10 * this.shieldEnergy;
+    ctx.lineWidth = GU * (0.075  + 0.075 * this.shieldEnergy);
     ctx.arc(
       0,
       0,
-      180,
+      GU * (Character.BODY_RADIUS * + 0.2) * 12,
       -Character.MAX_SHIELD_ARC * Math.max(this.shieldEnergy, 0),
       Character.MAX_SHIELD_ARC * Math.max(this.shieldEnergy, 0),
       false
