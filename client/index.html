@@ -15,11 +15,20 @@
         <link rel=stylesheet href=res/style.css />
 
         <!-- lib files -->
+        <script src="lib/modernizr-custom.js"></script>
         <script src=lib/jquery.min.js></script>
         <script src=lib/StateManager.js></script>
         <script src=lib/pointToLine.js></script>
         <script src=lib/soundjs-0.6.2.min.js></script>
 
+        <script>
+            if (!Modernizr.websockets) {
+                alert(
+                    'Your browser seems to lack support for WebSockets, which this game requires.' +
+                    ' Try to use a more modern browser'
+                )
+            }
+        </script>
         <!-- bootstrap -->
         <script src=src/bootstrap.js></script>
 
