@@ -211,8 +211,8 @@ function update() {
         for (var i = 0; i < walls.length; i++) {
           if (utility.lineIntersect(character.x,
                 character.y,
-                character.x + (character.bodyRadius + 0.2) * fire_dir_x,
-                character.y + (character.bodyRadius + 0.2) * fire_dir_y,
+                character.x + (Character.BODY_RADIUS + 0.2) * fire_dir_x,
+                character.y + (Character.BODY_RADIUS + 0.2) * fire_dir_y,
                 walls[i].start_x,
                 walls[i].start_y,
                 walls[i].end_x,
