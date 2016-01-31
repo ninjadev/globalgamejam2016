@@ -65,7 +65,7 @@ Character.prototype.hit = function(bullet) {
   }
 
   if (this.canShieldTakeBullet(bullet)) {
-    this.shieldEnergy *= 0.25;
+    this.shieldEnergy -= 0.45;
   } else {
     this.dx += bullet.dx;
     this.dy += bullet.dy;
@@ -83,14 +83,14 @@ Character.prototype.hit = function(bullet) {
 Character.prototype.killed = function(enemy){
   //YEEY
   this.kills++;
-}
+};
 
 
 Character.prototype.die = function(){
-      this.hp = 0;
-      this.timeDied = +new Date();
-      this.respawnTime = 1000 + this.points * 0.3;
-}
+  this.hp = 0;
+  this.timeDied = +new Date();
+  this.respawnTime = 1000 + this.points * 0.3;
+};
 
 Character.prototype.canShieldTakeBullet = function(bullet) {
   if (!this.isShieldActive) {
@@ -101,8 +101,8 @@ Character.prototype.canShieldTakeBullet = function(bullet) {
     mouseDirection += 2 * Math.PI;
   }
   var oppositeShieldDirection = mouseDirection + Math.PI;
-  var minShieldDirection = oppositeShieldDirection - Character.MAX_SHIELD_ARC * this.shieldEnergy;
-  var maxShieldDirection = oppositeShieldDirection + Character.MAX_SHIELD_ARC * this.shieldEnergy;
+  var minShieldDirection = oppositeShieldDirection - Character.MAX_SHIELD_ARC * Math.max(this.shieldEnergy, 0);
+  var maxShieldDirection = oppositeShieldDirection + Character.MAX_SHIELD_ARC * Math.max(this.shieldEnergy, 0);
   var bulletDirection = bullet.direction + 2 * Math.PI;
   return bulletDirection <= maxShieldDirection && bulletDirection >= minShieldDirection;
 };
@@ -112,25 +112,10 @@ Character.prototype.getTimeUntilRespawn = function(timeDied) {
   return Math.max(timeDied + this.respawnTime - currentTime, 0);
 };
 
-/*Character.getRandomSpawnPoint = function(team, capturePoints) {
-  var possibleSpawnPoints = [];
-  for (var i = 0; i < capturePoints.length; i++) {
-    var capturePoint = capturePoints[i];
-    if (team === 0 && capturePoint.ownage_d === -1 || team === 1 && capturePoint.ownage_d === 1) {
-      possibleSpawnPoints.push(capturePoint);
-    }
-  }
-  if (possibleSpawnPoints.length) {
-    var spawnPointIndex = Math.floor(possibleSpawnPoints.length * Math.random());
-    return possibleSpawnPoints[spawnPointIndex];
-  }
-  return null;
-}; */
-
 var defaultSpawn = [{x:5, y:32}, {x:55, y:32}];
 Character.getDefaultPoint = function(team) {
   return defaultSpawn[team];
-}
+};
 
 Character.getClosestSpawnPoint = function(team, character, capturePoints) {
   var spawnPoint = defaultSpawn[team];
@@ -160,7 +145,7 @@ Character.prototype.update = function(input, walls, utility, capturePoints, poin
 
   this.applyMovementForce(input);
   this.applyFrictionForce();
-  this.mouseDirection = input[BUTTONS.MOUSE_DIR]
+  this.mouseDirection = input[BUTTONS.MOUSE_DIR];
 
   this.isShieldActive = input[BUTTONS.ALTERNATE_FIRE];
   this.shieldEnergy += 0.003;
@@ -327,16 +312,16 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
   var img = this.team == 0 ? lightImg : darkImg;
   ctx.drawImage(img, -img.width / 2, -img.height / 2 - 52);
   
-  if (this.isShieldActive) {
+  if (this.isShieldActive && this.shieldEnergy > 0) {
     ctx.beginPath();
     ctx.strokeStyle = '#BCBCBC';
-    ctx.lineWidth = 20  + 20 * this.shieldEnergy;
+    ctx.lineWidth = 10  + 10 * this.shieldEnergy;
     ctx.arc(
       0,
       0,
-      300,
-      -Character.MAX_SHIELD_ARC * this.shieldEnergy,
-      Character.MAX_SHIELD_ARC * this.shieldEnergy,
+      180,
+      -Character.MAX_SHIELD_ARC * Math.max(this.shieldEnergy, 0),
+      Character.MAX_SHIELD_ARC * Math.max(this.shieldEnergy, 0),
       false
     );
     ctx.stroke();
