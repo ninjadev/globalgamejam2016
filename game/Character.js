@@ -149,11 +149,7 @@ Character.prototype.update = function(input, walls, utility, capturePoints, poin
 
   this.applyMovementForce(input);
   this.applyFrictionForce();
-  var mouse_x = input[BUTTONS.MOUSE_X] || 0;
-  var mouse_y = input[BUTTONS.MOUSE_Y] || 0;
-  this.mouseDirection = Math.atan2(
-    mouse_y - this.y,
-    mouse_x - this.x);
+  this.mouseDirection = input[BUTTONS.MOUSE_DIR]
 
   this.isShieldActive = input[BUTTONS.ALTERNATE_FIRE];
   this.shieldEnergy += 0.003;

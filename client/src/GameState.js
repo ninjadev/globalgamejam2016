@@ -234,6 +234,10 @@ GameState.prototype.update = function() {
     this.cameraZoom = clamp(0.1, this.cameraZoom, 3);
   }
 
+  var mouseDir = Math.atan2(
+    MOUSE.y - 4.5,
+    MOUSE.x - 8);
+
   if(this.wsReady) {
     var inputs = [];
     this.ws.send(JSON.stringify({
@@ -245,8 +249,7 @@ GameState.prototype.update = function() {
       KEYS[68] || KEYS[39],  // D, right arrow
       MOUSE.left,
       MOUSE.right,
-      MOUSE.x - 8 + this.cameraX,
-      MOUSE.y - 4.5 + this.cameraY
+      mouseDir
       ]
     }));
   }
