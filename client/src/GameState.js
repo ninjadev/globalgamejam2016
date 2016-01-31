@@ -193,18 +193,23 @@ GameState.prototype.render = function(ctx) {
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     ctx.font = (0.1 * GU) + 'px monospace';
-    ctx.fillText('' + (state.light_points / 300 | 0),
-        (104 + 10 + (state.light_points / 100 / 300) * 374) / 1920 * 16 * GU,
-        18 / 1920 * 16 * GU);
+
+    if(state.light_points / 300 > 0) {
+      ctx.fillText('' + (state.light_points / 300 | 0),
+          (104 + 10 + (state.light_points / 100 / 300) * 374) / 1920 * 16 * GU,
+          18 / 1920 * 16 * GU);
+    }
     ctx.fillStyle = '#191919';
     ctx.fillRect(104 / 1920 * 16 * GU, 69 / 1920 * 16 * GU,
         374 / 1920 * 16 * GU * state.dark_points / 100 / 300,
      12 / 1920 * 16 * GU);
 
-    ctx.fillStyle = 'white';
-    ctx.fillText('' + (state.dark_points / 300 | 0),
-        (104 + 10 + (state.dark_points / 100 / 300) * 374) / 1920 * 16 * GU,
-        67 / 1920 * 16 * GU);
+    if(state.dark_points / 300 > 0) {
+      ctx.fillStyle = 'white';
+      ctx.fillText('' + (state.dark_points / 300 | 0),
+          (104 + 10 + (state.dark_points / 100 / 300) * 374) / 1920 * 16 * GU,
+          67 / 1920 * 16 * GU);
+    }
 
     ctx.save();
     ctx.globalAlpha = 0.5;
