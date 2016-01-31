@@ -1,4 +1,10 @@
 
+/* smoothstep interpolates between a and b, at time t from 0 to 1 */
+function smoothstep(a, b, t) {
+  var v = t * t * (3 - 2 * t);
+  return b * v + a * (1 - v);
+}
+
 last_cp_id = 0;
 
 function CapturePoint(x, y) {
@@ -9,6 +15,8 @@ function CapturePoint(x, y) {
   this.id = last_cp_id++;
   this.ownage_d = 0;
   this.locked_ownage = 0;
+  this.old_ownage_d = 0;
+  this.blast_timer = 0;
 }
 
 
@@ -31,8 +39,17 @@ function sign(x) {
   return 1;
 }
 
+CapturePoint.MAX_BLAST_TIMER = 40;
+
 
 CapturePoint.prototype.update = function(clients){
+  if(this.blast_timer > 0) {
+    this.blast_timer--;
+  }
+  if(Math.abs(this.ownage_d) == 1 && this.ownage_d != this.old_ownage_d) {
+    this.blast_timer = CapturePoint.MAX_BLAST_TIMER;
+  }
+  this.old_ownage_d = this.ownage_d;
   //calculate number of people standing on me.
   var light = 0;
   var dark = 0;
@@ -118,6 +135,17 @@ CapturePoint.prototype.render = function(ctx, cpNext, neutralImg, ui) {
     ctx.arc(0, 0, outerRadius, 0, Math.PI * 2);
     ctx.fill();
   }
+  if(this.blast_timer) {
+    var falloff = smoothstep(0, 2,  this.blast_timer / CapturePoint.MAX_BLAST_TIMER / 2);
+    if(this.ownage_d < 0) {
+      ctx.fillStyle = 'rgba(255, 255, 255,  ' + (falloff * 0.8) + ')';
+    } else {
+      ctx.fillStyle = 'rgba(0, 0, 0,  ' + (falloff * 0.8) + ')';
+    }
+    ctx.beginPath();
+    ctx.arc(0, 0, outerRadius + (1/CapturePoint.MAX_BLAST_TIMER) * 2 * GU * (CapturePoint.MAX_BLAST_TIMER - this.blast_timer), 0, Math.PI * 2);
+    ctx.fill();
+  }
   ctx.strokeStyle = 'black';
   ctx.beginPath();
   var step = 216 / 360 * Math.PI * 2;
@@ -175,7 +203,8 @@ CapturePoint.prototype.getState = function() {
   return {
     x: this.x,
     y: this.y,
-    ownage_d: this.ownage_d
+    ownage_d: this.ownage_d,
+    blast_timer: this.blast_timer
   }
 }
 
