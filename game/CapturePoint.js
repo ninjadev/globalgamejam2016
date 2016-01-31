@@ -101,16 +101,9 @@ CapturePoint.prototype.sqDistToPlayer = function(character){
 }
 
 CapturePoint.prototype.render = function(ctx, cpNext, neutralImg, ui) {
-  if(ui){ //overloading hack, yo!
-    var x = this.x/15 ;
-    var y = this.y/15 - 1.2 ;
-    var scale = 0.08;
-  }else{
-    var x = this.x;
-    var y = this.y;
-    var scale = 0.6;
-  }
-
+  var x = this.x;
+  var y = this.y;
+  var scale = 0.6;
   ctx.save();
   ctx.translate(x * GU, y * GU);
   ctx.scale(scale, scale);

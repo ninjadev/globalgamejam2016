@@ -189,16 +189,22 @@ GameState.prototype.render = function(ctx) {
         '' + (state.dark_points / 300 | 0),
         9.1 * GU, 0.68 * GU);
 
-    ctx.fillStyle = "rgba(60,60,60,0.8)";
-    ctx.fillRect(0.7 * GU, 0.2 * GU, 3.2 * GU, 2 * GU);
     ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.translate(13.5 * GU, 6.5 * GU);
+    ctx.scale(16 * GU / 1920 * 0.15, 16 * GU / 1920 * 0.15);
+    ctx.drawImage(this.bg, 0, 0);
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 0.05 * GU;
+    ctx.strokeRect(0, 0, this.bg.width, this.bg.height);
+    ctx.scale(0.325, 0.325);
+    ctx.globalAlpha = 0.8;
     for(var i in capture_points) {
       CapturePoint.prototype.render.call(
           capture_points[i], 
           ctx,
           capture_points_next[i],
-          this.cpNeutralImg,
-          true);
+          this.cpNeutralImg);
     }
     ctx.restore();
     
