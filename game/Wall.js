@@ -19,6 +19,14 @@ Wall.prototype.update = function() {
 
 Wall.prototype.render = function(ctx, wall_next, coeff) {
 	// Currently not used as this is treated serverside.
+  ctx.translate(this.start_x * GU, this.start_y * GU);
+
+  ctx.strokeStyle = 'black';
+  ctx.beginPath();
+  ctx.lineTo((this.end_x - this.start_x) * GU,
+             (this.end_y - this.start_y) * GU);
+  ctx.stroke();
+
 }
 
 Wall.prototype.getState = function() {
