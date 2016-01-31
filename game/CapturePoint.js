@@ -15,6 +15,14 @@ function CapturePoint(x, y) {
 CapturePoint.prototype.init = function(){
 }
 
+CapturePoint.prototype.sqDistanceTo = function(vec) {
+  var dx = vec.x - this.x;
+  var dy = vec.y - this.y;
+
+  return dx * dx + dy * dy;
+  
+}
+
 
 function sign(x) {
   if(x < 0) {
