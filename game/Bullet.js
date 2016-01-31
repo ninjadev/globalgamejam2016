@@ -27,8 +27,8 @@ Bullet.prototype.fire = function(character, fire_dir_x, fire_dir_y){
   this.character = character;
   var x = character.x + (character.bodyRadius + this.WEAPON_DISTANCE) * fire_dir_x;
   var y = character.y + (character.bodyRadius + this.WEAPON_DISTANCE) * fire_dir_y;
-  var dx = fire_dir_x * this.SPEED + character.dx;
-  var dy = fire_dir_y * this.SPEED + character.dy;
+  var dx = fire_dir_x * this.SPEED;
+  var dy = fire_dir_y * this.SPEED;
   this.init(x, y, dx, dy, character.team);
   return this;
 }
