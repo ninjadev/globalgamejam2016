@@ -268,7 +268,7 @@ GameState.prototype.update = function() {
 
   if(MOUSE.scrollY) {
     this.cameraZoom *= 1 / ((MOUSE.scrollY + 1000) / 1000);
-    this.cameraZoom = clamp(0.1, this.cameraZoom, 3);
+    this.cameraZoom = clamp(0.42, this.cameraZoom, 3);
   }
 
   var mouseDir = Math.atan2(
