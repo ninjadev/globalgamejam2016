@@ -252,7 +252,7 @@ GameState.prototype.render = function(ctx) {
     ctx.font = 0.5 * GU + 'px Arial';
     ctx.textAlign = 'center';
     ctx.baseLine = 'bottom';
-    if (state.dark_points > 300) {
+    if (state.dark_points > 30000) {
       if(!KEYS[9]) {
         TabOverlay.render(ctx, players, this.players);
       }
