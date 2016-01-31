@@ -101,7 +101,7 @@ CapturePoint.prototype.sqDistToPlayer = function(character){
   return dx*dx + dy*dy;
 }
 
-CapturePoint.prototype.render = function(ctx, cpNext, neutralImg, ui) {
+CapturePoint.prototype.render = function(ctx, cpNext, neutralImg) {
   var x = this.x;
   var y = this.y;
   var scale = 0.6;

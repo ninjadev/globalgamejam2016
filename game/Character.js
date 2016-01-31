@@ -274,7 +274,7 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
   if (this.timeDied) {
     ctx.save();
     ctx.translate(x * GU, y * GU);
-    ctx.scale(GU * 0.01, GU * 0.01);
+    ctx.scale(1.2, 1.2);
     ctx.font = GU + 'px Arial';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
@@ -289,7 +289,7 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
   var bodyRadius = this.bodyRadius;
   ctx.save();
   ctx.translate(x * GU, y * GU);
-  ctx.scale(GU * 0.005, GU * 0.005);
+  ctx.scale(0.6, 0.6);
   ctx.font = (.5 * GU) + 'px Arial';
   var width = ctx.measureText(name).width;
   var padding = GU * 0.5;
@@ -311,9 +311,21 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
       -1.9 * GU,
       hpWidth + 0.2 * GU, 0.4 * GU);
 
+  ctx.restore();
+  ctx.save();
+
+  ctx.translate(x * GU, y * GU);
+  ctx.scale(GU * 0.005, GU * 0.005);
   ctx.rotate(this.mouseDirection);
   var img = this.team == 0 ? lightImg : darkImg;
   ctx.drawImage(img, -img.width / 2, -img.height / 2 - 52);
+
+  ctx.restore();
+  ctx.save();
+
+  ctx.translate(x * GU, y * GU);
+  ctx.scale(0.6, 0.6);
+  ctx.rotate(this.mouseDirection);
   
   if (this.isShieldActive && this.shieldEnergy > 0) {
     ctx.beginPath();
