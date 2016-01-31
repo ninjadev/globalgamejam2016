@@ -188,7 +188,12 @@ function update() {
       character.fireCooldown--;
     }
 
-    if (player.input[BUTTONS.FIRE] && character.fireCooldown <= 0 && !character.overheated && !character.timeDied) {
+    if (player.input[BUTTONS.FIRE] 
+        && character.fireCooldown <= 0 
+        && !character.overheated 
+        && !character.onCP 
+        && !character.isShieldActive 
+        && !character.timeDied) {
       character.fireCooldown = fireCooldownTime;
       var m_dir = player.input[BUTTONS.MOUSE_DIR];
 
@@ -230,6 +235,19 @@ function update() {
       bullets[i] = bullets[bullets.length - 1];
       bullets.length = bullets.length - 1;
     }
+  }
+
+  //Set onCP = false for all players
+  for(var i in clients) {
+    if(!clients.hasOwnProperty(i)) {
+      continue;
+    }
+    var player = clients[i].player;
+    if (!player) {
+      continue;
+    }
+    var character = player.character;
+    character.onCP = false;
   }
 
   var lightOwnsAllCapturePoints = true;
