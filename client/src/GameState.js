@@ -189,6 +189,17 @@ GameState.prototype.render = function(ctx) {
         '' + (state.dark_points / 300 | 0),
         9.1 * GU, 0.68 * GU);
 
+    ctx.fillStyle = "rgba(60,60,60,0.8)";
+    ctx.fillRect(0.7 * GU, 0.2 * GU, 3.2 * GU, 2 * GU);
+    for(var i in capture_points) {
+      CapturePoint.prototype.render.call(
+          capture_points[i], 
+          ctx,
+          capture_points_next[i],
+          this.cpNeutralImg,
+          true);
+    }
+
     // Announce the winner if the winning condition is met.
     if (state.dark_points > 30000) {
       ctx.fillStyle = '#191919';
