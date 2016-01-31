@@ -50,6 +50,7 @@ GameState.prototype.init = function() {
   this.playerImgDark = loadImage('res/player-dark.png');
   this.cpNeutralImg = loadImage('res/marker.png');
 
+
   var soundPath = 'res/sounds/';
   for (var soundName in SOUNDS.byName) {
     if (SOUNDS.byName.hasOwnProperty(soundName)) {
