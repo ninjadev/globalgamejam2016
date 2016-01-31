@@ -8,6 +8,9 @@ var sounds = {
     'game-over-light-wins.mp3': '5',
     'game-over-dark-wins.mp3': '6',
     'click.mp3': '7',
+    'shield-hit-1.mp3': '8',
+    'shield-hit-2.mp3': '9',
+    'shield-hit-3.mp3': '10'
   },
   message: {
     'dark-ritual-complete.mp3': 'DARK RITUAL!',

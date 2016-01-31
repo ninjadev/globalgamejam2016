@@ -61,13 +61,15 @@ Character.prototype.getState = function() {
   };
 };
 
-Character.prototype.hit = function(bullet) {
-  if(bullet.team == this.team){
+Character.prototype.hit = function(bullet, soundsToPlay) {
+  if (bullet.team == this.team){
     return;
   }
 
   if (this.canShieldTakeBullet(bullet)) {
     this.shieldEnergy -= 0.45;
+    var shieldSoundIndex = Math.floor(3 * Math.random()) + 1;
+    soundsToPlay['shield-hit-' + shieldSoundIndex + '.mp3'] = true;
   } else {
     this.dx += bullet.dx;
     this.dy += bullet.dy;
