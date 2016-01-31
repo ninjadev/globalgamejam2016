@@ -87,7 +87,7 @@ function checkCollisionWithPlayers(clients, bullet, oldX, oldY, newX, newY, soun
       continue;
     }
     var character = clients[i].player.character;
-    if (!character.timeDied && utility.intersectLineCircle(oldX, oldY, newX, newY, character.x, character.y, character.BODY_RADIUS)) {
+    if (!character.timeDied && utility.intersectLineCircle(oldX, oldY, newX, newY, character.x, character.y, Character.BODY_RADIUS)) {
       character.hit(bullet, soundsToPlay);
       hit = true;
     }
