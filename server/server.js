@@ -330,8 +330,10 @@ function reset_game() {
     if(!clients.hasOwnProperty(i)) {
       continue;
     }
-    clients[i].player.hp = 10;
-    clients[i].player.weaponHeat = 0;
-    clients[i].player.overheated = false;
+    var player = clients[i].player;
+    if(player){
+      var chara = player.character;
+      chara.init(Character.getDefaultPoint(chara.team));
+    }
   }
 }
