@@ -7,7 +7,7 @@ try {
 function Character(team, spawnPoint) {
   this.breakingCoefficient = 0.025;
   this.accelerationCoefficient = 0.012;
-  this.bodyRadius = 0.4;
+  this.bodyRadius = 0.6;
   this.MAX_HP = 10;
   this.team = team;
   this.init(spawnPoint);
