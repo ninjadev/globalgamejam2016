@@ -23,11 +23,12 @@ Character.prototype.init = function(spawnPoint) {
   if (spawnPoint) {
     this.x = spawnPoint.x;
     this.y = spawnPoint.y;
-    this.timeDied = null;
+    this.timeToRespawn = null;
   } else {
     this.x = 32;
     this.y = 32;
     this.timeDied = +new Date();
+    this.timeToRespawn = this.getTimeUntilRespawn(this.timeDied);
   }
 
   this.dx = 0;
@@ -50,14 +51,14 @@ Character.prototype.getState = function() {
     hp: this.hp,
     kills: this.kills,
     deaths: this.deaths,
-    respawnTime: this.respawnTime,
     mouseDirection: this.mouseDirection,
     isShieldActive: this.isShieldActive,
     shieldEnergy: this.shieldEnergy,
     team: this.team,
     weaponHeat: this.weaponHeat,
     overheated: this.overheated,
-    timeDied: this.timeDied
+    respawnTime: this.respawnTime,
+    timeToRespawn: this.timeToRespawn
   };
 };
 
@@ -138,8 +139,8 @@ Character.getClosestSpawnPoint = function(team, character, capturePoints) {
 Character.prototype.update = function(input, walls, utility, capturePoints, points) {
   this.points = points;
   if (this.timeDied) {
-    var timeUntilRespawn = this.getTimeUntilRespawn(this.timeDied);
-    if (timeUntilRespawn <= 0) {
+    this.timeToRespawn = this.getTimeUntilRespawn(this.timeDied);
+    if (this.timeToRespawn <= 0) {
       var spawnPoint = Character.getClosestSpawnPoint(this.team,this, capturePoints);
       if (spawnPoint) {
         this.init(spawnPoint);
@@ -273,15 +274,14 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
   var x = this.x * (1 - coeff) + player_next.x * coeff;
   var y = this.y * (1 - coeff) + player_next.y * coeff;
 
-  if (this.timeDied) {
+  if (this.timeToRespawn) {
     ctx.save();
     ctx.translate(x * GU, y * GU);
     ctx.scale(1.2, 1.2);
     ctx.font = GU + 'px Arial';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
-    var timeUntilRespawn = Character.prototype.getTimeUntilRespawn.call(this, this.timeDied);
-    ctx.fillText(name + ' is dead (' + Math.ceil(timeUntilRespawn / 1000).toString() + ')', 0, 0);
+    ctx.fillText(name + ' is dead (' + Math.ceil(this.timeToRespawn / 1000).toString() + ')', 0, 0);
     ctx.restore();
     return;
   }
