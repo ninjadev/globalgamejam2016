@@ -35,6 +35,8 @@ Character.prototype.init = function(spawnPoint) {
   this.shieldEnergy = 1;
   this.weaponHeat = 0;
   this.overheated = false;
+  this.points = 0;
+  this.respawnTime = 4000;
 };
 
 Character.prototype.getState = function() {
@@ -43,6 +45,7 @@ Character.prototype.getState = function() {
     x: this.x,
     y: this.y,
     hp: this.hp,
+    respawnTime: this.respawnTime,
     mouseDirection: this.mouseDirection,
     isShieldActive: this.isShieldActive,
     shieldEnergy: this.shieldEnergy,
@@ -66,11 +69,17 @@ Character.prototype.hit = function(bullet) {
 
     this.hp --;
     if (this.hp <= 0){
-      this.hp = 0;
-      this.timeDied = +new Date();
+      this.die();
     }
   }
 };
+
+
+Character.prototype.die = function(){
+      this.hp = 0;
+      this.timeDied = +new Date();
+      this.respawnTime = 1000 + this.points * 0.3;
+}
 
 Character.prototype.canShieldTakeBullet = function(bullet) {
   if (!this.isShieldActive) {
@@ -87,9 +96,9 @@ Character.prototype.canShieldTakeBullet = function(bullet) {
   return bulletDirection <= maxShieldDirection && bulletDirection >= minShieldDirection;
 };
 
-Character.getTimeUntilRespawn = function(timeDied) {
+Character.prototype.getTimeUntilRespawn = function(timeDied) {
   var currentTime = +new Date();
-  return Math.max(timeDied + 4000 - currentTime, 0);
+  return Math.max(timeDied + this.respawnTime - currentTime, 0);
 };
 
 /*Character.getRandomSpawnPoint = function(team, capturePoints) {
@@ -125,9 +134,10 @@ Character.getClosestSpawnPoint = function(team, character, capturePoints) {
   }
   return spawnPoint;
 };
-Character.prototype.update = function(input, walls, utility, capturePoints) {
+Character.prototype.update = function(input, walls, utility, capturePoints, points) {
+  this.points = points;
   if (this.timeDied) {
-    var timeUntilRespawn = Character.getTimeUntilRespawn(this.timeDied);
+    var timeUntilRespawn = this.getTimeUntilRespawn(this.timeDied);
     if (timeUntilRespawn <= 0) {
       var spawnPoint = Character.getClosestSpawnPoint(this.team,this, capturePoints);
       if (spawnPoint) {
@@ -273,7 +283,7 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
     ctx.font = GU + 'px Arial';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
-    var timeUntilRespawn = Character.getTimeUntilRespawn(this.timeDied);
+    var timeUntilRespawn = Character.prototype.getTimeUntilRespawn.call(this, this.timeDied);
     ctx.fillText(name + ' is dead (' + Math.ceil(timeUntilRespawn / 1000).toString() + ')', 0, 0);
     ctx.restore();
     return;

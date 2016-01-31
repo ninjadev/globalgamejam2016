@@ -174,7 +174,7 @@ function update() {
       continue;
     }
     var character = player.character;
-    character.update(player.input, walls, utility, capture_points);
+    character.update(player.input, walls, utility, capture_points, character.team == 0 ? light_points: dark_points);
 
     if(character.fireCooldown > 0){
       character.fireCooldown--;
