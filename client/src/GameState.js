@@ -48,7 +48,7 @@ GameState.prototype.init = function() {
   this.bgLight = loadImage('res/ggj-bg-light.jpg');
   this.playerImgLight = loadImage('res/player-light.png');
   this.playerImgDark = loadImage('res/player-dark.png');
-  this.cpNeutralImg = loadImage('res/marker.png');
+  this.pointsOverlay = loadImage('res/points-overlay.png');
   this.ps = new ParticleSystem();
 
   var soundPath = 'res/sounds/';
@@ -179,20 +179,37 @@ GameState.prototype.render = function(ctx) {
     this.ps.render(ctx);
 
     ctx.restore();
-    ctx.textAlign = 'center';
-    ctx.font = (0.5 * GU|0) + 'px Arial';
+
+    ctx.save();
+    ctx.scale(16 * GU / 1920, 16 * GU / 1920);
+    ctx.drawImage(this.pointsOverlay, 0, 0);
+    ctx.restore();
+
+
     ctx.fillStyle = 'white';
-    ctx.fillRect(6 * GU, 0.2 * GU, 1.8 * GU, 0.6 * GU);
+    ctx.fillRect(104 / 1920 * 16 * GU, 19 / 1920 * 16 * GU,
+        374 / 1920 * 16 * GU * state.light_points / 100 / 300,
+     12 / 1920 * 16 * GU);
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.font = (0.1 * GU) + 'px monospace';
+
+    if(state.light_points / 300 > 0) {
+      ctx.fillText('' + (state.light_points / 300 | 0),
+          (104 + 10 + (state.light_points / 100 / 300) * 374) / 1920 * 16 * GU,
+          18 / 1920 * 16 * GU);
+    }
     ctx.fillStyle = '#191919';
-    ctx.fillRect(8.2 * GU, 0.2 * GU, 1.8 * GU, 0.6 * GU);
-    ctx.fillStyle = '#191919';
-    ctx.fillText(
-        '' + (state.light_points / 300 | 0),
-        6.9 * GU, 0.68 * GU);
-    ctx.fillStyle = 'white';
-    ctx.fillText(
-        '' + (state.dark_points / 300 | 0),
-        9.1 * GU, 0.68 * GU);
+    ctx.fillRect(104 / 1920 * 16 * GU, 69 / 1920 * 16 * GU,
+        374 / 1920 * 16 * GU * state.dark_points / 100 / 300,
+     12 / 1920 * 16 * GU);
+
+    if(state.dark_points / 300 > 0) {
+      ctx.fillStyle = 'white';
+      ctx.fillText('' + (state.dark_points / 300 | 0),
+          (104 + 10 + (state.dark_points / 100 / 300) * 374) / 1920 * 16 * GU,
+          67 / 1920 * 16 * GU);
+    }
 
     ctx.save();
     ctx.globalAlpha = 0.5;

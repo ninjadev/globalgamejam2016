@@ -2,7 +2,7 @@ function AudioButton() {
   var that = this;
   this.position = {
     x: 15.5,
-    y: 0.5
+    y: 0.4
   };
 
   if (typeof localStorage.soundActivated === 'undefined') {
@@ -19,7 +19,7 @@ function AudioButton() {
 AudioButton.prototype.render = function() {
   var sprite = this.on ? this.sprite_on : this.sprite_off;
   ctx.save();
-  var scaler = sprite.width * GU * 0.00025;
+  var scaler = sprite.width * GU * 0.00015;
   ctx.translate(this.position.x * GU, this.position.y * GU);
   ctx.scale(scaler, scaler);
   ctx.drawImage(sprite, -sprite.width / 2, -sprite.height / 2);
