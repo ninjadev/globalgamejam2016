@@ -20,6 +20,7 @@ Character.OVERHEAT_THRESHOLD = 1.5;
 Character.BODY_RADIUS = 0.6;
 
 Character.prototype.init = function(spawnPoint) {
+  this.playerSpriteState = 0;
   if (spawnPoint) {
     this.x = spawnPoint.x;
     this.y = spawnPoint.y;
@@ -60,7 +61,8 @@ Character.prototype.getState = function() {
     overheated: this.overheated,
     respawnTime: this.respawnTime,
     timeDied: this.timeDied,
-    timeToRespawn: this.timeToRespawn
+    timeToRespawn: this.timeToRespawn,
+    playerSpriteState: this.playerSpriteState | 0
   };
 };
 
@@ -220,6 +222,11 @@ Character.prototype.update = function(input, walls, utility, capturePoints, poin
   } else if (this.y > 64) {
     this.y = 64;
   }
+
+  this.playerSpriteState += Math.sqrt(this.dx * this.dx + this.dy * this.dy) * 2;
+  if(this.playerSpriteState >= 8) {
+    this.playerSpriteState %= 8;
+  }
 };
 
 Character.prototype.applyMovementForce = function(input) {
@@ -317,11 +324,38 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
   ctx.restore();
   ctx.save();
 
+  var state = this.playerSpriteState;
   ctx.translate(x * GU, y * GU);
-  ctx.scale(GU * 0.005, GU * 0.005);
-  ctx.rotate(this.mouseDirection);
+  var s = 256;
+  ctx.scale(GU / s * 1.2, GU / s * 1.2);
+  ctx.rotate(this.mouseDirection - Math.PI * 0.5);
   var img = this.team == 0 ? lightImg : darkImg;
-  ctx.drawImage(img, -img.width / 2, -img.height / 2 - 52);
+  switch(state) {
+    case 0:
+      ctx.drawImage(img, 0 * s, 0 * s, s, s, -s / 2, -s / 2, s, s);
+      break;
+    case 1:
+      ctx.drawImage(img, 1 * s, 0 * s, s, s, -s / 2, -s / 2, s, s);
+      break;
+    case 2:
+      ctx.drawImage(img, 2 * s, 0 * s, s, s, -s / 2, -s / 2, s, s);
+      break;
+    case 3:
+      ctx.drawImage(img, 0 * s, 1 * s, s, s, -s / 2, -s / 2, s, s);
+      break;
+    case 4:
+      ctx.drawImage(img, 1 * s, 1 * s, s, s, -s / 2, -s / 2, s, s);
+      break;
+    case 5:
+      ctx.drawImage(img, 2 * s, 1 * s, s, s, -s / 2, -s / 2, s, s);
+      break;
+    case 6:
+      ctx.drawImage(img, 0 * s, 2 * s, s, s, -s / 2, -s / 2, s, s);
+      break;
+    case 7:
+      ctx.drawImage(img, 1 * s, 2 * s, s, s, -s / 2, -s / 2, s, s);
+      break;
+  }
 
   ctx.restore();
   ctx.save();

@@ -47,8 +47,8 @@ GameState.prototype.init = function() {
   this.bg = loadImage('res/ggj-bg.jpg');
   this.bgDark = loadImage('res/ggj-bg-dark.jpg');
   this.bgLight = loadImage('res/ggj-bg-light.jpg');
-  this.playerImgLight = loadImage('res/player-light.png');
-  this.playerImgDark = loadImage('res/player-dark.png');
+  this.playerImgLight = loadImage('res/man-light.png');
+  this.playerImgDark = loadImage('res/man-dark.png');
   this.pointsOverlay = loadImage('res/points-overlay.png');
   this.ps = new ParticleSystem();
 
