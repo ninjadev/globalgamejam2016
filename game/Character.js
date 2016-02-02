@@ -18,6 +18,7 @@ function Character(team, spawnPoint) {
 Character.MAX_SHIELD_ARC = 0.2 * Math.PI;
 Character.OVERHEAT_THRESHOLD = 1.5;
 Character.BODY_RADIUS = 0.6;
+Character.FIRE_COOLDOWN = 30; //frames between shots
 
 Character.prototype.init = function(spawnPoint) {
   if (spawnPoint) {
@@ -77,7 +78,7 @@ Character.prototype.hit = function(bullet, soundsToPlay) {
     this.dx += bullet.dx;
     this.dy += bullet.dy;
 
-    this.hp --;
+    this.hp -= bullet.damage;
     if (this.hp <= 0){
       this.deaths++;
       if(bullet.character){

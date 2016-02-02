@@ -6,7 +6,8 @@ try {
 }
 
 function Bullet() {
-  this.SPEED = 0.3;
+  this.SPEED = 0.5;
+  this.damage = 7;
   this.WEAPON_DISTANCE = 0.1;
 }
 

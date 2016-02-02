@@ -40,7 +40,6 @@ var oldDarkCapturePointCount = 0;
 reset_game();
 
 
-var fireCooldownTime = 11;
 
 var teamCount = [0, 0];
 
@@ -195,7 +194,7 @@ function update() {
         && !character.isShieldActive 
         && !character.timeDied) {
 
-      character.fireCooldown = fireCooldownTime;
+      character.fireCooldown = Character.FIRE_COOLDOWN;
 
       if(player.input[BUTTONS.FIRE] && character.onCP) {
         soundsToPlay['click.mp3'] = true;
