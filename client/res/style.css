@@ -49,6 +49,33 @@ button {
     top: 50%;
 }
 
+.chat-input {
+    position: absolute;
+    left:5%;
+    top:70%;
+    color:white;
+    width:40%;
+    background:none;
+}
+
+.chat-window {
+    position: fixed;
+    bottom: 30%;
+    left:5%;
+    height: 30%;
+}
+
+.chat-msg {
+    bottom: 0px;
+    color:white;
+    font-size: 14;
+}
+
+.hidden {
+    -webkit-transition: opacity 1s linear;
+    opacity: 0;
+}
+
 input {
     cursor: text;
 }
