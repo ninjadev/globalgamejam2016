@@ -49,13 +49,13 @@ window.requestAnimFrame = (function() {
 
 var MS_PER_FRAME = 15;
 function loop() {
+  requestAnimFrame(loop);
   if (loaded > 0) {
     canvas.width = canvas.width;
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "black";
     ctx.fillText("Loading " + loaded, 8 * GU, 4.5 * GU);
-    requestAnimFrame(loop);
     return;
   }
   t = +new Date();
@@ -73,9 +73,6 @@ function loop() {
   /* clearing canvas */
   canvas.width = canvas.width;
   sm.render(ctx);
-
-
-  requestAnimFrame(loop);
 }
 
 function bootstrap() {
