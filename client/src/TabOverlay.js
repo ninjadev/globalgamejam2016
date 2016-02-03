@@ -34,7 +34,6 @@ TabOverlay.render = function(ctx, players, local_players){
       var player = players[i];
       var name = local_players[i].name;
       var team = player.team;
-      console.log(player);
       var playerString = '' + player.kills + 'K/' + player.deaths + 'D/' + player.captures+'C ' +  name; 
       switch(team){
         case 0:

@@ -95,11 +95,9 @@ GameState.prototype.render = function(ctx) {
   if(states[0] && ready_for_render) {
     if(tick < states[0].tick){
       tick = states[0].tick; //global variables <3  ...
-      console.log("Local tick too long behind");
     }
     if(tick >= states[2].tick){
       tick = states[2].tick - 1; //Don't go past last tick, remember we are adding subticks too
-      console.log("Local tick too far ahead");
     }
 
     var state = tick >= states[1].tick ? states[1] : states[0];
@@ -341,7 +339,6 @@ GameState.prototype.update = function() {
 GameState.prototype.playSounds = function(soundIds) {
   for (var i = 0; i < soundIds.length; i++) {
     var soundName = SOUNDS.byId[soundIds[i]];
-    console.log('playing', soundName);
     createjs.Sound.play(soundName);
     var message = SOUNDS.message[soundName];
     if(message) {
