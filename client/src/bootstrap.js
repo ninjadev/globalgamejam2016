@@ -58,7 +58,7 @@ function loop() {
     requestAnimFrame(loop);
     return;
   }
-  t = +new Date();
+  t = performance.now();
   dt += (t - old_time);
   old_time = t;
   songTime = mm.music.currentTime;
@@ -97,7 +97,7 @@ function bootstrap() {
   dt = 0;
   tick = 0;
   t = 0;
-  time = +new Date();
+  time = performance.now();
   old_time = time;
   KEYS = [];
   for (var i = 0; i < 256; i++) {
