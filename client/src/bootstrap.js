@@ -126,10 +126,8 @@ function bootstrap() {
   document.addEventListener("mousedown", function(e) {
     if (e.button === 0) {
       MOUSE.left = true;
-      console.log(MOUSE.x, MOUSE.y);
     } else if (e.button === 2) {
       MOUSE.right = true;
-      console.log();
     }
   });
 
