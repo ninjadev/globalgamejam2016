@@ -227,25 +227,20 @@ Character.prototype.update = function(input, walls, utility, capturePoints, poin
 Character.prototype.applyMovementForce = function(input) {
   var fx = 0;
   var fy = 0;
-  var shouldMove = false;
   if (input[BUTTONS.MOVE_UP]) { // W
     fy += -1;
-    shouldMove = true;
   }
   if (input[BUTTONS.MOVE_DOWN]) { // S
     fy += 1;
-    shouldMove = true;
   }
   if (input[BUTTONS.MOVE_LEFT]) { // A
     fx += -1;
-    shouldMove = true;
   }
   if (input[BUTTONS.MOVE_RIGHT]) { // D
     fx += 1;
-    shouldMove = true;
   }
 
-  if (shouldMove) {
+  if (fx || fy) {
     var targetDirection = Math.atan2(fy, fx);
 
     fx = this.accelerationCoefficient * Math.cos(targetDirection);
