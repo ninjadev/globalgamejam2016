@@ -105,7 +105,7 @@ GameState.prototype.render = function(ctx) {
     var state = tick >= states[1].tick ? states[1] : states[0];
     var state_next = tick >= states[1].tick ? states[2] : states[1];
 
-    var coeff = (tick + dt/15 - state.tick) / (state_next.tick - state.tick);
+    var coeff = (tick + dt/MS_PER_FRAME - state.tick) / (state_next.tick - state.tick);
 
     var players      = state.players;
     var players_next = state_next.players;
