@@ -47,7 +47,11 @@ window.requestAnimFrame = (function() {
     };
 })();
 
-var MS_PER_FRAME = 1000 / 60;
+var MS_PER_UPDATE_FRAME = 1000 / 60;
+var RENDER_FRAMES_PER_SECOND = 0;
+var RENDER_FRAMES_SO_FAR_THIS_COUNT_PERIOD = 0;
+var TIME_AT_RENDER_FRAME_COUNT_PERIOD_START = performance.now();
+var UPDATE_FRAME = 0;
 function loop() {
   requestAnimFrame(loop);
   if (loaded > 0) {
@@ -62,17 +66,27 @@ function loop() {
   dt += (t - old_time);
   old_time = t;
   songTime = mm.music.currentTime;
-  while (dt >= MS_PER_FRAME) {
+  while (dt >= MS_PER_UPDATE_FRAME) {
     sm.update();
     mm.update();
     MOUSE.scrollX = 0;
     MOUSE.scrollY = 0;
     tick++;
-    dt -= MS_PER_FRAME;
+    dt -= MS_PER_UPDATE_FRAME;
+    UPDATE_FRAME++;
   }
   /* clearing canvas */
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   sm.render(ctx);
+  RENDER_FRAMES_SO_FAR_THIS_COUNT_PERIOD += 1;
+
+  var msSinceFPSCountPeriodStart = (performance.now() -
+    TIME_AT_RENDER_FRAME_COUNT_PERIOD_START);
+  if(msSinceFPSCountPeriodStart >= 1000) {
+    FPS = RENDER_FRAMES_SO_FAR_THIS_COUNT_PERIOD * 1000 / msSinceFPSCountPeriodStart;
+    RENDER_FRAMES_SO_FAR_THIS_COUNT_PERIOD = 0;
+    TIME_AT_RENDER_FRAME_COUNT_PERIOD_START = performance.now();
+  }
 }
 
 function bootstrap() {
