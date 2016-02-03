@@ -156,7 +156,7 @@ var oldTime = time;
 var deltaTime = 0;
 var updateTickAccumulator = 0;
 var networkTickAccumulator = 0;
-var UPDATE_TICK_LENGTH_IN_MS = 15;
+var UPDATE_TICK_LENGTH_IN_MS = 1000 / 60;
 var NETWORK_TICK_LENGTH_IN_MS = 50;
 
 function getTime() {

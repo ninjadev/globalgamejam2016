@@ -47,7 +47,7 @@ window.requestAnimFrame = (function() {
     };
 })();
 
-var MS_PER_FRAME = 15;
+var MS_PER_FRAME = 1000 / 60;
 function loop() {
   if (loaded > 0) {
     canvas.width = canvas.width;
@@ -62,7 +62,7 @@ function loop() {
   dt += (t - old_time);
   old_time = t;
   songTime = mm.music.currentTime;
-  while (dt > MS_PER_FRAME) {
+  while (dt >= MS_PER_FRAME) {
     sm.update();
     mm.update();
     MOUSE.scrollX = 0;
