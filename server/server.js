@@ -61,6 +61,18 @@ wsServer.on('request', function(r) {
     if(event.type == 'inputs') {
       if(!connection.player) return;
       connection.player.input = [false].concat(event.inputs);
+    } else if (event.type == 'chat') {
+      console.log((new Date()) + ' Chat: ' + connection.player.name + ': ' + event.message);
+      for(var i in clients) {
+        if(!clients.hasOwnProperty(i)) {
+          continue;
+        }
+        clients[i].send(JSON.stringify({
+          type: 'chat',
+          message: event.message,
+          name: connection.player.name,
+        }));
+      }
     } else if (event.type == 'join') {
       var team = null;
       if (teamCount[LIGHT] > teamCount[DARK]) {

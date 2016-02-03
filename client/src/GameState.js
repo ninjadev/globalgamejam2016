@@ -31,8 +31,11 @@ GameState.prototype.connectWebsocket = function() {
                     ,that.states[2]
                     ,message.state];
       that.playSounds(message.state.sounds);
+    } else if (message.type == 'chat') {
+      that.chat.displayMessage(message.name + ': ' + message.message);
     } else if (message.type == 'join') {
       that.players[message.id] = new Player(message.name);
+      that.chat.displayMessage(message.name + ' has joined the game.');
       if(message.you) {
         that.youId = message.id;
         var team = message.team == 0 ? 'light' : 'dark';
@@ -51,6 +54,8 @@ GameState.prototype.init = function() {
   this.playerImgDark = loadImage('res/player-dark.png');
   this.pointsOverlay = loadImage('res/points-overlay.png');
   this.ps = new ParticleSystem();
+  this.chat = new Chat();
+  this.enterflag = true;
 
   var soundPath = 'res/sounds/';
   for (var soundName in SOUNDS.byName) {
@@ -250,6 +255,7 @@ GameState.prototype.render = function(ctx) {
       TabOverlay.render(ctx, players, this.players);
     }
 
+
     // Announce the winner if the winning condition is met.
     ctx.save();
     ctx.font = 0.5 * GU + 'px Arial';
@@ -303,7 +309,18 @@ GameState.prototype.update = function() {
     MOUSE.y - 4.5,
     MOUSE.x - 8);
 
-  if(this.wsReady) {
+
+  if(!this.enterflag && KEYS[13]){
+    this.enterflag = true;
+    //Enter keydown, guaranteed to only trigger once.
+    this.chat.hitEnter(this.ws, this.wsReady);
+  }
+
+  if(!KEYS[13]){
+    this.enterflag = false;
+  }
+
+  if(this.wsReady && !this.chat.open) {
     var inputs = [];
     this.ws.send(JSON.stringify({
       type: 'inputs',
