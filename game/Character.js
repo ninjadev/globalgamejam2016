@@ -12,6 +12,7 @@ function Character(team, spawnPoint) {
   this.onCP = false;
   this.kills = 0;
   this.deaths = 0;
+  this.captures = 0;
   this.init(spawnPoint);
 }
 
@@ -52,6 +53,7 @@ Character.prototype.getState = function() {
     hp: this.hp,
     kills: this.kills,
     deaths: this.deaths,
+    captures: this.captures,
     mouseDirection: this.mouseDirection,
     isShieldActive: this.isShieldActive,
     shieldEnergy: this.shieldEnergy,

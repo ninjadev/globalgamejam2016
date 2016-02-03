@@ -79,10 +79,21 @@ CapturePoint.prototype.update = function(clients){
   this.ownage_d = Math.max(-1, Math.min(1, this.ownage_d));
 
   // Lock the point if locking is apropriate.
-  if(this.ownage_d == 1)
+  if(this.ownage_d == 1){
+    if(this.locked_ownage != 1){
+      //Captured by dark!
+      this.pointCaptured(clients, 1);
+    }
     this.locked_ownage = 1;
-  if(this.ownage_d == -1)
+  }
+  if(this.ownage_d == -1){
+    if(this.locked_ownage != -1){
+      //Captured by light!
+      this.pointCaptured(clients, 0);
+    }
+
     this.locked_ownage = -1;
+  }
   if(this.locked_ownage!=0 && sign(this.locked_ownage) != sign(this.ownage_d))
     this.locked_ownage = 0;
 
@@ -93,6 +104,26 @@ CapturePoint.prototype.update = function(clients){
       this.ownage_d = 0;
     }
   }
+}
+
+CapturePoint.prototype.pointCaptured = function(clients, team){
+  for(var i in clients) {
+    if(!clients.hasOwnProperty(i)) {
+      continue;
+    }
+    if(!clients[i].player){
+      continue;
+    }
+    var character = clients[i].player.character;
+    if (!character.timeDied && this.sqDistToPlayer(character) < this.radiusSq) {
+      if(character.team == team) {
+        character.captures++;
+      }
+    }
+  }
+
+
+
 }
 
 CapturePoint.prototype.sqDistToPlayer = function(character){
