@@ -71,7 +71,7 @@ function loop() {
     dt -= MS_PER_FRAME;
   }
   /* clearing canvas */
-  canvas.width = canvas.width;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   sm.render(ctx);
 
 
