@@ -5,8 +5,10 @@ try {
   var Character = require('./../game/Character');
 }
 
+Bullet.speed = 0.3;
+Bullet.damage = 7;
+
 function Bullet() {
-  this.SPEED = 0.3;
   this.WEAPON_DISTANCE = 0.1;
 }
 
@@ -23,12 +25,16 @@ Bullet.prototype.init = function(x, y, dx, dy, team){
   this.team = team;
 };
 
+Bullet.prototype.getDamage = function(){
+  return Bullet.damage;
+}
+
 Bullet.prototype.fire = function(character, fire_dir_x, fire_dir_y){
   this.character = character;
   var x = character.x + (Character.BODY_RADIUS + this.WEAPON_DISTANCE) * fire_dir_x;
   var y = character.y + (Character.BODY_RADIUS +  this.WEAPON_DISTANCE) * fire_dir_y;
-  var dx = fire_dir_x * this.SPEED;
-  var dy = fire_dir_y * this.SPEED;
+  var dx = fire_dir_x * Bullet.speed;
+  var dy = fire_dir_y * Bullet.speed;
   this.init(x, y, dx, dy, character.team);
   return this;
 };
