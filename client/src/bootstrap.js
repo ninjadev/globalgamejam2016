@@ -8,6 +8,8 @@ CENTER = {
   y: 4.5
 };
 
+RATIO = window.devicePixelRatio;
+
 MOUSE = {x: 0, y: 0, left: false, right: false};
 
 missedGFXFrames = 0;
@@ -184,18 +186,32 @@ function bootstrap() {
 
 function resize(e) {
   if (window.innerWidth / window.innerHeight > 16 / 9) {
-    GU = (window.innerHeight / 9);
+    GU = (window.innerHeight / 9) * RATIO;
   } else {
-    GU = (window.innerWidth / 16);
+    GU = (window.innerWidth / 16) * RATIO;
   }
   if (typeof canvas !== "undefined") {
     canvas.width = 16 * GU;
     canvas.height = 9 * GU;
-    canvas.style.margin = (($(window).height() - 9 * GU) / 2) + "px 0 0 " + (($(window).width() - 16 * GU) / 2) + "px";
+    var transform =  'scale3d(' + (1 / RATIO) + ', ' + (1 / RATIO) + ', 1)';
+    if(RATIO == 1) {
+      transform = '';
+    }
+    canvas.style.transform = transform;
+    canvas.style.position = 'fixed';
+    canvas.style.top = '50%';
+    canvas.style.left = '50%';
+    canvas.style.marginLeft = (-canvas.width / 2) + 'px';
+    canvas.style.marginTop = (-canvas.height / 2) + 'px';
     var wrapper = document.getElementById('wrapper');
-    wrapper.style.margin = canvas.style.margin;
+    wrapper.style.position = 'fixed';
+    wrapper.style.transform = transform;
+    wrapper.style.top = '50%';
+    wrapper.style.left = '50%';
     wrapper.style.width = 16 * GU + 'px';
     wrapper.style.height = 9 * GU + 'px';
+    wrapper.style.marginLeft = -16 * GU / 2 + 'px';
+    wrapper.style.marginTop = -9 * GU / 2 + 'px';
     wrapper.style.fontSize = 0.15 * GU + 'px';
     wrapper.style.zIndex = 99999999;
   }
@@ -257,7 +273,7 @@ function relMouseCoords(e) {
   canvasX = (e.pageX || (e.touches && e.touches[0] && e.touches[0].pageX) || (this.cached_coords.x + totalOffsetX)) - totalOffsetX;
   canvasY = (e.pageY || (e.touches && e.touches[0] && e.touches[0].pageY) || (this.cached_coords.y + totalOffsetY)) - totalOffsetY;
 
-  return {x: canvasX / GU, y: canvasY / GU}
+  return {x: (canvasX / GU - 8) * RATIO + 8, y: (canvasY / GU - 4.5) * RATIO + 4.5}
 }
 
 if (window.navigator.msPointerEnabled) {
