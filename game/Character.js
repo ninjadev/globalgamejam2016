@@ -294,6 +294,7 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
   var padding = GU * 0.5;
   ctx.fillStyle = 'white';
   ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
   ctx.fillText(name , 0, -2.1 * GU);
 
   ctx.fillStyle = 'white';
