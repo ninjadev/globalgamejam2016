@@ -56,6 +56,7 @@ function loop() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "black";
     ctx.fillText("Loading " + loaded, 8 * GU, 4.5 * GU);
+    t = old_time = performance.now();
     return;
   }
   t = performance.now();
