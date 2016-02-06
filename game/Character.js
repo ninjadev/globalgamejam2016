@@ -279,7 +279,6 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
   ctx.translate(x * GU, y * GU);
   ctx.scale(0.6, 0.6);
   ctx.font = (.5 * GU) + 'px Arial';
-  var padding = GU * 0.5;
   ctx.fillStyle = 'white';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'bottom';

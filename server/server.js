@@ -136,7 +136,7 @@ function loop() {
   networkTickAccumulator += deltaTime;
   oldTime = time;
   while(updateTickAccumulator > UPDATE_TICK_LENGTH_IN_MS) {
-    updateTickAccumulator -= UPDATE_TICK_LENGTH_IN_MS;  
+    updateTickAccumulator -= UPDATE_TICK_LENGTH_IN_MS;
     update();
     tick++;
   }
@@ -201,23 +201,19 @@ function update() {
     }
 
 
-    if (player.input[BUTTONS.FIRE] 
-        && character.fireCooldown <= 0 
-        && !character.overheated 
-        && !character.isShieldActive 
+    if (player.input[BUTTONS.FIRE]
+        && character.fireCooldown <= 0
         && !character.timeDied) {
 
       character.fireCooldown = fireCooldownTime;
 
-      if(player.input[BUTTONS.FIRE] && character.onCP) {
+      if (player.input[BUTTONS.FIRE] && (character.onCP || character.isShieldActive || character.overheated)) {
         soundsToPlay['click.mp3'] = true;
       } else {
         var m_dir = player.input[BUTTONS.MOUSE_DIR];
 
-
         var fire_dir_x = Math.cos(m_dir);
         var fire_dir_y = Math.sin(m_dir);
-
 
         var blocked_by_wall = false;
         for (var i = 0; i < walls.length; i++) {
