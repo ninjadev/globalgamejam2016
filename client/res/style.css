@@ -63,6 +63,7 @@ button {
     bottom: 30%;
     left:5%;
     height: 30%;
+    z-index:1001;
 }
 
 .chat-msg {
