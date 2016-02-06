@@ -210,18 +210,6 @@ Character.prototype.update = function(input, walls, utility, capturePoints, poin
     
   this.x += this.dx;
   this.y += this.dy;
-  
-  // stay within bounds
-  if (this.x < 0) {
-    this.x = 0;
-  } else if (this.x > 64) {
-    this.x = 64;
-  }
-  if (this.y < 0) {
-    this.y = 0;
-  } else if (this.y > 64) {
-    this.y = 64;
-  }
 };
 
 Character.prototype.applyMovementForce = function(input) {
