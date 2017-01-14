@@ -36,6 +36,23 @@ var announce_timer = 0;
 /* used for triggering sound effects */
 var oldLightCapturePointCount = 0;
 var oldDarkCapturePointCount = 0;
+var commands = {
+  "!bspeed" : function(value){
+      Bullet.speed = value;
+  },
+  "!bdmg" : function(value){
+      Bullet.damage = value;
+  },
+  "!firecd" : function(value){
+      fireCooldownTime = value*60;
+  },
+  "!heatrate" : function(value){
+      Character.heat_per_shot = value;
+  },
+  "!friction" : function(value){
+      Character.breaking_coefficient = value;
+  },
+}
 
 reset_game();
 
@@ -63,6 +80,7 @@ wsServer.on('request', function(r) {
       connection.player.input = [false].concat(event.inputs);
     } else if (event.type == 'chat') {
       console.log((new Date()) + ' Chat: ' + connection.player.name + ': ' + event.message);
+      parseChatMessage(event.message);
       for(var i in clients) {
         if(!clients.hasOwnProperty(i)) {
           continue;
@@ -128,6 +146,16 @@ wsServer.on('request', function(r) {
 });
 
 
+function parseChatMessage(msg){
+  var msg_split = msg.split(" ");
+  var prefix = msg_split[0];
+  if(prefix in commands){
+    var value = parseFloat(msg_split[1]);
+    if(!isNaN(value)){
+      commands[prefix](msg_split[1]);
+    }
+  }
+}
 
 function loop() {
   time = getTime();
@@ -232,7 +260,7 @@ function update() {
           // fire
           bullets.push((new Bullet()).fire(character, fire_dir_x, fire_dir_y));
         }
-        character.weaponHeat += 0.2;
+        character.weaponHeat += Character.heat_per_shot;
         if (character.weaponHeat > Character.OVERHEAT_THRESHOLD) {
           character.overheated = true;
           character.weaponHeat = Character.OVERHEAT_THRESHOLD;
