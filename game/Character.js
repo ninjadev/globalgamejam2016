@@ -46,6 +46,24 @@ Character.prototype.init = function(spawnPoint) {
   this.respawnTime = 4000;
 };
 
+Character.prototype.setState = function(state) {
+  this.x = state.x;
+  this.y = state.y;
+  this.hp = state.hp;
+  this.kills = state.kills;
+  this.deaths = state.deaths;
+  this.captures = state.captures;
+  //this.mouseDirection = state.mouseDirection;
+  this.isShieldActive = state.isShieldActive;
+  this.shieldEnergy = state.shieldEnergy;
+  this.team = state.team;
+  this.weaponHeat = state.weaponHeat;
+  this.overheated = state.overheated;
+  this.respawnTime = state.respawnTime;
+  this.timeDied = state.timeDied;
+  this.timeToRespawn = state.timeToRespawn;
+};
+
 Character.prototype.getState = function() {
   return {
     t: 'C',
@@ -141,6 +159,27 @@ Character.getClosestSpawnPoint = function(team, character, capturePoints) {
   }
   return spawnPoint;
 };
+
+Character.prototype.applyInputs = function(input, walls, utility) {
+  this.applyMovementForce(input, walls, utility);
+  this.mouseDirection = input[BUTTONS.MOUSE_DIR];
+
+  this.isShieldActive = input[BUTTONS.ALTERNATE_FIRE];
+  this.shieldEnergy += 0.003;
+  if (this.shieldEnergy > 1) {
+    this.shieldEnergy = 1;
+  }
+
+  this.weaponHeat -= this.overheated ? 0.005 : 0.01;
+  if (this.weaponHeat < 0) {
+    this.weaponHeat = 0;
+  }
+  if (this.weaponHeat < 1) {
+    this.overheated = false;
+  }
+
+}
+
 Character.prototype.update = function(input, walls, utility, capturePoints, points) {
   this.points = points;
   if (this.timeDied) {
@@ -154,8 +193,7 @@ Character.prototype.update = function(input, walls, utility, capturePoints, poin
     return;
   }
 
-  this.applyMovementForce(input);
-  this.applyFrictionForce();
+  this.applyMovementForce(input, walls, utility);
   this.mouseDirection = input[BUTTONS.MOUSE_DIR];
 
   this.isShieldActive = input[BUTTONS.ALTERNATE_FIRE];
@@ -173,47 +211,11 @@ Character.prototype.update = function(input, walls, utility, capturePoints, poin
   }
 
 
-  for(var i = 0; i < walls.length; i++) {
-    if(utility.intersectLineCircle(walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y, this.x, this.y, Character.BODY_RADIUS)) {
-      var p = walls[i].getPushVector(this.x, this.y, Character.BODY_RADIUS);
-      
-      //Decompose velocity!
-      var newDx = 0;
-      var newDy = 0;
-
-      
-      var p_l = Math.sqrt(p.x * p.x + p.y * p.y);
-      if(p_l > 0.0001){
-        p = { x: p.x/p_l, y: p.y / p_l }
-
-        var newSpeed = p.x * this.dx + p.y * this.dy;
-        if(newSpeed > 0){ //Moving away from wall. this is ok.
-          newDx += p.x * newSpeed;
-          newDy += p.y * newSpeed;
-        }
-
-      }
-
-      var n = { x: -p.y, y: p.x };
-      var n_l = Math.sqrt(n.x * n.x + n.y * n.y);
-      if(n_l > 0.0001){
-        n = { x: n.x/n_l, y: n.y / n_l }
-
-        var newSpeed = n.x * this.dx + n.y * this.dy;
-        newDx += n.x * newSpeed;
-        newDy += n.y * newSpeed;
-      }
-
-      this.dx = newDx;
-      this.dy = newDy;
-    }
-  }
-    
-  this.x += this.dx;
-  this.y += this.dy;
+  //this.x += this.dx;
+  //this.y += this.dy;
 };
 
-Character.prototype.applyMovementForce = function(input) {
+Character.prototype.applyMovementForce = function(input, walls, utility) {
   var fx = 0;
   var fy = 0;
   if (input[BUTTONS.MOVE_UP]) { // W
@@ -232,11 +234,50 @@ Character.prototype.applyMovementForce = function(input) {
   if (fx || fy) {
     var targetDirection = Math.atan2(fy, fx);
 
-    fx = this.accelerationCoefficient * Math.cos(targetDirection);
-    fy = this.accelerationCoefficient * Math.sin(targetDirection);
+    speed = 0.1;
+    fx = speed * Math.cos(targetDirection);
+    fy = speed * Math.sin(targetDirection);
+    
+    if(walls){
+      for(var i = 0; i < walls.length; i++) {
+        if(utility.intersectLineCircle(walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y, this.x, this.y, Character.BODY_RADIUS)) {
+          var p = walls[i].getPushVector(this.x, this.y, Character.BODY_RADIUS);
+          
+          //Decompose velocity!
+          var newDx = 0;
+          var newDy = 0;
 
-    this.dx += fx;
-    this.dy += fy;
+          
+          var p_l = Math.sqrt(p.x * p.x + p.y * p.y);
+          if(p_l > 0.0001){
+            p = { x: p.x/p_l, y: p.y / p_l }
+
+            var newSpeed = p.x * fx + p.y * fy;
+            if(newSpeed > 0){ //Moving away from wall. this is ok.
+              newDx += p.x * newSpeed;
+              newDy += p.y * newSpeed;
+            }
+
+          }
+
+          var n = { x: -p.y, y: p.x };
+          var n_l = Math.sqrt(n.x * n.x + n.y * n.y);
+          if(n_l > 0.0001){
+            n = { x: n.x/n_l, y: n.y / n_l }
+
+            var newSpeed = n.x * fx + n.y * fy;
+            newDx += n.x * newSpeed;
+            newDy += n.y * newSpeed;
+          }
+
+          fx = newDx;
+          fy = newDy;
+        }
+      }
+    }
+    this.x += fx;
+    this.y += fy;
+
   }
 };
 
@@ -256,11 +297,13 @@ Character.prototype.applyFrictionForce = function() {
 };
 
 Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg, name) {
-  if (!player_next) {
-    return;
+  if (player_next) {
+    var x = this.x * (1 - coeff) + player_next.x * coeff;
+    var y = this.y * (1 - coeff) + player_next.y * coeff;
+  }else{
+    var x = this.x;
+    var y = this.y;
   }
-  var x = this.x * (1 - coeff) + player_next.x * coeff;
-  var y = this.y * (1 - coeff) + player_next.y * coeff;
 
   if (this.timeToRespawn) {
     ctx.save();
@@ -274,7 +317,11 @@ Character.prototype.render = function(ctx, player_next, coeff, lightImg, darkImg
     return;
   }
 
-  var hp = this.hp * (1 - coeff) + player_next.hp * coeff;
+  if (player_next) {
+    var hp = this.hp * (1 - coeff) + player_next.hp * coeff;
+  }else{
+    var hp = this.hp;
+  }
 
   ctx.save();
   ctx.translate(x * GU, y * GU);

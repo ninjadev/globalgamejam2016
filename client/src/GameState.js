@@ -5,7 +5,10 @@ var types = {
   BULLET: 2
 };
 
+var local_prediction = true;
 var ready_for_render = false;
+var walls = [];
+Utility.populate_walls(walls, Wall);
 
 GameState.prototype.connectWebsocket = function() {
   var ws = new WebSocket('ws://localhost:1337', 'echo-protocol');
@@ -30,6 +33,7 @@ GameState.prototype.connectWebsocket = function() {
       that.states = [that.states[1]
                     ,that.states[2]
                     ,message.state];
+      that.input_ack = message.input_tick;
       that.playSounds(message.state.sounds);
     } else if (message.type == 'chat') {
       that.chat.displayMessage(message.name + ': ' + message.message);
@@ -79,6 +83,7 @@ GameState.prototype.resume = function() {
   ];
   var playerName = document.getElementById('player-name-input').value;
   this.player = new Player(playerName);
+  this.you = new Character();
   localStorage.playerName = playerName;
   this.connectWebsocket();
   this.scoreL = 8;
@@ -87,8 +92,16 @@ GameState.prototype.resume = function() {
   this.cameraX = 0;
   this.cameraY = 0;
   this.states = [];
+  this.pending_input = [];
 };
 
+GameState.prototype.predict_self = function() {
+  for (var i = 0; i < this.pending_input.length; i++){
+    input = [false].concat(this.pending_input[i]['inputs']);
+    this.you.applyInputs(input, walls, Utility);
+  }
+  
+}
 GameState.prototype.render = function(ctx) {
 
   var states = this.states; 
@@ -108,18 +121,32 @@ GameState.prototype.render = function(ctx) {
     var players      = state.players;
     var players_next = state_next.players;
 
-    var you = players[this.youId];
-    var you_next = players_next[this.youId];
-    if(you_next && you){
-      var you_x = you.x * (1 - coeff) + you_next.x * coeff;
-      var you_y = you.y * (1 - coeff) + you_next.y * coeff;
-      this.cameraX = you_x;
-      this.cameraY = you_y;
+    // To reduce lag the player need to be as updated as possible
+    // even if this is inconsistent with the rest of the state
+    // see https://developer.valvesoftware.com/wiki/Latency_Compensating_Methods_in_Client/Server_In-game_Protocol_Design_and_Optimization
+    // for an example of the philosophy used
+    that = this;
+    this.pending_input = this.pending_input.filter(input => input.tick > that.input_ack);
 
-    } else if(you){
-      this.cameraX = you.x;
-      this.cameraY = you.y;
+    if(local_prediction){
+      var you_state = states[2].players[this.youId];
+      this.you.setState(you_state)
+      this.predict_self();
+    }else{
+      var you = players[this.youId];
+      var you_next = players_next[this.youId];
+    }
 
+    if(this.you){
+      if(local_prediction){
+        this.cameraX = this.you.x;
+        this.cameraY = this.you.y;
+      } else {
+        var you_x = you.x * (1 - coeff) + you_next.x * coeff;
+        var you_y = you.y * (1 - coeff) + you_next.y * coeff;
+        this.cameraX = you_x;
+        this.cameraY = you_y;
+      }
     } else {
       this.cameraX = 8;
       this.cameraY = 5;
@@ -154,9 +181,16 @@ GameState.prototype.render = function(ctx) {
     }
 
     for(var i in players) {
+
       var player = players[i];
       var player_next = players_next[i];
       var name = this.players[i].name;
+
+      if(i == this.youId && local_prediction){
+        this.you.render(ctx, null, 0, this.playerImgLight, this.playerImgDark, name);
+        continue; // Special case for self rendering
+      }
+
       Character.prototype.render.call(
           player,
           ctx,
@@ -166,7 +200,7 @@ GameState.prototype.render = function(ctx) {
           this.playerImgDark,
           name);
     }
-
+    
 
     var bullets      = state.bullets;
     var bullets_next = state_next.bullets;
@@ -282,8 +316,8 @@ GameState.prototype.render = function(ctx) {
         8 * GU, 7.5 * GU);
     }
     ctx.save();
-    if (you) {
-      Character.prototype.renderUi.call(you, ctx);
+    if (this.you) {
+      this.you.renderUi(ctx);
     }
   }
 
@@ -319,19 +353,22 @@ GameState.prototype.update = function() {
   }
 
   if(this.wsReady && !this.chat.open) {
-    var inputs = [];
-    this.ws.send(JSON.stringify({
-      type: 'inputs',
-      inputs: [
+    var inputs = [
       KEYS[87] || KEYS[38], // W, up arrow
       KEYS[83] || KEYS[40], // S, down arrow
       KEYS[65] || KEYS[37], // A, left arrow
       KEYS[68] || KEYS[39],  // D, right arrow
       MOUSE.left,
       MOUSE.right,
-      mouseDir
-      ]
-    }));
+      mouseDir];
+
+    this.ws.send(JSON.stringify({
+      type: 'inputs',
+      tick: tick,
+      inputs: inputs}));
+
+    this.pending_input.push({tick: tick, inputs: inputs});
+
   }
 };
 

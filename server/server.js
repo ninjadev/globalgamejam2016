@@ -27,6 +27,7 @@ var count = 0;
 var clients = {};
 var bullets = [];
 var walls = [];
+console.log(utility.populate_walls);
 utility.populate_walls(walls, Wall);
 var capture_points = [];
 var dark_points = 0;
@@ -78,6 +79,8 @@ wsServer.on('request', function(r) {
     if(event.type == 'inputs') {
       if(!connection.player) return;
       connection.player.input = [false].concat(event.inputs);
+      connection.input_tick = event.tick;
+
     } else if (event.type == 'chat') {
       console.log((new Date()) + ' Chat: ' + connection.player.name + ': ' + event.message);
       parseChatMessage(event.message);
@@ -88,7 +91,6 @@ wsServer.on('request', function(r) {
         clients[i].send(JSON.stringify({
           type: 'chat',
           message: event.message,
-          name: connection.player.name,
         }));
       }
     } else if (event.type == 'join') {
@@ -159,7 +161,7 @@ function parseChatMessage(msg){
 
 function loop() {
   time = getTime();
-  var deltaTime = time -oldTime;
+  var deltaTime = time - oldTime;
   updateTickAccumulator += deltaTime;
   networkTickAccumulator += deltaTime;
   oldTime = time;
@@ -326,9 +328,8 @@ function update() {
   oldDarkCapturePointCount = darkCapturePointCount;
 }
 
-function sendNetworkState(tick) {
+function getState(tick) {
   var state = {};
-  state.tick = tick;
   state.players = {};
   state.bullets = {};
   state.capture_points = {};
@@ -365,6 +366,12 @@ function sendNetworkState(tick) {
       state.sounds.push(soundId)
     }
   }
+  return state;
+}
+
+function sendNetworkState(tick) {
+  var state = getState(tick);
+  state.tick = tick;
 
   var messageAsJSON = JSON.stringify({
     type: 'state',
@@ -375,6 +382,11 @@ function sendNetworkState(tick) {
     if(!clients.hasOwnProperty(i)) {
       continue;
     }
+    var messageAsJSON = JSON.stringify({
+      type: 'state',
+      state: state,
+      input_tick: clients[i].input_tick ? clients[i].input_tick : 0
+    });
     clients[i].sendUTF(messageAsJSON);
   }
   soundsToPlay = {};
