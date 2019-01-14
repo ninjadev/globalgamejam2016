@@ -79,7 +79,7 @@ wsServer.on('request', function(r) {
     if(event.type == 'inputs') {
       if(!connection.player) return;
       connection.player.input = [false].concat(event.inputs);
-      connection.input_tick = event.tick;
+      connection.received_tick = event.tick;
 
     } else if (event.type == 'chat') {
       console.log((new Date()) + ' Chat: ' + connection.player.name + ': ' + event.message);
@@ -220,6 +220,7 @@ function update() {
       continue;
     }
     var player = clients[i].player;
+    clients[i].applied_tick = clients[i].received_tick;
     if (!player) {
       continue;
     }
@@ -385,7 +386,7 @@ function sendNetworkState(tick) {
     var messageAsJSON = JSON.stringify({
       type: 'state',
       state: state,
-      input_tick: clients[i].input_tick ? clients[i].input_tick : 0
+      input_tick: clients[i].applied_tick ? clients[i].applied_tick : 0
     });
     clients[i].sendUTF(messageAsJSON);
   }
