@@ -183,8 +183,10 @@ GameState.prototype.render = function(ctx) {
 
     if(local_prediction){
       var you_state = players[this.youId];
-      this.you.setState(you_state)
-      this.predict_self();
+      if(you_state){
+        this.you.setState(you_state)
+        this.predict_self();
+      }
     }else{
       var you = players[this.youId];
       var you_next = players_next[this.youId];
