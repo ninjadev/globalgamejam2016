@@ -180,7 +180,7 @@ Character.prototype.applyInputs = function(input, walls, utility) {
 
 }
 
-Character.prototype.update = function(input, walls, utility, capturePoints, points) {
+Character.prototype.update = function(capturePoints, points) {
   this.points = points;
   if (this.timeDied) {
     this.timeToRespawn = this.getTimeUntilRespawn(this.timeDied);
@@ -193,10 +193,10 @@ Character.prototype.update = function(input, walls, utility, capturePoints, poin
     return;
   }
 
-  this.applyMovementForce(input, walls, utility);
-  this.mouseDirection = input[BUTTONS.MOUSE_DIR];
+  //this.applyMovementForce(input, walls, utility);
+  //this.mouseDirection = input[BUTTONS.MOUSE_DIR];
 
-  this.isShieldActive = input[BUTTONS.ALTERNATE_FIRE];
+  //this.isShieldActive = input[BUTTONS.ALTERNATE_FIRE];
   this.shieldEnergy += 0.003;
   if (this.shieldEnergy > 1) {
     this.shieldEnergy = 1;
