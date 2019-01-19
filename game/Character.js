@@ -12,6 +12,7 @@ function Character(team, spawnPoint) {
   this.kills = 0;
   this.deaths = 0;
   this.captures = 0;
+  this.lastFireTick = 0;
   this.init(spawnPoint);
 }
 
@@ -62,6 +63,7 @@ Character.prototype.setState = function(state) {
   this.respawnTime = state.respawnTime;
   this.timeDied = state.timeDied;
   this.timeToRespawn = state.timeToRespawn;
+  this.lastFireTick = state.lastFireTick
 };
 
 Character.prototype.getState = function() {
@@ -81,7 +83,8 @@ Character.prototype.getState = function() {
     overheated: this.overheated,
     respawnTime: this.respawnTime,
     timeDied: this.timeDied,
-    timeToRespawn: this.timeToRespawn
+    timeToRespawn: this.timeToRespawn,
+    lastFireTick: this.lastFireTick
   };
 };
 

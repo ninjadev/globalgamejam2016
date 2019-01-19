@@ -30,10 +30,10 @@ GameState.prototype.connectWebsocket = function() {
     message = JSON.parse(e.data);
     if(message.type == 'state') {
       oldstates = that.states;
+      message.state.input_ack = message.input_tick;
       that.states = [that.states[1]
                     ,that.states[2]
                     ,message.state];
-      that.input_ack = message.input_tick;
       that.playSounds(message.state.sounds);
     } else if (message.type == 'chat') {
       that.chat.displayMessage(message.name + ': ' + message.message);
@@ -93,15 +93,68 @@ GameState.prototype.resume = function() {
   this.cameraY = 0;
   this.states = [];
   this.pending_input = [];
+  this.speculative_bullets = [];
 };
 
 GameState.prototype.predict_self = function() {
+  this.speculative_bullets = [];
   for (var i = 0; i < this.pending_input.length; i++){
-    input = [false].concat(this.pending_input[i]['inputs']);
+    input = this.pending_input[i]['inputs'];
+    input_tick = this.pending_input[i]['tick'];
+
     this.you.applyInputs(input, walls, Utility);
+
+    if (input[BUTTONS.FIRE]
+        && input_tick - this.you.lastFireTick > 11
+        && !this.you.onCP
+        && !this.you.isShieldActive
+        && !this.you.overheated
+        && !this.you.timeDied) {
+
+
+
+      this.you.lastFireTick = input_tick;
+
+      var m_dir = input[BUTTONS.MOUSE_DIR];
+
+      var fire_dir_x = Math.cos(m_dir);
+      var fire_dir_y = Math.sin(m_dir);
+
+      var blocked_by_wall = false;
+      for (var wall_i = 0; wall_i < walls.length; wall_i++) {
+        if (Utility.lineIntersect(this.you.x,
+              this.you.y,
+              this.you.x + (Character.BODY_RADIUS + 0.2) * fire_dir_x,
+              this.you.y + (Character.BODY_RADIUS + 0.2) * fire_dir_y,
+              walls[wall_i].start_x,
+              walls[wall_i].start_y,
+              walls[wall_i].end_x,
+              walls[wall_i].end_y)) {
+          blocked_by_wall = true;
+        }
+      }
+
+      if (!blocked_by_wall) {
+        // fire
+        bullet = (new Bullet()).fire(this.you, fire_dir_x, fire_dir_y)
+        bullet.fire_tick = input_tick
+        for(var t = 0; t < tick - bullet.fire_tick; t++){
+          bullet.update(null, walls, null);
+        }
+
+        this.speculative_bullets.push(bullet);
+        this.you.weaponHeat += Character.heat_per_shot;
+        this.you.fire_tick = input_tick;
+        if (this.you.weaponHeat > Character.OVERHEAT_THRESHOLD) {
+          this.you.overheated = true;
+          this.you.weaponHeat = Character.OVERHEAT_THRESHOLD;
+        }
+      }
+    }
+
   }
-  
 }
+
 GameState.prototype.render = function(ctx) {
 
   var states = this.states; 
@@ -126,10 +179,10 @@ GameState.prototype.render = function(ctx) {
     // see https://developer.valvesoftware.com/wiki/Latency_Compensating_Methods_in_Client/Server_In-game_Protocol_Design_and_Optimization
     // for an example of the philosophy used
     that = this;
-    this.pending_input = this.pending_input.filter(input => input.tick > that.input_ack);
+    this.pending_input = this.pending_input.filter(input => input.tick > state.input_ack);
 
     if(local_prediction){
-      var you_state = states[2].players[this.youId];
+      var you_state = players[this.youId];
       this.you.setState(you_state)
       this.predict_self();
     }else{
@@ -212,6 +265,11 @@ GameState.prototype.render = function(ctx) {
         var color = bullet.team == 0 ? 255 : 19;
         this.ps.explode(bullet.x, bullet.y, color, color, color);
       }
+    }
+
+    for(var i in this.speculative_bullets) {
+      var bullet = this.speculative_bullets[i];
+      Bullet.prototype.render.call(bullet, ctx, bullet, 0);
     }
 
     this.ps.render(ctx);

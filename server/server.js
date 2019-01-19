@@ -215,11 +215,11 @@ function update() {
     return ;
   }
 
-  for(var i in clients) {
-    if(!clients.hasOwnProperty(i)) {
+  for(var client_i in clients) {
+    if(!clients.hasOwnProperty(client_i)) {
       continue;
     }
-    var player = clients[i].player;
+    var player = clients[client_i].player;
     if (!player) {
       continue;
     }
@@ -228,13 +228,18 @@ function update() {
       var input_event = player.input_queue.shift(); //Get the oldest event in the queue and remove it.
       var input_tick = input_event.tick;
       var inputs = input_event.inputs;
-      player.applied_tick = input_tick;
+
+      character.applyInputs(inputs, walls, utility)
+      clients[client_i].applied_tick = input_tick;
+
 
       if (inputs[BUTTONS.FIRE]
-          && character.fireCooldown <= 0
+          && input_tick - character.lastFireTick >= fireCooldownTime 
           && !character.timeDied) {
 
         character.fireCooldown = fireCooldownTime;
+        character.lastFireTick = input_tick;
+
 
         if (inputs[BUTTONS.FIRE] && (character.onCP || character.isShieldActive || character.overheated)) {
           soundsToPlay['click.mp3'] = true;
@@ -259,7 +264,14 @@ function update() {
           }
           if (!blocked_by_wall) {
             // fire
-            bullets.push((new Bullet()).fire(character, fire_dir_x, fire_dir_y));
+            bullet = (new Bullet()).fire(character, fire_dir_x, fire_dir_y);
+
+            //Compensate for latency
+            for(var t = input_tick; t < tick; t++){
+              bullet.update(clients, walls, soundsToPlay);
+            }
+
+            bullets.push(bullet);
           }
           character.weaponHeat += Character.heat_per_shot;
           if (character.weaponHeat > Character.OVERHEAT_THRESHOLD) {
@@ -270,8 +282,6 @@ function update() {
             ['gun-1.mp3', 'gun-2.mp3', 'gun-3.mp3'][Math.random()*3|0]] = true;
         }
       }
-
-      character.applyInputs(inputs, walls, utility)
     }
 
     for(var i = 0; i < bullets.length; i++){
@@ -397,7 +407,7 @@ function sendNetworkState(tick) {
     var messageAsJSON = JSON.stringify({
       type: 'state',
       state: state,
-      input_tick: clients[i].player.applied_tick ? clients[i].player.applied_tick : 0
+      input_tick: clients[i].applied_tick ? clients[i].applied_tick : 0
     });
     clients[i].sendUTF(messageAsJSON);
   }

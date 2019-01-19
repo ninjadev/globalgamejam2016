@@ -1,7 +1,7 @@
 try {
   window;
 } catch(e) {
-  var utility = require('./../game/utility');
+  var Utility = require('./../game/utility');
   var Character = require('./../game/Character');
 }
 
@@ -23,6 +23,7 @@ Bullet.prototype.init = function(x, y, dx, dy, team){
   this.active = true;
   this.direction = Math.atan2(dy, dx);
   this.team = team;
+  this.fire_tick = 0;
 };
 
 Bullet.prototype.getDamage = function(){
@@ -94,7 +95,7 @@ function checkCollisionWithPlayers(clients, bullet, oldX, oldY, newX, newY, soun
       continue;
     }
     var character = clients[i].player.character;
-    if (!character.timeDied && utility.intersectLineCircle(oldX, oldY, newX, newY, character.x, character.y, Character.BODY_RADIUS)) {
+    if (!character.timeDied && Utility.intersectLineCircle(oldX, oldY, newX, newY, character.x, character.y, Character.BODY_RADIUS)) {
       character.hit(bullet, soundsToPlay);
       hit = true;
     }
@@ -106,7 +107,7 @@ function checkCollisionWithWalls(walls, bullet, oldX, oldY, newX, newY){
   var hit = false;
   for(var i = 0; i < walls.length; i++) {
 
-    if(utility.lineIntersect(oldX, oldY, newX, newY, walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y)) {
+    if(Utility.lineIntersect(oldX, oldY, newX, newY, walls[i].start_x, walls[i].start_y, walls[i].end_x, walls[i].end_y)) {
       hit = true;
     }
   }
