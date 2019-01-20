@@ -55,7 +55,6 @@ var RENDER_FRAMES_SO_FAR_THIS_COUNT_PERIOD = 0;
 var TIME_AT_RENDER_FRAME_COUNT_PERIOD_START = performance.now();
 var UPDATE_FRAME = 0;
 function loop() {
-  requestAnimFrame(loop);
   if (loaded > 0) {
     canvas.width = canvas.width;
     ctx.fillStyle = "white";
@@ -63,6 +62,7 @@ function loop() {
     ctx.fillStyle = "black";
     ctx.fillText("Loading " + loaded, 8 * GU, 4.5 * GU);
     t = old_time = performance.now();
+    requestAnimFrame(loop);
     return;
   }
   t = performance.now();
@@ -90,6 +90,7 @@ function loop() {
     RENDER_FRAMES_SO_FAR_THIS_COUNT_PERIOD = 0;
     TIME_AT_RENDER_FRAME_COUNT_PERIOD_START = performance.now();
   }
+  requestAnimFrame(loop);
 }
 
 function bootstrap() {

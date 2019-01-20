@@ -27,6 +27,7 @@ var count = 0;
 var clients = {};
 var bullets = [];
 var walls = [];
+console.log(utility.populate_walls);
 utility.populate_walls(walls, Wall);
 var capture_points = [];
 var dark_points = 0;
@@ -77,7 +78,8 @@ wsServer.on('request', function(r) {
     var event = JSON.parse(message.utf8Data);
     if(event.type == 'inputs') {
       if(!connection.player) return;
-      connection.player.input = [false].concat(event.inputs);
+      connection.player.input_queue.push(event);
+
     } else if (event.type == 'chat') {
       console.log((new Date()) + ' Chat: ' + connection.player.name + ': ' + event.message);
       parseChatMessage(event.message);
@@ -88,7 +90,6 @@ wsServer.on('request', function(r) {
         clients[i].send(JSON.stringify({
           type: 'chat',
           message: event.message,
-          name: connection.player.name,
         }));
       }
     } else if (event.type == 'join') {
@@ -104,10 +105,11 @@ wsServer.on('request', function(r) {
 
       var spawnPoint = Character.getDefaultPoint(team);
 
+      connection.applied_tick = 0;
       connection.player = {
         character: new Character(team, spawnPoint),
         name: event.name,
-        input: []
+        input_queue: []
       };
       for(var i in clients) {
         if(!clients.hasOwnProperty(i)) {
@@ -159,7 +161,7 @@ function parseChatMessage(msg){
 
 function loop() {
   time = getTime();
-  var deltaTime = time -oldTime;
+  var deltaTime = time - oldTime;
   updateTickAccumulator += deltaTime;
   networkTickAccumulator += deltaTime;
   oldTime = time;
@@ -213,71 +215,93 @@ function update() {
     return ;
   }
 
-  for(var i in clients) {
-    if(!clients.hasOwnProperty(i)) {
+  for(var client_i in clients) {
+    if(!clients.hasOwnProperty(client_i)) {
       continue;
     }
-    var player = clients[i].player;
+    var player = clients[client_i].player;
     if (!player) {
       continue;
     }
     var character = player.character;
-    character.update(player.input, walls, utility, capture_points, character.team == 0 ? light_points: dark_points);
+    while(player.input_queue.length > 0){
+      var input_event = player.input_queue.shift(); //Get the oldest event in the queue and remove it.
+      var input_tick = input_event.tick;
+      var inputs = input_event.inputs;
+
+      character.applyInputs(inputs, walls, utility)
+      clients[client_i].applied_tick = input_tick;
+
+
+      if (inputs[BUTTONS.FIRE]
+          && input_tick - character.lastFireTick >= fireCooldownTime 
+          && !character.timeDied) {
+
+        character.fireCooldown = fireCooldownTime;
+        character.lastFireTick = input_tick;
+
+
+        if (inputs[BUTTONS.FIRE] && (character.onCP || character.isShieldActive || character.overheated)) {
+          soundsToPlay['click.mp3'] = true;
+        } else {
+          var m_dir = inputs[BUTTONS.MOUSE_DIR];
+
+          var fire_dir_x = Math.cos(m_dir);
+          var fire_dir_y = Math.sin(m_dir);
+
+          var blocked_by_wall = false;
+          for (var i = 0; i < walls.length; i++) {
+            if (utility.lineIntersect(character.x,
+                  character.y,
+                  character.x + (Character.BODY_RADIUS + 0.2) * fire_dir_x,
+                  character.y + (Character.BODY_RADIUS + 0.2) * fire_dir_y,
+                  walls[i].start_x,
+                  walls[i].start_y,
+                  walls[i].end_x,
+                  walls[i].end_y)) {
+              blocked_by_wall = true;
+            }
+          }
+          if (!blocked_by_wall) {
+            // fire
+            bullet = (new Bullet()).fire(character, fire_dir_x, fire_dir_y);
+
+            //Compensate for latency
+            for(var t = input_tick; t < tick; t++){
+              bullet.update(clients, walls, soundsToPlay);
+            }
+
+            bullets.push(bullet);
+          }
+          character.weaponHeat += Character.heat_per_shot;
+          if (character.weaponHeat > Character.OVERHEAT_THRESHOLD) {
+            character.overheated = true;
+            character.weaponHeat = Character.OVERHEAT_THRESHOLD;
+          }
+          soundsToPlay[
+            ['gun-1.mp3', 'gun-2.mp3', 'gun-3.mp3'][Math.random()*3|0]] = true;
+        }
+      }
+    }
+
+    for(var i = 0; i < bullets.length; i++){
+      var bullet = bullets[i];
+      bullet.update(clients, walls, soundsToPlay);
+      if(!bullet.active){
+        bullets[i] = bullets[bullets.length - 1];
+        bullets.length = bullets.length - 1;
+      }
+    }
+
+
+    character.update(capture_points, character.team == 0 ? light_points: dark_points);
 
     if(character.fireCooldown > 0){
       character.fireCooldown--;
     }
-
-
-    if (player.input[BUTTONS.FIRE]
-        && character.fireCooldown <= 0
-        && !character.timeDied) {
-
-      character.fireCooldown = fireCooldownTime;
-
-      if (player.input[BUTTONS.FIRE] && (character.onCP || character.isShieldActive || character.overheated)) {
-        soundsToPlay['click.mp3'] = true;
-      } else {
-        var m_dir = player.input[BUTTONS.MOUSE_DIR];
-
-        var fire_dir_x = Math.cos(m_dir);
-        var fire_dir_y = Math.sin(m_dir);
-
-        var blocked_by_wall = false;
-        for (var i = 0; i < walls.length; i++) {
-          if (utility.lineIntersect(character.x,
-                character.y,
-                character.x + (Character.BODY_RADIUS + 0.2) * fire_dir_x,
-                character.y + (Character.BODY_RADIUS + 0.2) * fire_dir_y,
-                walls[i].start_x,
-                walls[i].start_y,
-                walls[i].end_x,
-                walls[i].end_y)) {
-            blocked_by_wall = true;
-          }
-        }
-        if (!blocked_by_wall) {
-          // fire
-          bullets.push((new Bullet()).fire(character, fire_dir_x, fire_dir_y));
-        }
-        character.weaponHeat += Character.heat_per_shot;
-        if (character.weaponHeat > Character.OVERHEAT_THRESHOLD) {
-          character.overheated = true;
-          character.weaponHeat = Character.OVERHEAT_THRESHOLD;
-        }
-        soundsToPlay[
-          ['gun-1.mp3', 'gun-2.mp3', 'gun-3.mp3'][Math.random()*3|0]] = true;
-      }
-    }
   }
-  for(var i = 0; i < bullets.length; i++){
-    var bullet = bullets[i];
-    bullet.update(clients, walls, soundsToPlay);
-    if(!bullet.active){
-      bullets[i] = bullets[bullets.length - 1];
-      bullets.length = bullets.length - 1;
-    }
-  }
+
+
 
   //Set onCP = false for all players
   for(var i in clients) {
@@ -326,9 +350,8 @@ function update() {
   oldDarkCapturePointCount = darkCapturePointCount;
 }
 
-function sendNetworkState(tick) {
+function getState(tick) {
   var state = {};
-  state.tick = tick;
   state.players = {};
   state.bullets = {};
   state.capture_points = {};
@@ -365,6 +388,12 @@ function sendNetworkState(tick) {
       state.sounds.push(soundId)
     }
   }
+  return state;
+}
+
+function sendNetworkState(tick) {
+  var state = getState(tick);
+  state.tick = tick;
 
   var messageAsJSON = JSON.stringify({
     type: 'state',
@@ -375,6 +404,11 @@ function sendNetworkState(tick) {
     if(!clients.hasOwnProperty(i)) {
       continue;
     }
+    var messageAsJSON = JSON.stringify({
+      type: 'state',
+      state: state,
+      input_tick: clients[i].applied_tick ? clients[i].applied_tick : 0
+    });
     clients[i].sendUTF(messageAsJSON);
   }
   soundsToPlay = {};

@@ -5,7 +5,10 @@ var types = {
   BULLET: 2
 };
 
+var local_prediction = true;
 var ready_for_render = false;
+var walls = [];
+Utility.populate_walls(walls, Wall);
 
 GameState.prototype.connectWebsocket = function() {
   var ws = new WebSocket('ws://localhost:1337', 'echo-protocol');
@@ -27,6 +30,7 @@ GameState.prototype.connectWebsocket = function() {
     message = JSON.parse(e.data);
     if(message.type == 'state') {
       oldstates = that.states;
+      message.state.input_ack = message.input_tick;
       that.states = [that.states[1]
                     ,that.states[2]
                     ,message.state];
@@ -79,6 +83,7 @@ GameState.prototype.resume = function() {
   ];
   var playerName = document.getElementById('player-name-input').value;
   this.player = new Player(playerName);
+  this.you = new Character();
   localStorage.playerName = playerName;
   this.connectWebsocket();
   this.scoreL = 8;
@@ -87,7 +92,68 @@ GameState.prototype.resume = function() {
   this.cameraX = 0;
   this.cameraY = 0;
   this.states = [];
+  this.pending_input = [];
+  this.speculative_bullets = [];
 };
+
+GameState.prototype.predict_self = function() {
+  this.speculative_bullets = [];
+  for (var i = 0; i < this.pending_input.length; i++){
+    input = this.pending_input[i]['inputs'];
+    input_tick = this.pending_input[i]['tick'];
+
+    this.you.applyInputs(input, walls, Utility);
+
+    if (input[BUTTONS.FIRE]
+        && input_tick - this.you.lastFireTick > 11
+        && !this.you.onCP
+        && !this.you.isShieldActive
+        && !this.you.overheated
+        && !this.you.timeDied) {
+
+
+
+      this.you.lastFireTick = input_tick;
+
+      var m_dir = input[BUTTONS.MOUSE_DIR];
+
+      var fire_dir_x = Math.cos(m_dir);
+      var fire_dir_y = Math.sin(m_dir);
+
+      var blocked_by_wall = false;
+      for (var wall_i = 0; wall_i < walls.length; wall_i++) {
+        if (Utility.lineIntersect(this.you.x,
+              this.you.y,
+              this.you.x + (Character.BODY_RADIUS + 0.2) * fire_dir_x,
+              this.you.y + (Character.BODY_RADIUS + 0.2) * fire_dir_y,
+              walls[wall_i].start_x,
+              walls[wall_i].start_y,
+              walls[wall_i].end_x,
+              walls[wall_i].end_y)) {
+          blocked_by_wall = true;
+        }
+      }
+
+      if (!blocked_by_wall) {
+        // fire
+        bullet = (new Bullet()).fire(this.you, fire_dir_x, fire_dir_y)
+        bullet.fire_tick = input_tick
+        for(var t = 0; t < tick - bullet.fire_tick; t++){
+          bullet.update(null, walls, null);
+        }
+
+        this.speculative_bullets.push(bullet);
+        this.you.weaponHeat += Character.heat_per_shot;
+        this.you.fire_tick = input_tick;
+        if (this.you.weaponHeat > Character.OVERHEAT_THRESHOLD) {
+          this.you.overheated = true;
+          this.you.weaponHeat = Character.OVERHEAT_THRESHOLD;
+        }
+      }
+    }
+
+  }
+}
 
 GameState.prototype.render = function(ctx) {
 
@@ -108,18 +174,34 @@ GameState.prototype.render = function(ctx) {
     var players      = state.players;
     var players_next = state_next.players;
 
-    var you = players[this.youId];
-    var you_next = players_next[this.youId];
-    if(you_next && you){
-      var you_x = you.x * (1 - coeff) + you_next.x * coeff;
-      var you_y = you.y * (1 - coeff) + you_next.y * coeff;
-      this.cameraX = you_x;
-      this.cameraY = you_y;
+    // To reduce lag the player need to be as updated as possible
+    // even if this is inconsistent with the rest of the state
+    // see https://developer.valvesoftware.com/wiki/Latency_Compensating_Methods_in_Client/Server_In-game_Protocol_Design_and_Optimization
+    // for an example of the philosophy used
+    that = this;
+    this.pending_input = this.pending_input.filter(input => input.tick > state.input_ack);
 
-    } else if(you){
-      this.cameraX = you.x;
-      this.cameraY = you.y;
+    if(local_prediction){
+      var you_state = players[this.youId];
+      if(you_state){
+        this.you.setState(you_state)
+        this.predict_self();
+      }
+    }else{
+      var you = players[this.youId];
+      var you_next = players_next[this.youId];
+    }
 
+    if(this.you){
+      if(local_prediction){
+        this.cameraX = this.you.x;
+        this.cameraY = this.you.y;
+      } else {
+        var you_x = you.x * (1 - coeff) + you_next.x * coeff;
+        var you_y = you.y * (1 - coeff) + you_next.y * coeff;
+        this.cameraX = you_x;
+        this.cameraY = you_y;
+      }
     } else {
       this.cameraX = 8;
       this.cameraY = 5;
@@ -154,9 +236,16 @@ GameState.prototype.render = function(ctx) {
     }
 
     for(var i in players) {
+
       var player = players[i];
       var player_next = players_next[i];
       var name = this.players[i].name;
+
+      if(i == this.youId && local_prediction){
+        this.you.render(ctx, null, 0, this.playerImgLight, this.playerImgDark, name);
+        continue; // Special case for self rendering
+      }
+
       Character.prototype.render.call(
           player,
           ctx,
@@ -166,7 +255,7 @@ GameState.prototype.render = function(ctx) {
           this.playerImgDark,
           name);
     }
-
+    
 
     var bullets      = state.bullets;
     var bullets_next = state_next.bullets;
@@ -178,6 +267,11 @@ GameState.prototype.render = function(ctx) {
         var color = bullet.team == 0 ? 255 : 19;
         this.ps.explode(bullet.x, bullet.y, color, color, color);
       }
+    }
+
+    for(var i in this.speculative_bullets) {
+      var bullet = this.speculative_bullets[i];
+      Bullet.prototype.render.call(bullet, ctx, bullet, 0);
     }
 
     this.ps.render(ctx);
@@ -282,8 +376,8 @@ GameState.prototype.render = function(ctx) {
         8 * GU, 7.5 * GU);
     }
     ctx.save();
-    if (you) {
-      Character.prototype.renderUi.call(you, ctx);
+    if (this.you) {
+      this.you.renderUi(ctx);
     }
   }
 
@@ -319,19 +413,22 @@ GameState.prototype.update = function() {
   }
 
   if(this.wsReady && !this.chat.open) {
-    var inputs = [];
-    this.ws.send(JSON.stringify({
-      type: 'inputs',
-      inputs: [
+    var inputs = [
       KEYS[87] || KEYS[38], // W, up arrow
       KEYS[83] || KEYS[40], // S, down arrow
       KEYS[65] || KEYS[37], // A, left arrow
       KEYS[68] || KEYS[39],  // D, right arrow
       MOUSE.left,
       MOUSE.right,
-      mouseDir
-      ]
-    }));
+      mouseDir];
+
+    this.ws.send(JSON.stringify({
+      type: 'inputs',
+      tick: tick,
+      inputs: inputs}));
+
+    this.pending_input.push({tick: tick, inputs: inputs});
+
   }
 };
 
