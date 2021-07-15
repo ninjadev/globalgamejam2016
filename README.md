@@ -1,10 +1,12 @@
 # Shrine Quest: Light and Dark
 
-This game is Ninjadev's contribution to Global Game Jam 2016
+This game is Ninjadev's contribution to Global Game Jam 2016.
 
 ## About the game
 
 Capture the ritual sites and shoot your enemies! "Shrine Quest: Light and Dark" is a global multiplayer-only browser game. Everyone can join in on the perpetual ongoing strife between the light and dark forces performing arcane rituals to capture shrines and dominate the battlefield.
+
+You can try it at [lionleaf.org/shrinequest](http://lionleaf.org/shrinequest)
 
 ## Controls
 
